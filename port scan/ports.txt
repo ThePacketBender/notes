@@ -1,0 +1,45 @@
+ENUMERATED PORTS
+
+ # service			PURPOSE									ENUM			Exploit
+			
+IP
+1	icmp		
+2	igmp	
+4	ipv4
+6	tcp
+17	udp
+41	ipv6	
+47  gre			
+50  esp   			ipsec vpn tunnel?					ikescan?
+51  ah 				ipsec vpn tunnel?					ikescan?
+58	ipv6-icmp
+103	pim
+132	sctp
+
+TCP
+21	ftp				file transfer
+22	ssh				secure shell
+23	telnet
+25	smtp			email
+80	http			internet
+110	pop3			email
+111	rpcbind
+135	msrpc
+139	netbios-ssn
+199	smux
+443	https
+445	netbios-ssn
+445	microsoft-ds	smb
+995	pop3s
+1025iis
+1025nfs				network filesystem
+1026lsa
+1026nterm			network terminal
+1029ms-lsa
+3306mysql
+3372msdtc			microsoft distributed transaction coordinator
+3389ms-wbt-server	
+32768filenet-tms	
+
+
+UDP

@@ -1,0 +1,7 @@
+PASSWORD HASHES
+
+
+unshadow
+unshadow /etc/passwd /etc/shadow > unshadow
+hashcat64 -m 500 unshadow
+jtr hashfile

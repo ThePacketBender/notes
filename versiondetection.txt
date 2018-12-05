@@ -1,0 +1,29 @@
+SERVICE/VERSION DETECTION/BANNER GRABS
+Known serivces
+msf > services -l 22 -c name,port,proto
+
+
+GENERAL
+nc
+ncat
+cryptocat
+
+
+msf > use auxiliary/scanner/ssh/ssh_version
+
+
+
+TELNET
+telnet
+msf > auxiliary/scanner/telnet/telnet_version
+
+
+SMB
+enum4linux
+acccheck
+smbclient
+
+
+FTP
+ftp
+msf > use auxiliary/scanner/ftp/ftp_version

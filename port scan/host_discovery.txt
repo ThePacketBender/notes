@@ -1,0 +1,17 @@
+mkdir test
+cd ./test
+ping -B 127.0.0.255
+	-ping own broadcast netmask address to populate kernel's arp table cache
+arp >arpf
+	-return arp table trying to determine symbolic host, port and user names
+arp -n >arpnf
+	-return arp table with of network hosts names by numerical address and resolved addresses
+diff arpf arpnf
+
+netdiscover -p
+	-netdiscover is passive mode captures arp traffic without broadcasting arp requests
+netdiscover -p -L >netdiscover
+	-netdiscover run same as previously but with results not returning to stdout display, but saved to file
+
+nmap -p 80 --script hostmap-bfk.nse nmap.org
+nmap -p 80 --script dns-brute.nse vulnweb.com

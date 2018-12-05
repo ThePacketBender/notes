@@ -1,0 +1,11 @@
+VERSION INFORMATION
+
+WINDOWS NT
+5.0 2000
+5.1 XP/legacy
+5.2 XP64/Server 2003 (R2)
+6.0 Vista/Server 2008
+6.1 7/Server 2008R2/Home Server 2011
+6.2 8/Server 2012
+6.3 8.1/Server 2012R2
+10.0 10/Server 2016

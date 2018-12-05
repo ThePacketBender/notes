@@ -1,0 +1,568 @@
+OPENSSL
+
+TLS Handshake
+	[ClientHello]
+->client connects to a TLS-enabled server requesting a secure connection
+	-- client presents a list of supported cipher suites (ciphers and hash functions)
+	[ServerHello]
+<-server picks a cipher and hash function that it also supports and notifies the client of the decision
+<-server then sends its identification as a digital certificate
+	--certificate contains:
+		-server name
+		-trusted Certificate Authrity (CA) to authenticate cert against
+			--unless self-signed
+		-server public encryption key
+	[Certificate Verification]
+->client confirms the validity of the certificate
+	-error if validation expecting CA authentication fails
+	[Change Cipher Spec]
+->To generate session keys used for secure connection, client either:
+	A. encrypts a pseudorandom number (initialization vector) with the server's public key 
+		&& sends the result to the server
+		(which only the server should be able to decrypt with its private key);
+		<->both parties then use the pseudorandom initialization vector to generate a unique session key for subsequent encryption and decryption during session
+	OR
+	B. Diffie-Hellman key exchange to securely generate a pseudorandom unique session key for encryption and decryption 
+		--has additional property of forward secrecy
+		viz.
+		 if the server's private key is disclosed in future, it cannot be used to decrypt the current session, even if the session is intercepted by some man-in-the-middle
+	[Finished]
+<->SECURE SOCKET LAYER is initialized with session key until connection is closed
+	-Transport-layer connection data transfer begins encrypting
+
+	
+           TLS Handshake
+
+               +-----+                              +-----+
+               |     |                              |     |
+               |     |        ClientHello           |     |
+               |     o----------------------------> |     |
+               |     |                              |     |
+       CLIENT  |     |        ServerHello           |     |  SERVER
+               |     |       [Certificate]          |     |
+               |     |    [ServerKeyExchange]       |     |
+               |     |    [CertificateRequest]      |     |
+               |     |      ServerHelloDone         |     |
+               |     | <----------------------------o     |
+               |     |                              |     |
+               |     |       [Certificate]          |     |
+               |     |     ClientKeyExchange        |     |
+               |     |    [CertificateVerify]       |     |
+               |     |   ** ChangeCipherSpec **     |     |
+               |     |         Finished             |     |
+               |     o----------------------------> |     |
+               |     |                              |     |
+               |     |   ** ChangeCipherSpec **     |     |
+               |     |         Finished             |     |
+               |     | <----------------------------o     |
+               |     |                              |     |
+               +-----+                              +-----+
+ Optional messages
+ --------------------------------------------------------------------------------------------
+ Certificate (server)     needed with all key exchange algorithms, except for anonymous ones.
+ ServerKeyExchange        needed in some cases, like Diffie-Hellman key exchange algorithm.
+ CertificateRequest       needed if Client authentication is required.
+ Certificate (client)     needed in response to CertificateRequest by the server.
+ CertificateVerify        needed if client Certificate message was sent.
+ 
+BUILDING AN SSL RECORD
+   -----------+
+          data   --+--------------> 1. Fragment data
+        -----------+
+                                    +------------------------+
+                                    |                        |
+                                    |                        |
+                                    +------------------------+
+
+                                    2. Compress data (generally no compression applied)
+
+                                    +------------------------+----+
+                                    |                        |MAC | Add a Message Authentication Code
+                                    |                        |    |
+                                    +------------------------+----+
+
+                                    3. Encrypt data
+
+                                    +-----------------------------+
+                                    |ciphertext                   |
+                                    |                             |
+                                    +-----------------------------+
+
+                                    4. Add header
+
+                               +----+-----------------------------+
+                    TLS Record |    |ciphertext                   | Add a TLS Record header
+                      header   |    |                             |
+                               +----+-----------------------------+
+
+Record Protocol format
+	Byte 0: TLS record type
+	Bytes 1-2: TLS version (major/minor)
+	Bytes 3-4: Length of data in the record (excluding the header itself). The maximum supported is 16384 (16K).
+
+	     record type (1 byte)
+        /
+       /    version (1 byte major, 1 byte minor)
+      /    /
+     /    /         length (2 bytes)
+    /    /         /
+ +----+----+----+----+----+
+ |    |    |    |    |    |
+ |    |    |    |    |    | TLS Record header
+ +----+----+----+----+----+
+
+
+ Record Type Values       dec      hex
+ -------------------------------------
+ CHANGE_CIPHER_SPEC        20     0x14
+ ALERT                     21     0x15
+ HANDSHAKE                 22     0x16
+ APPLICATION_DATA          23     0x17
+
+
+ Version Values            dec     hex
+ -------------------------------------
+ SSL 3.0                   3,0  0x0300
+ TLS 1.0                   3,1  0x0301
+ TLS 1.1                   3,2  0x0302
+ TLS 1.2                   3,3  0x0303
+ 
+Handshake Protocol format
+                           |
+                           |
+                           |
+         Record Layer      |  Handshake Layer
+                           |                                  |
+                           |                                  |  ...more messages
+  +----+----+----+----+----+----+----+----+----+------ - - - -+--
+  | 22 |    |    |    |    |    |    |    |    |              |
+  |0x16|    |    |    |    |    |    |    |    |message       |
+  +----+----+----+----+----+----+----+----+----+------ - - - -+--
+    /               /      | \    \----\-----\                |
+   /               /       |  \         \
+  type: 22        /        |   \         handshake message length
+                 /              type
+                /
+           length: arbitrary (up to 16k)
+
+
+   Handshake Type Values    dec      hex
+   -------------------------------------
+   HELLO_REQUEST              0     0x00
+   CLIENT_HELLO               1     0x01
+   SERVER_HELLO               2     0x02
+   CERTIFICATE               11     0x0b
+   SERVER_KEY_EXCHANGE       12     0x0c
+   CERTIFICATE_REQUEST       13     0x0d
+   SERVER_DONE               14     0x0e
+   CERTIFICATE_VERIFY        15     0x0f
+   CLIENT_KEY_EXCHANGE       16     0x10
+   FINISHED                  20     0x14
+  
+	>HelloRequest:
+		-Allows a server to restart the handshake negotiation
+		--server can use this message to force a client to renegotiate new session keys
+	     |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+
+		 |    |    |    |    |
+	   4 |  0 |  0 |  0 |  0 |
+	- ---+----+----+----+----+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \    length: 0
+	length     \
+				type: 0
+				
+	>ClientHello
+	     |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----+----+------+----+----------+--------+-----------+----------+
+		 |  1 |    |    |    |    |    |32-bit|    |max 32-bit| Cipher |Compression|Extensions|
+		 |0x01|    |    |    |  3 |  1 |random|    |session Id| Suites |  methods  |          |
+	- ---+----+----+----+----+----+----+------+----+----------+--------+-----------+----------+
+	  /  |  \    \---------\    \----\             \       \
+	 /       \        \            \                \   SessionId
+	record    \     length        SSL/TLS            \
+	length     \                  version         SessionId
+				type: 1       (TLS 1.0 here)       length
+		-CipherSuites
+		+----+----+----+----+----+----+
+		|    |    |    |    |    |    |
+		|    |    |    |    |    |    |
+		+----+----+----+----+----+----+
+		  \-----\   \-----\    \----\
+			 \         \          \
+			  length    cipher Id  cipherId
+		-Compression methods (no practical implementation uses compression)
+		+----+----+----+
+		|    |    |    |
+		|  0 |  1 |  0 |
+		+----+----+----+
+		  \-----\    \
+			 \        \
+		 length: 1    cmp Id: 0
+		-Extensions
+
+		+----+----+----+----+----+----+----- - -
+		|    |    |    |    |    |    |
+		|    |    |    |    |    |    |...extension data
+		+----+----+----+----+----+----+----- - -
+		  \-----\   \-----\    \----\
+			 \         \          \
+			length    Extension  Extension data
+						 Id          length
+	
+	>ServerHello
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----+----+----------+----+----------+----+----+----+----------+
+		 |  2 |    |    |    |    |    |  32byte  |    |max 32byte|    |    |    |Extensions|
+		 |0x02|    |    |    |  3 |  1 |  random  |    |session Id|    |    |    |          |
+	- ---+----+----+----+----+----+----+----------+----+----------+--------------+----------+
+	  /  |  \    \---------\    \----\               \       \       \----\    \
+	 /       \        \            \                  \   SessionId      \  Compression
+	record    \     length        SSL/TLS              \ (if length > 0)  \   method
+	length     \                  version           SessionId              \
+				type: 2       (TLS 1.0 here)         length            CipherSuite
+
+	>Certificate
+		--Certificate chains allows TLS to support certificate hierarchies and PKIs (Public Key Infrastructures)
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----+----+----+----+----+----+-----------+---- - -
+		 | 11 |    |    |    |    |    |    |    |    |    |           |
+		 |0x0b|    |    |    |    |    |    |    |    |    |certificate| ...more certificate
+	- ---+----+----+----+----+----+----+----+----+----+----+-----------+---- - -
+	  /  |  \    \---------\    \---------\    \---------\
+	 /       \        \              \              \
+	record    \     length      Certificate    Certificate
+	length     \                   chain         length
+				type: 11           length
+
+	>ServerKeyExchange
+		-carries the keys exchange algorithm parameters that the client needs from the server in order to get the symmetric encryption working thereafter
+		--optional, since not all key exchanges require the server explicitly sending this message
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----------------+
+		 | 12 |    |    |    |   algorithm    |
+		 |0x0c|    |    |    |   parameters   |
+	- ---+----+----+----+----+----------------+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \     length
+	length     \
+				type: 12
+
+	>CertificateRequest
+		-used when the server requires client identity authentication
+		--asks the client for the certificate
+		 &&tells which certificate types are acceptable
+		 &&indicates which Certificate Authorities are considered trustworthy
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----+----+---- - - --+----+----+----+----+-----------+-- -
+		 | 13 |    |    |    |    |    |           |    |    |    |    |    C.A.   |
+		 |0x0d|    |    |    |    |    |           |    |    |    |    |unique name|
+	- ---+----+----+----+----+----+----+---- - - --+----+----+----+----+-----------+-- -
+	  /  |  \    \---------\    \    \                \----\   \-----\
+	 /       \        \          \ Certificate           \        \
+	record    \     length        \ Type 1 Id        Certificate   \
+	length     \             Certificate         Authorities length \
+				type: 13     Types length                         Certificate Authority
+																		  length
+
+	>ServerHelloDone
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+
+		 | 14 |    |    |    |
+	   4 |0x0e|  0 |  0 |  0 |
+	- ---+----+----+----+----+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \     length: 0
+	length     \
+				type: 14		
+
+	>ClientKeyExchange
+		-provides the server with the necessary data to generate the keys for the symmetric encryption
+		--depends on key exchange algorithm picked by server
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----------------+
+		 | 16 |    |    |    |   algorithm    |
+		 |0x10|    |    |    |   parameters   |
+	- ---+----+----+----+----+----------------+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \     length
+	length     \
+				type: 16
+
+	>CertificateVerify
+		-used by the client to prove the server that it possesses the private key corresponding to its public key certificate
+		--holds hashed information digitally signed by the client
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----------+
+		 | 15 |    |    |    |  signed  |
+		 |0x0f|    |    |    |   hash   |
+	- ---+----+----+----+----+----------+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \     length
+	length     \
+				type: 15
+	
+	>Finished
+		-should be sent already encrypted, since the negotiation is successfully done
+		--ergo a ChangeCipherSpec protocol message must be sent before this one to activate the encryption
+		--Finished message contains a hash of all previous handshake messages combined, followed by a special number identifying server/client role, the master secret and padding
+		 |
+		 |
+		 |
+		 |  Handshake Layer
+		 |
+		 |
+	- ---+----+----+----+----+----------+
+		 | 20 |    |    |    |  signed  |
+		 |0x14|    |    |    |   hash   |
+	- ---+----+----+----+----+----------+
+	  /  |  \    \---------\
+	 /       \        \
+	record    \     length
+	length     \
+				type: 20
+
+ChangeCipherSpec Protocol format
+	-signals the activation of encryption
+	--it follow that encryption cannot be applied to parts of a message it is impossible for any other message to follow a ChangeCipherSpec
+                           |
+                           |
+                           |
+         Record Layer      |  ChangeCipherSpec Layer
+                           |
+                           |
+  +----+----+----+----+----+----+
+  | 20 |    |    |    |    |    |
+  |0x14|    |    |  0 |  1 |  1 |
+  +----+----+----+----+----+----+
+    /               /      |
+   /               /       |
+  type: 20        /        |
+                 /
+                /
+           length: 1
+
+Alert Protocol format
+	--defines two fields: severity level and alert description
+		--severity level:
+			indicates the severity of the alert (1 for warning, 2 for fatal)
+		--alert description
+			encodes the exact condition
+                           |
+                           |
+                           |
+         Record Layer      |  Alert Layer
+                           |
+                           |
+  +----+----+----+----+----+----+----+
+  | 21 |    |    |    |    |    |    |
+  |0x15|    |    |  0 |  2 |    |    |
+  +----+----+----+----+----+----+----+
+    /               /      |
+   /               /       |
+  type: 21        /        |
+                 /
+                /
+           length: 2
+
+
+  Alert severity               dec     hex
+  ----------------------------------------
+  WARNING                        1    0x01
+  FATAL                          2    0x02
+
+
+
+  TLS 1.0 Alert descriptions   dec     hex
+  ----------------------------------------
+
+  CLOSE_NOTIFY                   0    0x00
+  UNEXPECTED_MESSAGE            10    0x0A
+  BAD_RECORD_MAC                20    0x14
+  DECRYPTION_FAILED             21    0x15
+  RECORD_OVERFLOW               22    0x16
+  DECOMPRESSION_FAILURE         30    0x1E
+  HANDSHAKE_FAILURE             40    0x28
+  NO_CERTIFICATE                41    0x29
+  BAD_CERTIFICATE               42    0x2A
+  UNSUPPORTED_CERTIFICATE       43    0x2B
+  CERTIFICATE_REVOKED           44    0x2C
+  CERTIFICATE_EXPIRED           45    0x2D
+  CERTIFICATE_UNKNOWN           46    0x2E
+  ILLEGAL_PARAMETER             47    0x2F
+  UNKNOWN_CA                    48    0x30
+  ACCESS_DENIED                 49    0x31
+  DECODE_ERROR                  50    0x32
+  DECRYPT_ERROR                 51    0x33
+  EXPORT_RESTRICTION            60    0x3C
+  PROTOCOL_VERSION              70    0x46
+  INSUFFICIENT_SECURITY         71    0x47
+  INTERNAL_ERROR                80    0x50
+  USER_CANCELLED                90    0x5A
+  NO_RENEGOTIATION             100    0x64
+ 
+ApplicationData Protocol format
+	-properly encapsulate the data coming from the Application Layer of the network stack
+                           |
+                           |
+                           |
+         Record Layer      |  ApplicationData Layer (encrypted)
+                           |
+                           |
+  +----+----+----+----+----+----+----+--- - - - - - - --+---------+
+  | 23 |    |    |    |       length-delimited data     |         |
+  |0x17|    |    |    |    |    |    |                  |   MAC   |
+  +----+----+----+----+----+----+----+--- - - - - - - --+---------+
+    /               /      |
+   /               /       |
+  type: 23        /        |
+                 /
+                /
+           length: arbitrary (up to 16k)
+		
+
+		
+		
+openssl s_client -showcerts -servername example.com -connect example.com:443
+wget https://certs.godaddy.com/repository/gd_bundle.crt -O ~/.cert/mail.nixcraft.net/gd.pem
+c_rehash ~/.cert/mail.nixcraft.net/
+openssl s_client -CApath ~/.cert/mail.nixcraft.net/ -connect mail.nixcraft.net:443
+	-look for verify return code: 0 (ok)
+
+# CSR, RSA 4096 bit
+openssl genrsa 4096 > private.key
+openssl req -new -key private.key -sha256 -nodes -out request.csr
+
+# Self-signed certificate, RSA 4096, validity: 1 year
+openssl genrsa 4096 > private.key
+openssl req -new -key private.key -sha256 -nodes -x509 -days 365 -out public.crt
+
+# Show certificate fingerprint
+openssl x509 -noout -sha1 -fingerprint -in public.crt
+openssl x509 -noout -sha256 -fingerprint -in public.crt
+
+# View certificate
+openssl x509 -noout -text -in public.crt
+
+# View CSR
+openssl req -noout -text -verify -in request.csr
+
+# Generate Diffie-Hellman parameters
+openssl dhparam -out dhparam4096.pem 4096
+
+# Supported TLS1.0+ ciphers
+openssl ciphers -v -tls1
+
+# Check certificate validity date (notBefore / notAfter)
+openssl s_client -connect leonklingele.de:443 2> /dev/null | openssl x509 -noout -dates
+
+# Check if private key and certificate match, both need to have same pubkey checksum
+## 1. Validate private key
+openssl rsa -noout -check -in private.key
+## 2. Verify that private key and certificate use the same public key
+openssl pkey -pubout -in private.key | openssl dgst -sha256
+openssl x509 -noout -pubkey -in public.crt | openssl dgst -sha256
+## 3. If the last two commands did return the same hash: the private key was used to generate the certificate
+
+
+
+	openssl.cnf
+
+[ req ]
+default_bits = 4096
+default_md = sha256
+default_keyfile = private.key
+distinguished_name = req_distinguished_name
+attributes = req_attributes
+x509_extensions = v3_user_req
+req_extensions = v3_user_req
+
+[ req_distinguished_name ]
+countryName = US
+countryName_default = US
+countryName_min = 2
+countryName_max = 2
+
+stateOrProvinceName = State or Province Name (full name)
+stateOrProvinceName_default = New York
+
+localityName = ThePacketBender
+localityName_default = Brooklyn
+
+0.organizationName = ThePacketBender
+0.organizationName_default = ThePacketBender
+
+organizationalUnitName = the_ego_or_the_id
+organizationalUnitName_default = self
+
+commonName = jonathonbohr.com
+commonName_max = 64
+
+emailAddress = self@jonathonbohr.com
+emailAddress_default = self@jonathonbohr.com
+emailAddress_max = 64
+
+[ req_attributes ]
+challengePassword = 54yS0mE+h1ng--
+challengePassword_min = 4
+challengePassword_max = 20
+
+[ v3_ca ]
+basicConstraints = critical,CA:TRUE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+
+[ v3_user_req ]
+basicConstraints = critical,CA:FALSE
+subjectKeyIdentifier = hash
+keyUsage = digitalSignature, keyEncipherment

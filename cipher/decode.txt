@@ -1,0 +1,4 @@
+rot13
+echo "rot13encoded" | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
+	-encrypt or decrypt
+

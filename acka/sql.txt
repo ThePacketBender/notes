@@ -1,0 +1,16 @@
+SQL
+
+MYSQL
+	version information
+SELECT VERSION();
+SHOW VARIABLES LIKE "%version%";
+	enumerate database
+SELECT distinct User,Host FROM mysql.user;
+SELECT * FROM mysql.user;
+SHOW DATABASES;
+USE dbaser;
+SHOW TABLES;
+SELECT * FROM table;
+
+
+POSTGRESQL

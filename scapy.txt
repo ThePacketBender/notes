@@ -1,0 +1,18 @@
+SCAPY
+
+>>>packet = IP(dst="10.11.12.13")
+>>>packet /= TCP(dport=443)
+>>>sr1(packet)
+
+>>>ls()
+>>>ls(IP)
+
+>>>packet
+>>>packet.summary()
+>>>packet.show()
+
+Example: tcp ping
+>>>p = IP(dst="10.11.12.13")
+>>>p /= TCP(dport=80)
+>>>res,unans=sr(p)
+>>>res.summary()

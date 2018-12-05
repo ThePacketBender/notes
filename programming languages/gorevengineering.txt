@@ -1,0 +1,97 @@
+<m_101> yo
+<credmp> hiya
+<m_101> ecnahc602: the pentest guide, there is no real exploit writing in OSCP
+<ecnahc602> i dont think this machine even has curl on it
+<ThePacketBender> hey m_101 credmp
+<m_101> sup?
+<newbee4u> like I said there is more than just cURL and wget
+<newbee4u> heya
+<ecnahc602> i wish i understood, but i'm not on the same page as yall
+* redworld has quit (Quit: My MacBook has gone to sleep. ZZZzzz…)
+* OS-31292 has quit (Ping timeout: 268 seconds)
+<m_101> echo -ne "\x41\x41\x41" > file.bin
+<m_101> is a good one too
+<m_101> there you go, free uploading without an interactive shell
+* pennega (~pennega@host211-25-dynamic.53-82-r.retail.telecomitalia.it) has joined
+* h3raKLeZ (~heraklez@unaffiliated/heraklez) has joined
+* ChanServ gives channel operator status to h3raKLeZ
+<m_101> command stagers are a must know
+* s14ve_ has quit (Ping timeout: 256 seconds)
+<ThePacketBender> !clean prepping for an audit+engagement...had the bright idea to volunteer to learn two languages team collectively didn't know by monday. You were working on Go a few months ago right? : m_101
+<pennega> Hi folks
+<ecnahc602> i do not see a way to use anything you guys are saying on this machine
+<m_101> ThePacketBender: yeah
+* baconology has quit (Ping timeout: 245 seconds)
+<m_101> Go interfacing to C is pretty bad
+<newbee4u> google that distribution for pre-installed download tools. Or just google *nix download tools, you will find one that works
+<m_101> and the runtime is huge
+* redworld (~redworld@208.71.93.2) has joined
+<newbee4u> or check the forums, I'm sure your not the only one that had this issue
+<ThePacketBender> shouldn't need to iface with C, just learning it for a code review and write programs in after that if I'm digging it; you notice anything worth knowing that I should look into for secure coding practices?
+<m_101> it shoulds
+<m_101> for compatibility reasons
+* redworld has quit (Client Quit)
+<m_101> that's part of why i'm using Rust instead of Go
+<m_101> well, don't use golang unsafe functions and you won't have buffer overflows, etc
+<m_101> there rest is straightforward enough
+<m_101> use channels properly, it will keep you from having race condtions
+<m_101> and the rest is the usual : filter user inputs
+* _0xurity has quit (Ping timeout: 248 seconds)
+* s14ve (~s14ve@80.188.244.110) has joined
+* redworld (~redworld@208.71.93.2) has joined
+<m_101> what's the other language?
+* _0xurity (~OS-23655@111.72.220.111.dyn.wbroadband.net.au) has joined
+<ThePacketBender> right, no pointer arithmetic, ergo := +/-type-safe ...so far, outside of expected potential vulns I've only really come up with errors in complex type structures being mangled during assertion
+<ThePacketBender> other is scala
+<m_101> you still have logic vulns, sql injection, command injection, etc etc etc
+<ThePacketBender> right, anything that sill applies to non-compiled/script languages I'm expecting
+<m_101> nobody use scala
+<m_101> yeah
+<ThePacketBender> haha, ya, not going to sweat as much on scala, just getting it down well enough that I can make sense of syntactical idioms and understand wtf the jvm is executing
+<m_101> lol ok
+<m_101> there are interesting characteristics of a go binaries that can be useful for exploit writing btw
+* sonpyh has quit (Remote host closed the connection)
+<m_101> if you write a golang library and then write a C binding for it
+<m_101> let's say your G
+* OS-35669 (~OS-35669@76.31.123.220) has joined
+<ThePacketBender> go on
+<m_101> let's say your golang binary is not vulnerable
+<m_101> your C program is vulnerable
+<m_101> guess what? the golang binary gives mitigations bypasses for FREE
+<m_101> there is no ASLR and there is a HUGE runtime
+<ThePacketBender> 8D was hoping that's where this was going
+<m_101> with the proper corruption primitive, you don't need any hardcoded offsets anyhow
+<m_101> so tbh, it doesn't change exploit writing that much if you know how to exploit a remote heap null byte overflow or BROP and bypass all mitigations
+* pennega has quit (Ping timeout: 248 seconds)
+<SASDOE_> Is it safe to assume any box exposing only a 3389 port are dependent me finding the creds elsewhere?
+<ThePacketBender> right just follow the GOT, do you know if the standard go compiler uses .dtors for exit...I mean, basically, just necessary to overwrite a function pointer at an offset?
+<m_101> SASDOE_: yes
+<m_101> ThePacketBender: probably, i don't see why not
+<m_101> but then, i haven't really spent a lot of time reversing go binaries
+<m_101> but it's still a linux binary linked with the libc
+<m_101> and the gnu libc uses .dtors at exit yes
+<newbee4u> can only one host ssh into a host as a single user? or can multiple instances of ssh be logged in from the same user account?
+* redworld has quit (Quit: My MacBook has gone to sleep. ZZZzzz…)
+<arch3y> thats a strange question
+<arch3y> why dont you try and find out
+<newbee4u> trying to figure out why I can't connect to a host via ssh.  I know I've been about to multiple times
+<SASDOE_> newbee4u: you can open as many ssh sessions as you want. It's like opening multiple term windows
+* OS-37509 (~OS-37509@60.243.77.124) has joined
+<newbee4u> I mean I can from my same host, but I was wondering if another student was using the host if I could still as well. Because something isn't right here.
+<newbee4u> huh
+<newbee4u> I wonder why my ssh would hang when trying to log in, when I've been using it for days
+* Ibrahim88 has quit (Remote host closed the connection)
+<newbee4u> thx. I guess I'm just going to find another route
+<SASDOE_> Host could be down or someone might've changed the password
+<OS-37509> any new way to exploit ph0EN1x?
+<SASDOE_> It's happened to me many times
+<newbee4u> k thx.  I was thinking that as well. I did revert, but my ssh is hanging. and I've never experienced that up until now, thats what made me wonder
+<ThePacketBender> sounds like cake; very tres helpful m_101 I'll start writing vulns into example programs then throw the resulting binaries at gdb once I finish the last chapters of Kernighan's golang book
+<m_101> no worries
+* redworld (~redworld@208.71.93.2) has joined
+<m_101> depends what you call cake, but yeah, it's not as hard as people makes it to be
+<m_101> what's super hard? reverse engineering and figuring out stuffs
+* redworld has quit (Client Quit)
+* redworld (~redworld@208.71.93.2) has joined
+<ThePacketBender> I call anything that can be done simply by trying harder cake..
+<m_101> lol

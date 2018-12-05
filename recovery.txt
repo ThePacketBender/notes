@@ -1,0 +1,39 @@
+recovery
+
+Linux
+
+Repair discs
+Hirens Boot CD
+https://downloads.tomsguide.com/Hiren-s-Boot-CD,0301-51033.html
+boot-repair-disc
+https://sourceforge.net/projects/boot-repair-cd/?source=directory
+*alt
+	sudo add-apt-repository ppa:yannubuntu/boot-repair
+	sudo apt-get update
+	sudo apt-get install -y boot-repair && boot-repair
+	launch Boot-Repair:
+		>boot-repair
+		click "Recommended repair"
+		When repair is finished, note the URL (paste.ubuntu.com/XXXXX) that appeared on a paper, then reboot and check if you recovered access to your OSs.
+
+If the repair did not succeed, indicate the URL to people who help you by email or forum.
+
+GRUB
+>bootrec /fixmbr
+>sudo update-grub
+sudo grub-install /dev/sda
+	grub rescue >
+		ls
+		ls (hd0,msdos1)/
+		set prefix=(hd1,msdos1)/boot/grub
+		insmod normal
+		normal
+
+fsck
+>*backup first*<
+>dd if=/dev/sda2 of=/disk2/backup-sda2.img
+e2fsck
+>e2fsck -f /dev/sda3
+>mke2fs -n /dev/sda3
+>dumpe2fs /dev/sda3|grep -i superblock
+>e2fsck -f -b 8193 /dev/sda3

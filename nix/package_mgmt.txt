@@ -1,0 +1,32 @@
+Package Management
+
+dpkg
+dpkg -l
+dpkg -i install_some-package
+dpkg -S /path/to/file
+	-returns which(if) package installed a file
+dpkg-reconfigure package_revert-default.conf
+
+
+apt
+apt-get install package
+apt-cache search pattern
+apt-cache show package
+apt-cdrom
+
+
+yum
+yum list installed
+yum search package
+yum info package
+yum install package
+yum update
+yum update packages package
+yum upgrade
+yum localinstall package
+
+
+rpm
+rpm -ivh package.rpm
+rpm -Uvh package.rpm
+rpm -qa

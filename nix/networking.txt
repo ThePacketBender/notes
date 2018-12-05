@@ -1,0 +1,101 @@
+NETWORKING COMMANDS
+
+LOCALHOST
+netstat -plnt
+netstat -tulpn
+	-check local ports
+watch ss -stlpu
+	-watch tcp/udp port in real time
+lsof -i
+	-list established connections
+
+IFCONFIG
+ifconfig
+ifconfig eth0
+ifconfig eth0 192.168.1.1./24
+	-set iprange for device
+ifconfig eth0:1 192.168.2.1/24
+	-add iprange to device
+ifconfig eth0 mtu 1500
+ifconfig eth0 down
+ifconfig eth0 up
+
+IWCONFIG
+	jack your antenna power/range
+ifconfig wlan0
+iw reg set BO
+	-set iw regulations to bolivia
+ifconfig wlan0 up
+iwconfig wlan0 channel 13
+iwconfig wlan0 txpower 30
+	-now jack up the power of your wireless card
+
+
+LOCAL NETWORKING
+netdiscover
+ip addr add 192.168.1.3/25 add hidden address[range] dev eth0 to linux
+
+NETBIOS	
+nbtsat -A 192.168.1.1
+nbtscan -V -m -O outfile.ext 10.11.1.1/24 
+
+MAC
+macchanger -m <ADDR> INTR
+macchanger -r
+ifconfig eth0 hw ether <ADDR>
+
+ARP
+arp -an
+arping 10.11.1.1/24
+
+
+INTERNET
+echo "8.8.8.8" > /etc/resolv.conf
+	-switch dns lookup server
+tcpkill -9 host domain.dom
+	-block access to/from domain servers to/from host
+	reverse lookup
+dig -x 192.168.1.1
+host 192.168.1.1
+	zone transfer
+dig @192.168.1.1 domain.dom -t [AXFR|NX|SRV]
+host -l domain.dom ns.server.dom
+
+
+HAXX
+echo "1" > /proc/sys/net/ipv4/ip_forward
+	-Enables IP forwarding, turns Linux box into a router
+	
+	
+WIFI
+
+ifconfig
+
+iwlist
+iwconfig
+iwconfig wlan0
+
+
+nmcli connection show "nix"
+	-details for connection
+nmcli -f GENERAL,WIFI-PROPERTIES dev show wlp4s0
+	-detials for interface
+
+	
+lspci
+lspci | grep -i wireless
+lspci | egrep -i --color 'wifi|wlan|wireless'
+lspci -vv -s 0c:00.0
+	get information about wireless card driver
+
+wpa_client
+>scan
+/etc/wpa_supplicant/wpa_supplicant.conf
+
+cat /proc/net/wireless
+OR
+watch -n 1 cat /proc/net/wireless
+	-See link quality continuously on screen
+	
+wavemon
+	-curses gui

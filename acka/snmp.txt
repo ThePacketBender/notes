@@ -1,0 +1,28 @@
+SNMP
+	simple network management protocol
+	-udp
+	-port 161
+	
+	nmap -sU --open -p 161 10.11.1.1-254 -oG mega-snmp.txt
+	nmap -sU -p 161 --script=snmp-interfaces 10.11.1.110
+	nmap -sU -p 161 --script=snmp-netstat 10.11.1.110
+	nmap -sU -p 161 --script=snmp-processes 10.11.1.110
+	nmap -sU -p 161 --script=snmp-win32-services 111.10.1.101
+	nmap -sU -p 161 --script=snmp-win32-users 111.10.1.101
+	nmap -sU -p 161 --script=snmp-win32-shares 111.10.1.101
+	nmap -sU -p 161 --script=snmp-win32-software 111.10.1.101
+	
+onesixtyone -c community.txt -i hosts.txt
+snmpwalk -Os -v2c -c public xx.xx.xx.xx system.sysLocation.0
+snmpget
+snmpcheck -t xx.xx.xx.xx -c community
+snmpset -v2c -c public xx.xx.xx.xx system.sysLocation.0 s "Foo"
+snmpstatus
+snmpbulkwalk
+snmpbulkget
+msf>use auxiliary/scanner/snmp/snmp_login
+
+nipper --input=ios.conf --output=report.html
+
+common hostnames
+	cacti, mrtg, hpov, tivoli, nagios

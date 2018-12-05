@@ -1,0 +1,113 @@
+WEB APPLICATION EXPLOIT TOOLS
+
+ENUMERATION
+	CMS IDENTIFICATION
+blindelephant -u
+blindelephant -n 50 http://10.11.1.8/ guess
+	-attempts to discover version of (known) web application(s)
+plecost -i /usr/share/plecost/wp_plugin_list.txt -t 20 -o results.txt http://127.0.0.1/
+
+VULNERABILITY SCANNERS
+nikto -h http://127.0.0.1/
+	**change useragent in nikto.conf for stealth
+wpscan --update
+wpscan --url http://127.0.0.1/
+	--scan vulnerabilities
+wpscan -u http://127.0.0.1/ --enumerate u
+	--enumerate users
+wpscan -u http://127.0.0.1/ --enumerate p
+	--enumerate installed plugins
+wpscan -u http://127.0.0.1/ --enumerate t
+	--enumerate installed themes
+wpscan -u http://127.0.0.1/ --enumerate tt
+	--enumerate installed timethumbs
+joomscan -u http://127.0.0.1/
+grabber http://127.0.0.1/index.html
+skipfish -W wordlist -o /output/dir http://127.0.0.1/
+cadaver
+davtest -url http://127.0.0.1/
+deblaze --help
+dotdotpwn -m http -h 10.11.1.1 -M GET
+	-directory traversal vulnerability fuzzer
+fimap -u 'http://127.0.0.1/'
+fimap -m -l 'urllist.txt'
+padbuster http://127.0.0.1/ EncryptedSample Blocksize
+retire
+	-search web applications for depricated javascript library implementations with known vulnerabilities
+uniscan-gui
+w3af
+w3af-gui
+wapiti http://127.0.0.1/
+webshag-cli -U
+webshag-cli -m pscan 127.0.0.1
+webshag-cli -m uscan 127.0.0.1
+webshag-cli -m info 127.0.0.1
+whatweb -v http://127.0.0.1/
+
+WEB DATABASES
+sqlmap -u "http://127.0.0.1/?id=1&str=val"
+	-GET request
+sqlmap -u "http://127.0.0.1/" --data="id=1&str=val"
+	-POST request
+sqlmap -u "http://127.0.0.1/index.php" --crawl 
+sqlmap -u ''http://127.0.0.1/'' --data=''id=l&str=val'' -p ''id'' -b --dbms=" mssqllmysqlloraclelpostgres "
+	-sqlmap against parameter id specifying db type
+sqlmap -u ''http://127.0.0.1/'' --data=''id=l&str=val'' -p ''id'' --cookie=''cookiel=vall;cookie2=val2''
+sqlmap -u "http://127.0.0.1/index.php?p=1&h=something" --dbs (--dump-all)
+sqlninja -m t/f/b/e/x/u/s/k/r/d/i/m -f /root/sqlninja.conf
+	locate sqlninja-howto.html
+jsql
+sqlsus -g sqlsus.cfg
+sqlsus sqlsus.cfg
+sqlsus> start
+
+IDS/IPS Identification
+ua-tester -u http://127.0.0.1/ -v
+	test lists of user agent strings on target web host
+
+WEB CRAWLERS
+apache-users -h https://10.11.1.223/ -l users -s 0 -e 403 -t 20
+cutycapt --url=http://127.0.0.1/ --out=file.png
+	-display image of webkit display
+dirb http://127.0.0.1/
+dirb http://127.0.0.1/ -X .html
+dirb http://127.0.0.1/ /usr/share/dirb/wordlists/vulns/apache.txt
+dirbuster
+parsero -u http://127.0.0.1/ -sb
+	-robots.txt audit
+webshag-cli -m spider 127.0.0.1
+
+Web Application Proxies
+fl-record -p 9090
+fl-record foo_bar
+fl-run-test -dV test_FooBar.py
+
+FRAMEWORK/GUI WEB APPLICATION FUZZERS/SPIDERS/PROXIES/SCANNERS
+burpsuite
+owasp-zap
+paros
+powerfuzzer
+proxystrike
+vega
+webscarab
+webshag-cli -m fuzz 127.0.0.1 -n gen -e 11 -o txt
+webshag-gui
+webslayer
+websploit
+wfuzz
+
+WEB APPLICATION EXPLOITATION
+bbqsql
+jboss-win 192.168.1.2 8080
+jboss-linux 192.168.1.2 80
+phpsploit
+websploit
+xsser
+
+
+cewl -w cewl"$1" -d 9 -m 5 "$1" -w cewl.txt
+	#create a dictionary list from website(-w) recurring over (-d) number of pages for all words length (-m) or greater	
+john --wordlist=cewl.txt --rules --stdout > cewl-mangled
+cat cewl-mangled | wc -l
+medusa -h admin.megacorpone.com -u admin -P cewl-mangled -M http -n 81 -m DIR:/admin -T 30
+

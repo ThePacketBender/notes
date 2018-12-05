@@ -1,0 +1,12 @@
+VOLATILITY
+volatility.exe -f dump.mem --profile=WinXPSP3x86 command
+python vol.py  -f dump.mem --profile=WinXPSP3x86 command
+
+
+INFORMATION ABOUT PROCESSES
+pslist
+pstree
+psscan
+psscan --output=dot --output-file=processes.dot
+psxview
+

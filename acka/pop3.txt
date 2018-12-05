@@ -1,0 +1,38 @@
+POP3
+	-Incomming (readable) email
+
+nc 10.11.1.24 110
+telnet 10.11.1.24 110
+openssl s_client -connect 10.11.1.24:995
+
+POP3 commands
+authentication
+USER uname@email.dom
+PASS pword
+
+post-login
+QUIT
+STAT
+LIST
+RETR #
+DELE #
+RSET
+	-reset mailbox (to undeleted)
+NOOP
+	-no operation, keep alive
+
+Normal Program flow:
+USER
+PASS
+LIST
+RETR
+DELE
+QUIT
+
+hydra -S -l $emailaddr -P /usr/share/wordlists/rockyou.txt -e s -V pop3://10.11.1.24:995
+
+
+IMAP
+
+openssl s_client -crlf -connect imap.gmail.com:993
+**imap user enum script

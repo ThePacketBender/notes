@@ -1,0 +1,43 @@
+Text Processing
+
+SED
+:  # label
+=  # line_number
+a  # append_text_to_stdout_after_flush
+b  # branch_unconditional             
+c  # range_change                     
+d  # pattern_delete_top/cycle          
+D  # pattern_ltrunc(line+nl)_top/cycle 
+g  # pattern=hold                      
+G  # pattern+=nl+hold                  
+h  # hold=pattern                      
+H  # hold+=nl+pattern                  
+i  # insert_text_to_stdout_now         
+l  # pattern_list                       
+n  # pattern_flush=nextline_continue   
+N  # pattern+=nl+nextline              
+p  # pattern_print                     
+P  # pattern_first_line_print          
+q  # flush_quit                        
+r  # append_file_to_stdout_after_flush 
+s  # substitute                                          
+t  # branch_on_substitute              
+w  # append_pattern_to_file_now         
+x  # swap_pattern_and_hold             
+y  # transform_chars                   
+
+sed 's/pattern/replacement/g' file
+
+
+AWK
+awk '{gsub(/pattern/,"replacement")}' file
+
+
+
+
+
+ONE-LINERS
+	url decoder
+sed 's@+@ @g;s@%@\\x@g' file | xargs -0 printf "%b"
+sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' file | xargs echo -e
+alias urldecode='sed "s@+@ @g;s@%@\\\\x@g" | xargs -0 printf "%b"'

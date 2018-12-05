@@ -1,0 +1,10 @@
+FTP
+
+cd/lcd
+close/quit/open
+delete
+get/mget
+ls
+mkdir
+put/mput
+mkdir/rmdir

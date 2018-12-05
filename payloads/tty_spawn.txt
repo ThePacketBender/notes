@@ -1,0 +1,34 @@
+Spawn TTY
+
+Shell
+/bin/sh -i
+/bin/bash -i
+
+Python
+python -c 'import pty; pty.spawn("/bin/sh")'
+
+Perl
+perl -e 'exec "/bin/sh";'
+perl -i 
+	exec "/bin/sh";
+
+Ruby
+ruby -i
+	exec "/bin/sh"
+
+Lua
+lua
+	os.execute('/bin/sh')
+
+vi
+:!bash
+:set shell=/bin/bash:shell
+
+nmap
+!sh
+
+From Netcat
+ctrl+z
+	--background process
+stty raw -echo
+fg % 1

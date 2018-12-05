@@ -1,0 +1,9 @@
+RSH
+
+rusers -al 192.168.1.110
+rlogin -l uname 192.168.1.110
+~/.rhosts -allows passwordless rsh login
+
+
+finger @192.168.1.110
+finger -lp neo@192.168.1.110

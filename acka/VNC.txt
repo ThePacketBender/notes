@@ -1,0 +1,7 @@
+VNC
+
+nmap -p5800 -sV -sC -script vnc-info 10.11.1.227
+nmap -p5800 -script realvnc-auth-bypass 10.22.1.227
+nmap -p5800 -sV -sC -script vnc-title 10.11.1.227
+
+ike-scan

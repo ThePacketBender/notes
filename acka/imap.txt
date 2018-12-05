@@ -1,0 +1,35 @@
+IMAP
+
+telnet <IP> 143
+openssl s_client -connect <IP>:993
+
+Command Input :
+	<RandomStringID> command
+Examples :
+	x1yz login test@dom.it p4ssw0rd
+
+a capability
+	-check capabilities
+LOGIN <username>@<domain> <password>
+LIST “<mailbox path>” “<search argument>”
+	“<mailbox path>” if empty list shows all content from root
+	“” is case-sensitive  mailbox name with possible wildcards
+	* is a wildcard, and matches zero or more characters at this position.
+	% is similar to “*” but it does not match a hierarchy delimiter
+STATUS <mailbox name> <status data>
+	where <status data> :
+	MESSAGES The number of messages in the mailbox.
+	RECENT The number of messages with the \Recent flag set.
+	UIDNEXT The next unique identifier value of the mailbox.
+	UIDVALIDITY The unique identifier validity value of the mailbox.
+	UNSEEN The number of messages which do not have the \Seen flag set.
+
+SELECT <mailbox path>
+	-SELECT allows to pass fromAuthenticated to Selected status… 
+
+FETCH <sequence set> <data items name>
+
+
+
+
+http://busylog.net/telnet-imap-commands-note/

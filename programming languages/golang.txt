@@ -1,0 +1,149 @@
+GOLANG NOTES
+
+Toolchain:
+
+go run hellworld.go
+go build helloworld.go
+
+go get domain.name/repo/file
+
+
+
+
+Operations:
+
+package main
+	-packages are libraries, they are a directory containing one or more .go files
+
+import "fmt"
+
+func main {}
+
+var s string
+	-explicit declaration
+string += ""
+	-implicit declaration
+
+
+
+	
+Operators
+
+
+
+
+Composite Types
+
+
+
+
+Builtin-functions
+make
+	make(map[string]int)
+		-make creating a new empty map
+	
+counts
+	counts[bufio.NewScanner(os.Stdin()).Text()]++
+		equivalent to }
+	line = bufio.NewScanner(os.Stdin).Text()
+	counts[line] = counts[line] + 1
+	}
+	
+
+	
+
+Variables & Datatypes (Definitions)
+var name type = expression
+	-variable assignment (common form)
+var := expression
+	-short form variable declaration
+string
+int
+map
+	-holds a set of k/v paries and provieds constant-time operations to store, retrieve or test for an item in the set
+	-a map is a reference to the data structure constructed by make
+chan
+	-channel is a communication mechanism that allows one goroutine to pass values of a specified type to another goroutine
+	
+	
+	
+	
+Standard library
+main
+	-defines a standalone executable
+	
+
+fmt
+	fmt.Println("")
+	fmt.Println("%d\t%s", anint, astring)
+		%d			-integer
+		%x,%o,%b	-int as hex, octal, binary
+		%f,%g,%e	-bloating point number
+		%t			-boolean
+		%c			-rune (Unicode code point)
+		%s			-string
+		%q			-quoted string "a" or rune 'b'
+		%v			-any value in a natural format
+		%T			-type of any value
+		%%			-literal percent sign
+		\t			-tab
+		\n			-newline
+	fmt.Fprintf(os.Stderr, "%v\n", err)
+	fmt.Printf("%s", astring)
+	fmt.Println(<- ch := make(chan String))
+	
+		
+os
+	os.Args[1]
+	os.Open(arg)
+		-open file handle
+	afile.Close()
+	os.Create("filename")
+	os.Stdout
+	os.Stderr
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+	os.File
+		-low level operation, prefer ioutil.Read/ioutil.Write/bufio.Scanner
+	os.Exit(1)
+	
+
+strings
+	strings.Join(index[1:], " ")
+	string.Split(astring, "\n")
+	
+
+bufio
+	input = bufio.NewScanner(os.Stdin)
+	input.Text()
+	bufio.Scanner
+	
+
+io
+	io.Copy(dest, src)
+	
+	
+io/ioutil
+	ioutil.Read
+	ioutil.Write
+	ioutil.ReadAll
+	
+	
+net/http
+	http.Get(url)
+		resp, err := http.Get(url)
+		b, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		resp.Status
+		
+		
+time
+	time.Now()
+	time.Since(time.Now()).Seconds()
+	
+log
+	
+	
+	
+sync
+	var mu := sync.Mutex
+	

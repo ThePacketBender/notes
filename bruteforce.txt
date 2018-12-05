@@ -1,0 +1,10 @@
+BRUTE FORCE
+
+ncrack -v -iX nmap.xml -g CL=5,to=1hr
+medusa -d
+	-dump all modules to stdout
+medusa -h 10.11.1.71 -u username -p password -M module
+medusa -H hostsfile -U usersfile -P passwordfile -M module
+patator
+hydra
+crowbar

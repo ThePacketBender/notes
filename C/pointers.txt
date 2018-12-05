@@ -1,0 +1,13 @@
+Dereference to Address of
+x = 1, *p=&x
+	-p dereferences the address of &x to return referenced value x
+Pointer on Pointer
+int x = 1, *p=&x, **q=&p;
+	-**q (de)references the value p returned by &p recursively referencing p as derefereced value x pointed to by &x
+
+POINTERS TERMS
+NULL pointer
+char *x=NULL;
+	-literally a pointer that points to value evaluating to nothing
+Dangling pointer
+	-A pointer initially holding valid address, but later the held address is released or freed.

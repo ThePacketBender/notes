@@ -1,0 +1,8 @@
+WIN filesystem read targets
+
+%SYSTEMDRIVE%\boot.ini
+	near ubiquitous, confirmation that a read is happening
+%WINDIR%\win.ini
+	second test file if boot.ini cannot be found/returned
+
+	

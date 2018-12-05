@@ -1,0 +1,41 @@
+WIN filesystem read targets
+
+tier 1
+%SYSTEMDRIVE%\boot.ini
+	near ubiquitous, confirmation that a read is happening
+%WINDIR%\win.ini
+	second test file if boot.ini cannot be found/returned
+%SYSTEMROOT%\repair\SAM
+%SYSTEMROOT%\System32\config\RegBack\SAM
+	stores users' passwords in a hashed format (in LM hash and NTLM hash). The SAM file in \repair is locked, but can be retired using forensic or Volume Shadow copy methods
+%SYSTEMROOT%\repair\system
+%SYSTEMROOT%\System32\config\RegBack\system
+	key to read SAM hashes in plaintext without cracking
+%WINDIR%\repair\security
+%SYSTEMDRIVE%\autoexec.bat
+
+TIER 1, LOCATION NOT SET BY DEFAULT
+unattend.txt
+unattend.xml
+sysprep.inf
+	--(ALL)Used in the automated deployment of windows images and can contain user accounts. No known default location.
+
+tier 2
+%WINDIR%\debug\NetSetup.log
+%WINDIR%\repair\software
+%WINDIR%\iis6.log
+	(or 5 or 7, given version)
+%WINDIR%\system32\logfiles\httperr\httperr1.log
+	--iis6 error log
+%SystemDrive%\inetpub\logs\LogFiles
+	--IIS 7’s logs location
+%WINDIR%\system32\config\AppEvent.Evt
+%WINDIR%\system32\config\SecEvent.Evt
+%WINDIR%\system32\config\default.sav
+%WINDIR%\system32\config\security.sav
+%WINDIR%\system32\config\software.sav
+%WINDIR%\system32\config\system.sav
+%WINDIR%\system32\CCM\logs\*.log
+%USERPROFILE%\ntuser.dat
+%USERPROFILE%\LocalS~1\Tempor~1\Content.IE5\index.dat
+%WINDIR%\System32\drivers\etc\hosts

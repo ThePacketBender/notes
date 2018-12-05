@@ -1,0 +1,106 @@
+Webservers
+
+FULL WEB SERVERS
+service nginx start
+/etc/init.d/nginx start
+service nginx stop
+
+service apache2 start
+/etc/init.d/apache2 start
+service apache2 stop
+
+
+BASIC SERVERS
+	PYTHON 2
+python -m SimpleHTTPServer 80
+python -m SimpleHTTPServer 443
+	-serve files from server root
+	PYTHON 3
+python -m http.server 8000
+	PYTHON
+python -c 'import BaseHTTPServer as bhs, SimpleHTTPServer as shs; bhs.HTTPServer(("192.168.1.106", 8008), shs.SimpleHTTPRequestHandler).serve_forever()'
+
+twisted -n web -p 8000 --path .
+python -c 'from twisted.web.server import Site; from twisted.web.static import File; from twisted.internet import reactor; reactor.listenTCP(8000, Site(File("."))); reactor.run()'
+	-depends package twisted
+djangothis
+	-depends pip install djangothis
+	BASH
+function serve {
+  port="${1:-3000}"
+  http-server . -p $port
+}
+	-function, perhaps add to bash.rc
+function serve() {
+	if [ $# -eq 0 ]; then
+		php -S localhost:8000
+	else
+		php -S localhost:"$@"
+	fi
+}
+	-function, bash with php
+serve 80
+	PERL
+perl -MIO::All -e 'io(":8080")->fork->accept->(sub { $_[0] < io(-x $1 ? "./$1 |" : $1) if /^GET \/(.*) / })'
+perl -MHTTP::Server::Brick -e '$s=HTTP::Server::Brick->new(port=>8080); $s->mount("/"=>{path=>"/tmp"}); $s->start'
+	-depends cpan HTTP::Server::Brick
+plackup -MPlack::App::Directory -e 'Plack::App::Directory->new(root=>".");' -p 8000
+	-depends cpan Plack
+perl -MMojolicious::Lite -MCwd -e 'app->static->paths->[0]=getcwd; app->start' daemon -l http://*:8000
+	-depends cpan Mojolicious::Lite
+	RUBY
+ruby -run -e httpd . -p 80
+ruby -rrack -e "include Rack;Handler::Thin.run Builder.new{run Directory.new''}"
+	-depends ruby thin gem
+ruby -rwebrick -e 'WEBrick::HTTPServer.new.start'
+adsf -p 8000
+	-depends gem adsf
+ruby -rsinatra -e'set :public_folder, "."; set :port, 8000'
+	-depends gem install sinatra
+serve
+	-depends gem install serve
+	POWERSHELL
+$Hso=New-Object Net.HttpListener;$Hso.Prefixes.Add("http://+:8000/");$Hso.Start();While ($Hso.IsListening){$HC=$Hso.GetContext();$HRes=$HC.Response;$HRes.Headers.Add("Content-Type","text/plain");$Buf=[Text.Encoding]::UTF8.GetBytes((GC (Join-Path $Pwd ($HC.Request).RawUrl)));$HRes.ContentLength64=$Buf.Length;$HRes.OutputStream.Write($Buf,0,$Buf.Length);$HRes.Close()};$Hso.Stop()
+PowerShell.exe -nop -enc JABIAHMAbwA9AE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAEgAdAB0AHAATABpAHMAdABlAG4AZQByADsAJABIAHMAbwAuAFAAcgBlAGYAaQB4AGUAcwAuAEEAZABkACgAIgBoAHQAdABwADoALwAvACsAOgA4ADAAMAAwAC8AIgApADsAJABIAHMAbwAuAFMAdABhAHIAdAAoACkAOwBXAGgAaQBsAGUAIAAoACQASABzAG8ALgBJAHMATABpAHMAdABlAG4AaQBuAGcAKQB7ACQASABDAD0AJABIAHMAbwAuAEcAZQB0AEMAbwBuAHQAZQB4AHQAKAApADsAJABIAFIAZQBzAD0AJABIAEMALgBSAGUAcwBwAG8AbgBzAGUAOwAkAEgAUgBlAHMALgBIAGUAYQBkAGUAcgBzAC4AQQBkAGQAKAAiAEMAbwBuAHQAZQBuAHQALQBUAHkAcABlACIALAAiAHQAZQB4AHQALwBwAGwAYQBpAG4AIgApADsAJABCAHUAZgA9AFsAVABlAHgAdAAuAEUAbgBjAG8AZABpAG4AZwBdADoAOgBVAFQARgA4AC4ARwBlAHQAQgB5AHQAZQBzACgAKABHAEMAIAAoAEoAbwBpAG4ALQBQAGEAdABoACAAJABQAHcAZAAgACgAJABIAEMALgBSAGUAcQB1AGUAcwB0ACkALgBSAGEAdwBVAHIAbAApACkAKQA7ACQASABSAGUAcwAuAEMAbwBuAHQAZQBuAHQATABlAG4AZwB0AGgANgA0AD0AJABCAHUAZgAuAEwAZQBuAGcAdABoADsAJABIAFIAZQBzAC4ATwB1AHQAcAB1AHQAUwB0AHIAZQBhAG0ALgBXAHIAaQB0AGUAKAAkAEIAdQBmACwAMAAsACQAQgB1AGYALgBMAGUAbgBnAHQAaAApADsAJABIAFIAZQBzAC4AQwBsAG8AcwBlACgAKQB9ADsAJABIAHMAbwAuAFMAdABvAHAAKAApAA==
+	-from cmd.exe
+	PHP
+php -S 127.0.0.1:8000
+	Erlang
+erl -s inets -eval 'inets:start(httpd,[{server_name,"NAME"},{document_root, "."},{server_root, "."},{port, 8000},{mime_types,[{"html","text/html"},{"htm","text/html"},{"js","text/javascript"},{"css","text/css"},{"gif","image/gif"},{"jpg","image/jpeg"},{"jpeg","image/jpeg"},{"png","image/png"}]}]).'
+	GO
+spark -port 8000 .
+	-depends go get github.com/rif/spark
+serve -p 9999 ~/my-awesome-blog
+serve -x /my ~/precious
+	-connect 127.0.0.1/my to ~/precious
+serve -o ~/sesame
+	-like x, but also opens index in default browser
+	-depends go get github.com/kidoman/serve or brew install kidoman/tools/serve
+gommand 'http.ListenAndServe(":8000", http.FileServer(http.Dir(".")))'
+	Node.js
+http-server -p 8000
+	-depends npm install -g http-server
+static -p 8000
+	-depends
+beefy
+	-depends npm install -g beefy
+	RUST
+http
+	-depends cargo install https
+	IIS EXPRESS
+"C:\Program Files (x86)\IIS Express\iisexpress.exe" /path:C:\MyWeb /port:8000
+	NETCAT
+nc -lvp 80 < ./file.ext
+while true ; do nc -l 80 < test.html ; done
+ncat -ssl -klvp 443 < ./file.ext
+	BUSYBOX
+busybox httpd -f -p 8000
+	WEBFS
+webfsd -F -p 8000
+	
+	AWK
+awk 'BEGIN{s="/inet/tcp/80/0/0";"pwd" |& getline;r=$0;while((s |& getline) >; 0){gsub(/[\r\n]/,"");if($0 ~ /^\s*$/){c="cat " r path;printf "HTTP/1.0 200 OK\r\n\r\n" |& s;while((c |& getline) > 0){print |& s}close(c);close(s)}else if($0 ~ /HTTP/){print;path=$2}}}'
+	
+Browser CLI
+gotty -a 127.0.0.1 -p 7070 -w msfconsole
+gotty -a 127.0.0.1 -p 7071 -w tmux

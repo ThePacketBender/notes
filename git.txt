@@ -1,0 +1,41 @@
+GIT
+https://git-scm.com/docs
+
+git clone https://github.com/owner/repot.git
+git update
+
+
+
+
+SEARCH
+git log -S'search string' --oneline --name-status
+	-find which commits and which files a string was added or removed in
+git log -G'search string' --oneline --name-status
+	-find which commits and which files a regex was added or removed in
+git log -S'search string' -p | grep 'search string' -C5
+	-see the diff of that
+
+git log --all --grep='Build 0051'
+	-search the commit log (across all branches) for the given text
+grep 'Build 0051' $(git rev-list --all)
+	-search the actual content of commits through a repo's history, use
+git log -g --grep='Build 0051'
+	-search the reflog itself with the -g flag (short for --walk-reflogs)
+git reflog
+git checkout 77b1f718d19e5cf46e2fab8405a9a0859c9c2889
+	-To recover your commit from the reflog: do a git checkout of the commit you found
+git checkout -b build_0051
+
+git show :/message
+
+
+
+REVISION HISTORY
+git log
+	-lists version history for the current branch
+git log --follow [file]
+	-lists version history for a file, including renames
+git diff [first-branch]...[second-branch]
+	-shows content differences between two branches
+git show [commit]
+	-outputs metadata and content changes of the specified commit

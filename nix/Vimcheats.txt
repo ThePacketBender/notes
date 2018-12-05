@@ -1,0 +1,72 @@
+VIM CHEAT SHEET
+
+quick commands
+u			undo
+^R			redo
++y			copy higlighted
+:w			write file(save)
+:w file		write file as file
+:q			quit
+:ls			show current buffers
+:help		command
+	-get help given a command or shortcut
+mk			mark current position k
+'k			move to mark k
+d'k			delete from current position to mark k
+:e file		edit file
+:sp file	split window and open file in new window
+ctrl-w up	move cursor up a window
+ctrl-w down	move cursor down a window
+ctrl-w_		maximize current window
+:only		keep only this window open
+:hide		close current window
+:make		for makefiles run make
+:copen		on makefiles open mini-window to debug output errors
+:reg		show named registers and what's in them
+"1p			paste content of register "1
+"1d			replace register 1 with what cursor is on
+qk			record edits to register k
+@k			execute recorded edits in register k (again)
+@@			repeat last @ execution
+2@@			repeat last @ execution 2 times
+dd			delete current line
+p			paste contents of clipboard to here
+
+PATTERN SEARCHING
+/		search for following pattern
+*		search for word currently under cursor
+g*		search for substring pattern currently under cursor
+n		repeat forward search
+repeat 	backward search
+
+PATTERN REPLACEMENT
+:%s/pattern/newpattern
+	-replace each instance of a pattern with new pattern
+:%s/,\(\S\)/, \1/g
+	-add a space following each comma
+
+AUTOCOMPLETION
+ctrl+n		next word completion
+ctrl+p		previous word completion
+ctrl+l		line completion
+ctrl+x		line completion
+
+VARIABLE SETTINGS
+:set				display variables with non-default values
+:set all			display all variables
+:setlocal			set variable only for current buffer
+
+:set ignorecase		toggle case sensitivity
+:set smartcase		use case sensitivity if any caps used
+:set hlsearch		set search highlighting
+:set autoindent		toggle automatic indentation
+:set smartindent	toggle smart indentation
+:set cindent		toggle strict c-style indentation
+:map <f#> :arg		map a function key to run a vim command
+
+
+VIM over bash
+cat file | vim -
+	open contents of file as new document in vim
+$TOVIM = ""; for FILE in $(locate pattern); do $TOVIM+=$(tail -n +1 $FILE); done && printf "$TOVIM" %s | vim -
+	find all files matching pattern, concatenate with filename as header and open stdout as new document in vim

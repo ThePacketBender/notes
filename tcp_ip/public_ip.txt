@@ -1,0 +1,16 @@
+PUBLIC IP ADDRESS RESOLUTION
+
+curl ifconfig.me
+curl icanhazip.com
+curl ipecho.net
+lynx -dump checkip.dyndns.org
+wget -qO- checkip.dyndns.org ; echo
+	-ret public ip using wget
+curl ipecho.net/plain ; echo
+	-ret public ip from website (shortest)
+dig +short myip.opendns.com @resolver1.opendns.com
+	-ret public ip from dns resolution service (fastest remote method)
+LANG=c ifconfig | grep -B1 "inet addr" |awk '{ if ( $1 == "inet" ) { print $2 } else if ( $2 == "Link" ) { printf "%s:" ,$1 } }' |awk -F: '{ print $1 ": " $3 }'
+	-ret public ip address locally (for all adapters)
+LANG=c ifconfig ppp0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
+	-ret public ip address locally (for single adapter)

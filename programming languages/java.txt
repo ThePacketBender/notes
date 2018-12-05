@@ -1,0 +1,15 @@
+JAVA
+
+tool-chain
+java -jar java.jar
+java -cp nomain.jar class.function -t flag
+javac ajar.java
+	-compile ajar.class file as bytecode
+jad java.class
+	-decompile bytecode to source
+	
+MAVEN
+mvn clean package -DskipTests
+mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mvn site
+

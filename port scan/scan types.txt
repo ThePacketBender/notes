@@ -1,0 +1,13 @@
+TCP FLAGS
+	SYN		-
+	ACK		-acknowledge
+	PSH		-
+	URG		-urgent
+	FIN		-
+	RST		-reset
+
+SCAN TYPES
+	Xmas	-FIN PSH URG
+	Connect	-SYN -> SYN/ACK -> FIN
+	Maimon	-FIN ACK
+	NULL	-no flags set

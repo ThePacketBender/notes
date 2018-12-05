@@ -1,0 +1,107 @@
+*NIX CUSTODIAL COMMANDS
+
+datetime
+ntpdate ntp.ubuntu.com
+	--set current datetime
+uptime
+
+ssh user@X.X.X.X | cat /dev/null > ~/.bash_history
+	-clear user history remotely
+
+processes/services
+ps -aux
+kils ####
+netstat -ntpl
+service --status-all
+ls /etc/init.d
+
+SYSTEMD
+service start|stop|restart|status
+/etc/init.d/nameofservice start|stop|restart|enable|disable
+systemctl [stop|start|restart|reload|status|enable|disable|show] service
+systemctl -H 127.0.0.1 command service
+	-remote administration system command
+systemctl list-dependencies
+systemctl list-sockets
+systemctl list-jobs
+systemctl list-units
+systemctl list-unit-files
+systemctl reboot
+systemctl poweroff
+systemctl emergency
+systemctl default
+journalctl
+journalctl -u name.service
+	-see messages for service
+journalctl -f
+	-display messages as they appear
+journalctl -k
+	-display kernel-level messages
+
+system resources
+	disk
+df
+df /dev/sda1
+mount /dev/sdb /user
+	memory
+vmstat
+
+filesystem managemnet
+ls -lashR .
+chown file
+chmod +1741 file /path-to-files
+chmod -r 777 /abs/dir
+
+
+filesystem search
+ls -R
+ls -R | xargs echo -
+locate pattern
+find /path/to -print | grep pattern
+	-conditions: -print -name -type -exec -size -mtime -user -perm
+find -cmin -10 2>/dev/null
+	-find files changed in the past 10 minutes
+find . -name *.py | sed -z 's/\n/,/g' -
+	-print comma-seperated single line of file with name matching pattern recursively
+
+RESOLVE gnome errors
+boot to recovery
+dpkg --configure -a
+apt purge gnome-session
+apt-get install gnome-session
+
+GRUB
+grub-install
+grub-editenv
+grub-mount
+grub-fstest
+
+error logs
+dmesg
+systemctl
+cat /var/log/dmesg
+cat /var/log/dpkg.log
+cat /var/log/auth.log
+
+DEVICES/HARDWARE
+lshw
+	-List Hardware
+hwinfo --short
+	-Hardware Information
+inxi -Fx
+USB
+lsusb
+CPU
+lscpu
+dmidecode
+PCI
+lspci
+SCI
+lssci
+Disk, Hard
+lsblk
+df
+fdisk
+mount
+MEMORY
+free -m

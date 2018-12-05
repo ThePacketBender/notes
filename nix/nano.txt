@@ -1,0 +1,30 @@
+NANO
+
+commands
+Ctrl G      (F1)            Invoke the help menu
+Ctrl X      (F2)            Close currently loaded file/Exit from nano
+Ctrl O      (F3)            Write the current file to disk
+Ctrl J      (F4)            Justify the current paragraph
+Ctrl R      (F5)            Insert another file into the current one
+Ctrl W      (F6)            Search for text within the editor
+Ctrl Y      (F7)            Move to the previous screen
+Ctrl V      (F8)            Move to the next screen
+Ctrl K      (F9)            Cut the current line and store it in the cutbuffer
+Ctrl U      (F10)           Uncut from the cutbuffer into the current line
+Ctrl C      (F11)           Show the position of the cursor
+Ctrl T      (F12)           Invoke the spell checker, if available
+Ctrl P                      Move up one line
+Ctrl N                      Move down one line
+Ctrl F                      Move forward one character
+Ctrl B                      Move back one character
+Ctrl A                      Move to the beginning of the current line
+Ctrl E                      Move to the end of the current line
+Ctrl L                      Refresh (redraw) the current screen
+Ctrl ^              (M-A)   Mark text at the current cursor location
+Ctrl D                      Delete the character under the cursor
+Ctrl H                      Delete the character to the left of the cursor
+Ctrl I                      Insert a tab character
+Ctrl \      (F14)   (M-R)   Replace text within the editor
+Ctrl M                      Insert a carriage return at the cursor position
+Ctrl _      (F13)   (M-G)   Go to a specific line number
+Ctrl Space                  Move forward one word

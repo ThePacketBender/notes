@@ -1,0 +1,14 @@
+email
+
+gaf
+	-open outlook wab(address book) files
+pff-tools
+pst-utils
+readpst
+davmail
+undbx
+tnef
+	
+kerberos
+rem-ctl
+rem-server

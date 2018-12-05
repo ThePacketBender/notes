@@ -1,0 +1,82 @@
+PECOFF AV Bypass
+
+*>bypassing static filesystem analysis/checksums<*
+Backdoor PE
+	1.Standard pecoff file injecteted with malcious code, e.g. rev shell
+	2.hijack the executable execution flow and redirect it to introduced code
+	3.once malcode has been run return to original application function
+
+BEFORE					AFTER
+ ______					 ______
+|______|				|______|				
+|______| Entry Point	|av____| Entry Point (replace original first opcodes with diversion)
+|      |				|cv    |
+|      |				|      |
+|      | Executable		|      | Executable
+|      |				|      |
+|      |				|      |
+|      |				|      |
+ ------					 ------
+						|bv^   | Payload
+						 ------
+1.Note the sequence of opcodes overwritten and their addresses,
+need to reference these later on
+2.replace the first instruction with a jmp to code cave
+3.embed shellcode
+4.pad shellcode with register saving commands
+	(pop registers back into place)
+	-attempt to preserve stack state for the rest of the execution
+5.reintroduce original instructions (noted in 1) overwrotten with commands jmp-ing to code cade
+Solving Problems
+-If execution only resumes once continuous (shellcode) execution is exited
+	--step through the shellcode execution via breakpoints
+	--seek/notice problematic function(s)
+		--look for, then edit parameters calling wait or set for indefinite time
+	
+	main goal for trojan
+		be undetected by AntiVirus Software
+		bypass Personal Firewalls
+		encrypt two-way communication
+		identify and transparently use any configured proxies
+
+		
+challenge:
+	find a way to change the file contents, without changing its functionality in order to bypass our average static AV
+	by encoding the file on disk, and have it decode back to its original content when executed in memory
+	\
+Once the file is executed, it is loaded into memory
+In memory, the execution flow will be hijacked
+XOR stub will then decode our previously encoded contents and then resume normal operations of the file
+Once decoded jump to the original bytes that were encoded, and continue normal operations of the malicious file
+
+BEFORE					AFTER
+ ______					 ______
+|______|				|______|				
+|______| Entry Point	|av____| Entry Point (replace original first opcodes with diversion)
+|      |				|cv    |
+|      |				|      |
+|      | trojan.exe		|      | trojan.exe
+|      |				|      |
+|      |				|      |<encoded.txt section
+|signat|ure				|signat|ure
+|      |				 ------
+|      |				|bv    | XOR Stub
+ ------					 ------
+ 
+ Example (basic xor stub)
+0040A770 MOV EAX, 00404C05 # Save start of encoding address in EDX
+0040A775 XOR BYTE PTR DS:[EAX],0F # XOR the contents od EDX with xor key 0F
+0040A778 INC EAX; # Increase EAX
+0040A779 CMP EAX, 0040A76F # Have we reached the end enc. address?
+0040A77E JLE SHORT 0040A775 # If not, jump back to XOR command
+0040A780 PUSH EBP # If you have, restore 1st hijacked command
+0040A781 MOV EBP,ESP # Restore 2nd hijacked command
+0040A783 PUSH -1 # Restore 3rd hijacked command
+0040A785 JMP 00404C05 # Jump to where we left off from.
+
+1add this stub to our code cave
+2open our new file in debugger, allow the decoder stub to run until the end of encoded .text section
+3put a breakpoint at the end of our encoding routine
+4capture a “snapshot” of the encoded binary file
+	>save the encoded file to disk
+5check if binary encoding loop is sufficient to bypass AV check

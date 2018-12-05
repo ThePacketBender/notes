@@ -1,0 +1,23 @@
+SELINUX
+
+setenforce 0
+
+/etc/selinux/config
+	SELINUX=permissive
+		or
+	SELINUX=disabled
+*requires reboot
+
+sudo sh -c 'echo 0 > /selinux/enforce'
+
+/boot/grub/grub.conf
+	ABEL=/ selinux=0
+	o root=LABEL=/ selinux=0
+	
+	
+	
+	
+	
+The Fever (Aye Aye) - De MC Ride et Death Grips
+apparmor only works on file paths
+selinux works on inodes

@@ -1,0 +1,79 @@
+ircheat cheat
+IRC
+
+/msg NickServ REGISTER [uname]
+/msg nickserv identify [pword]
+/msg nickserv set password [NewPword]
+
+BASIC USAGE
+/msg nickserv help group
+/HELP
+/HELP command
+/server freenode
+/join #channel
+/quit leave this message
+
+
+ENUMERATION
+/stats -p
+	--return list of active (freenode) staff
+		--requires IRC operator privs
+/msg chanserv access #channel list
+	--find channel ops
+/USERLIST
+	
+	
+CLOAKS, DECLOACKING, IDENTIFICATION &&C
+/whois
+/ping
+/monitor
+recieved /DCC requests will disclose requesting net addr in format base10 via CTCP-styled PRIVMSG
+	Numeric IP addrs can be converted to dotted-quad format with inet_aton(), my require htonl() depends endian-ness
+	ex /DCC CHAT /DCC SEND
+nmap -sV -p 6697 --script=irc-sasl-brute 192.168.11.111
+
+	
+freenode channels
+#offsec
+#vulnhub
+#vulnhub-chat
+#kali-linux
+#hack
+#anonops
+#python
+#perl
+#ruby
+#metasploit
+#bugcrowd
+#corelan
+#owasp
+#owasp-security101
+#owasp-contribute
+#offtopicsec
+#veil
+#psempire
+#tor
+##security
+##networking
+##C
+##php
+##asm
+##math
+##linux
+##securityfeed
+#bash
+#debian
+#freenode
+#git
+#nginx
+#mysql
+#postgresql
+#android
+undernet channels --sketch af --trust --nobody
+
+/server
+chat.freenode.net:6697 (OR 7000 OR 7070) / non-SSL: 6667 
+freenodeok2gncmy.onion
+	-freenode hidden service address for anonymous tor connections
+	-ref for sasl external || ecdsa-nist256p-challenge auth to access freenode or tor:
+		https://freenode.net/kb/answer/chat

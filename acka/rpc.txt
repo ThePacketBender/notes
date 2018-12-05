@@ -1,0 +1,94 @@
+RPC
+rpcclient 10.11.1.1 -U=username
+	getusernameAccount Name: Guest, Authority Name: TEST01
+	lsaenumsidfound
+	lookupsids S-1-5-21-1004336348-854245398-725345543-501
+rpcinfo -p 192.168.0.50
+
+ENUMERATION:
+srvinfo
+enum
+capabilities
+list
+enumprivs
+enumtrust
+enumalsgroups [domain|builtin]
+enumdomains
+enumdomgroups
+enumdomusers
+enumports
+lsaenumsid
+samlookupnames
+samlookupids
+getdompwinfo
+dfsenum
+dsroledominfo
+getusername
+winreg_enumkey [key]
+epmlookup	Lookup bindings
+epmmap	Map a binding
+
+Enumerate User
+lookupnames administrator
+queryuser 500
+lsaenumprivsaccount 500
+lsaenumacctrights 500
+
+FIND MEMBERS OF ADMINISTRATORS GROUP	
+enumalsgroups builtin
+querygroup 0x220
+queryaliasmem builtin 0x220
+lookupsids
+
+Enumerate SMB
+netshareenumall
+netshareenum
+netfileenum
+netsharegetinfo
+
+Enumerate Privileges
+getdispname
+lsalookupprivvalue
+
+Enumerate AD
+lookupdomain
+netrenumtrusteddomains
+dsenumdomtrusts
+gettrustrid
+dsr_enumtrustdom
+dsroledominfo
+enumtrust
+getdompwinfo
+getusrdompwinfo
+samlookupnames
+samlookuprids
+querygroup
+querygroupmem
+netrenumtrusteddomains
+netrenumtrusteddomainsex
+
+ATTACK:
+createdomuser
+lsaaddacctrights
+logonctrl
+logonctrl2
+samlogon
+samsync
+dfsadd
+netshareadd
+netsharedel
+change_trust_pw
+none
+	Force RPC pipe connections to have no special properties
+sign
+	Force RPC pipe connections to be signed
+schannel
+	Force RPC pipe connections to be sealed with 'schannel'. Assumes valid machine account to this domain controller.
+schannelsign
+	Force RPC pipe connections to be signed (not sealed) with 'schannel'. Assumes valid machine account to this domain controller.
+
+	
+Attack AD
+createdomuser
+createdomgroup
+createdomalias

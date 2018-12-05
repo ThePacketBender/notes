@@ -1,0 +1,27 @@
+ACTIVE DIRECTORY
+
+Active Directory domains are named using the Domain Name System (DNS) namespace.
+You can group domains that are part of the same contiguous DNS namespace
+within the same domain tree. For example, the marketing.adatum.com, sales.adatum.
+com, and adatum.com domains are part of the adatum.com domain tree.
+
+all the domains within the forest trust each
+other, whereas separate forests, by default, do not have any trust relationships set up
+
+with Windows Server 2003 and newer
+versions, you can use a trust type called a cross-forest trust to create a single transitive
+trust between two forest root domains. This single trust allows all of the domains in
+both forests to fully trust one another.
+
+Forests are considered the security boundary
+in Active Directory; by this we mean that if you need to definitively restrict access to a
+resource within a particular domain so that administrators from other domains do not
+have any access to it whatsoever, you need to implement a separate forest instead of
+using an additional domain within the current forest. This security concern is due to
+the transitive trust relationship that exists between all domains in a forest, the writable
+naming contexts (NCs) that exist on all domain controllers in a forest, and the extensive
+rights and permissions that are granted to members of the Administrators group.
+
+Domain controllers are servers that host an Active Directory domain and provide authentication
+and directory services to clients.
+

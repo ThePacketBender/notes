@@ -1,0 +1,11 @@
+static var x;
+	-static variables will retain a value between multiple calls to the function that is its location
+global varx ;
+	-global vars will retain their value across the execution of the source code file calling them
+extern var x;
+	-extern vars will retain their for the entire compiled program across source code files once defined
+register
+	--used for most frequently called variables; possibly the compiler gives CPU register for its storage to speed up the look up of var
+unsigned
+	--defaults to a 4-bit memory location, but will allocate to 8 if/once a 33rd or greater bit of length is allocated
+auto

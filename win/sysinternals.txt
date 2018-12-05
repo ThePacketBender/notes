@@ -1,0 +1,47 @@
+SYSINTERALS SUITE
+
+*with access to edit the registry of a remote machine, e.g. over rpc service,
+*execute the following to enable PsTool remote execution
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+
+PSEXEC
+	-ps applications access remote machines using the same or markedly similar syntax to psexec to execute their specific tasks
+psexec \\10.11.1.1 ipconfig
+psexec \\10.11.1.1 cmd /c c:\path\to\file.exe
+psexec \\10.11.2.1 -u name -p word /c c:/backdoor.bat
+	-using psexec a password hash can be used in place of its plaintext password
+psexec \\10.2.2.11 -s -i regedit
+	-access registry editor application
+psexec \\20.1.1.22 netstat -ano > C:\outfile.txt
+	-PsTools use unix-style redirections (>) to save command output to file
+psexec \\10.11.1.1 cmd.exe
+	-dont forget, you can launch an interactive command prompt on the target machine
+
+	
+PsFile – shows files that are opened on the remote computer through the network
+PsGetSid – displays the security identifier for a computer or user
+PsInfo – lists information about a system
+psinfo -d -h -s
+	-get disk info, hotfixes and installed program versions
+PsKill – kills processes by name or ID
+pskill \\10.11.1.1 2422 -t
+	-kill target process on remote (or local) system by PID or listed name (see tasklist/PsList); -t to kill process tree
+PsList – list information about processes on the command line
+PsLoggedOn – list accounts that are logged on either on the machine or connecting remotely
+PsLogList – pull the event log on the command line
+PsPasswd – change the password for users
+PsPing – a fairly simple ping utility with some additional features
+PsService – list and make changes to Windows services
+psservice \\10.11.1.1 start RemoteRegistry
+	-start or stop (restart, pause, cont) target remote or local service
+	--Remote Registry is similar to the above note(*) and may be required by certains PsTools
+psservice \\10.11.1.1 security Service
+	-return security permissions assigned target service
+PsShutdown – shut down, log off, or suspend a computer
+PsSuspend – suspend and resume processes (rather than killing them)
+	
+ACCESSCHK
+accesschk.exe -uwcqv "Authenticated Users" *
+accesschk.exe -ucqv SSDPSRV
+accesschk.exe -ucqv upnphost
+	-for XP sp0/1

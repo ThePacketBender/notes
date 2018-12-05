@@ -1,0 +1,8 @@
+<ThePortWhisperer> #badchars = ''.join(chr(c) for c in xrange(256))
+<ThePortWhisperer> #replacement in python script:
+<ThePortWhisperer> badchars = badchars.replace("\x00","")
+<ThePortWhisperer> errant #
+<ThePortWhisperer> for the one liner..you have to select the whatever hex made it into the immunity dump, 00 or 01 all the way to FF. paste it into the file, save, then run the 1 liner
+<ThePortWhisperer> paste raw hex dump into /tmp/immunityDumpRawPaste
+<ThePortWhisperer> cat /tmp/ImmunityDumpRawPaste | cut -d " " -f 2-10 >/tmp/ImmunityBcharDump; for i in {0..255}; do echo "\x"$(printf "%02x" $i) >> /tmp/Workfile ; grep -c -i $(printf "%02x" $i) /tmp/ImmunityBcharDump >>/tmp/Workfile | grep -B1 "^0$" /tmp/Workfile; done |sort -u && rm /tmp/Workfile && rm /tmp/ImmunityBcharDump
+<ThePortWhisperer> it will remove all the nonprintable trashes and just return you what hex chars are missing from the paste

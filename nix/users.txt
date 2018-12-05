@@ -1,0 +1,24 @@
+USER/RIGHTS MANAGEMENT
+
+Users
+cat /etc/passwd
+	-list users
+useradd username
+	-add new user
+passwd uname
+	-set password for user
+useradd -G examplegroup exampleusername
+	-Create a New User and Assign a Group
+	
+Groups
+groups
+	-list groups for current user
+sudo groups uname
+	-list groups for some user
+cat /etc/group
+getent group
+	-list groups for system
+usermod -a -G examplegroup exampleusername
+	-add user to group
+usermod -g groupname username
+	-change user's primary group

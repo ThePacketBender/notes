@@ -1,0 +1,6 @@
+Ctrl + Shift + Alt + Arrow key	move windows between workspaces
+Alt + Tab						Switches between windows
+Alt + spacebar					Window Menu
+Alt + F1						Applications Menu
+Alt + F2						Run Application dialog
+

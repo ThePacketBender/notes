@@ -1,0 +1,46 @@
+POSTGRES
+
+CLI programs
+psql
+/bin/psql -h 127.0.0.1 --username=uname --list
+psql -U uname -l
+
+PSQL commands
+\l \list
+	-list databases
+\c \connect db_name
+	-connect to/use a database
+\d
+	-show all tables, views and sequences
+\dt
+	-list tables in current databaes
+\dt *.
+	-list all tables in all schemas
+
+
+createuser --pwprompt
+createdb -O uname dbname
+dropdb dbname
+
+
+CREATE USER "name";
+CREATE DATABASE "belongtous";
+ALTER USER uname PASSWORD 'pass';
+ALTER USER uname RENAME to uname2;
+GRANT permissions ON DATABASE dbname TO uname;
+
+
+Time blind
+SELECT PG_SLEEP(%d)
+SELECT 'this' WHERE exists(SELECT * FROM generate_series(1,300000%d)
+
+
+
+CREATE USER name [ [ WITH ] option [ ... ] ]
+where option can be:
+    SYSID uid 
+    | CREATEDB | NOCREATEDB
+    | CREATEUSER | NOCREATEUSER
+    | IN GROUP groupname [, ...]
+    | [ ENCRYPTED | UNENCRYPTED ] PASSWORD 'password'
+    | VALID UNTIL 'abstime' 

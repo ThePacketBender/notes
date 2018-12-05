@@ -1,0 +1,11 @@
+CROSS-SITE REQUEST FORGERY
+
+Goals:
+	permission spoofing/capturing
+	disrupt normal site activity
+	
+Requirements
+	slave must have session/cookie
+	slave must be identified by network protocol(HTTP Auth)
+	
+	

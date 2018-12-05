@@ -1,0 +1,5 @@
+integer storage
+5 = 00001010
+signed integer storage
+-5 = 00001011
+	-the last bit of memory at a location evaluating to 5 is the signature bit
