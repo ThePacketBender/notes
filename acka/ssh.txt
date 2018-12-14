@@ -48,6 +48,11 @@ nmap -p 22 -v -sV --script=ssh-hostkey 10.11.1.71
 ssh root@127.0.0.1
 
 
+cat /usr/share/wordlists/metasploit/adobe_top100_pass.txt | while read pass; do if ssh-keygen –c –C “user@forandsix” –P $pass –f id_rsa &>/dev/null; then echo $pass; break; fi; done
+	-We tried logging in to ssh but it was asking for a passphrase. So, we created the following script to find the correct password.
+ssh2john id_rsa > id_rsa.john; john –wordlist=/usr/share/wordlists/rockyou.txt id_rsa.john
+
+
 
 USING SSH
 ssh-keygen -t rsa -C newserver -f ~/.ssh/id_rsa

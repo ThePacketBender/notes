@@ -1,0 +1,40 @@
+compression
+
+TAR
+.zip
+	unzip file.zip
+	7z x file.zip
+.gz, .gzip
+	gunzip file.gz
+.tar
+	tar xvf file.tar
+.tar.gz
+	tar xzvf file.tar.gz file.tgz
+	tar xf archive.tar.gz
+.tar.bz2
+	tar vxjf file.tar.bz2
+.tar.xz
+	tar xf file.tar.xz
+	tar xjf file.tar.xz
+	unxz file.tar.xz && tar xvf file.tar
+	
+cracking
+.zip
+	fcrackzip –u –c 1 –p aaaaaaaa ‘/root/Desktop/Test.zip’
+	fcrackzip –u –D –p ‘/root/Desktop/dic’ ‘/root/Desktop/Test.zip
+winzip
+	zip2john file.zip | cut -d ':' -f 2 > hashfile
+	>hashcat64 -a 0 -m 13600 hashfile /usr/share/wordlists/rockyou.txt
+	>john hashfile --format=ZIP
+
+7z2john
+72hashcat
+rar2john
+
+C:\bin\hashcat-5.1.0>hashcat64 -h | findstr Archives
+  11600 | 7-Zip                                            | Archives
+  12500 | RAR3-hp                                          | Archives
+  13000 | RAR5                                             | Archives
+  13200 | AxCrypt                                          | Archives
+  13300 | AxCrypt in-memory SHA1                           | Archives
+  13600 | WinZip                                           | Archives

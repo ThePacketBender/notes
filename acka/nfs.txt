@@ -3,6 +3,7 @@ NFS
 remote exploitation
 showmount -e 192.168.1.100
 mount 192.168.1.100:/home/neo /mnt/x
+mount -t nfs 192.168.1.103:/home/user/storage /mnt/x
 nfspysh -o server=192.168.1.100:/home/neo
 sshfs user@192.168.1.100:/home/neo mountname/
 

@@ -1,0 +1,15 @@
+VOIP
+
+enumeration
+SMAP
+smap -o 192.168.4.111
+SIPVICIOUS
+svmap 192.168.4.1-128
+svwar -e200-300 192.168.4.111 -m INVITE
+
+
+From Packet Captures
+sipdump auth.txt -p auth.pcap
+sipcrack auth.txt -w wordlist.txt
+
+

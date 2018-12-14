@@ -1,0 +1,33 @@
+VLAN Hopping
+
+DTOP protocol (for Cisco)
+check with wireshark
+
+802.1Q virtual interfaces
+vconfig add eth0 100
+vconfig add eth0 200
+dhclient eth0.100
+dhclient eth0.200
+route add -net 0.0.0.0/0 eth0.200
+nmap -sS -F -p 10.10.200.1
+
+CDP (Cisco Discovery Protocol)
+	Accessing Cisco VoIP VLAN
+dhclient eth0
+modprobe 8021q
+vconfig add eth0 200
+dhclient eth0.200
+
+
+TOOLS
+frogger
+https://github.com/nccgroup/vlan-hopping---frogger
+
+voiphopper
+voiphopper -c 0 -i eth0
+
+yersinia
+
+loki
+https://github.com/Raizo62/Loki_on_Kali
+/usr/bin/loki.py
