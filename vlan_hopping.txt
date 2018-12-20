@@ -31,3 +31,18 @@ yersinia
 loki
 https://github.com/Raizo62/Loki_on_Kali
 /usr/bin/loki.py
+
+
+
+Configure a vlan
+	install/setup
+apt-get install vlan
+/etc/init.d/network-manager stop
+	configure interfaces
+vconfig add eth0 111
+ifconfig eth0.111 192.168.1.10/24 up
+ifconfig eth0.111
+	--add individual routes for each vlan if communicate between vlans desired, don't rely on default gateway (route add)
+/etc/init.d/network-manager start
+	remove config
+vconfig rem eth0.101

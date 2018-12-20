@@ -101,3 +101,11 @@ sshuttle --dns -vr user@yourserver.com 0/0 --ssh-cmd 'ssh -i /your/key/path.pem'
 sshuttle --dns -vr user@18.191.44.176 35.190.8.19 --ssh-cmd 'ssh -i /root/Dropbox/sentant/xyzpivot.pem'
 ssh -f -N -R 2222:127.0.0.1:22 admin@12.11.13.14
 ssh -f -N -D -p 8080 
+
+TPROXY(SSHUTTLE)
+	-[as root]
+ip route add local default dev lo table 100
+ip rule add fwmark 1 lookup 100
+ip -6 route add local default dev lo table 100
+ip -6 rule add fwmark 1 lookup 100
+sudo SSH_AUTH_SOCK="$SSH_AUTH_SOCK" $HOME/tree/sshuttle.tproxy/sshuttle  --method=tproxy ...

@@ -1,0 +1,298 @@
+Docker
+
+Lifecycle
+docker create
+	creates a container but does not start it
+docker rename
+	allows the container to be renamed
+docker run
+	creates and starts a container in one operation
+docker rm
+	deletes a container
+docker update	
+	updates a container's resource limits
+docker images
+	shows all images
+docker import
+	creates an image from a tarball
+docker build
+	creates image from Dockerfile
+docker commit
+	creates image from a container, pausing it temporarily if it is running
+docker rmi
+	removes an image
+docker load
+	loads an image from a tar archive as STDIN, including images and tags
+docker save
+	saves an image to a tar archive stream to STDOUT with all parent layers, tags & versions
+	
+Starting and Stopping
+docker start
+	starts a container so it is running
+docker stop
+	stops a running container
+docker restart
+	stops and starts a container
+docker pause
+	pauses a running container, "freezing" it in place
+docker unpause
+	will unpause a running container
+docker wait
+	blocks until running container stops
+docker kill
+	sends a SIGKILL to a running container
+docker attach
+	will connect to a running container
+
+
+docker run --rm -it --cap-add SYS_ADMIN --device /dev/fuse sshfs	
+	To mount a FUSE based filesystem, you need to combine both --cap-add and --device
+docker run -it --device=/dev/ttyUSB0 debian bash
+	Give access to a single device
+docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb debian bash
+	Give access to all devices
+
+
+Info
+docker ps
+	shows running containers
+docker logs
+	gets logs from container. (You can use a custom log driver, but logs is only available for json-file and journald in 1.10)
+docker inspect
+	looks at all the info on a container (including IP address).
+docker events
+	gets events from container
+docker port
+	shows public facing port of container
+docker top
+	shows running processes in container
+docker stats
+	shows containers' resource usage statistics
+docker diff
+	shows changed files in the container's FS
+docker ps -a
+	shows running and stopped containers
+docker stats --all
+	shows a running list of containers
+	
+
+Import / Export
+docker cp
+	copies files or folders between a container and the local filesystem
+docker export
+	turns container filesystem into tarball archive stream to STDOUT
+docker load < my_image.tar.gz
+	Load an image from file
+docker save my_image:my_tag | gzip > my_image.tar.gz
+		Save an existing image
+cat my_container.tar.gz | docker import - my_image:my_tag
+	Import a container as an image from file
+docker export my_container | gzip > my_container.tar.gz
+	Export an existing container
+		
+	
+Executing Commands
+docker exec
+	to execute a command in container
+docker exec -it foo /bin/bash
+
+
+Info
+docker history
+	shows history of image
+docker tag
+	tags an image to a name (local or registry)
+	
+Networks
+docker network create
+docker network rm
+docker network ls
+docker network inspect
+docker network connect
+docker network disconnect
+docker network create --subnet 203.0.113.0/24 --gateway 203.0.113.254 iptastic
+	create a new bridge network with your subnet and gateway for your ip block
+docker run --rm -it --net iptastic --ip 203.0.113.2 nginx
+	run a nginx container with a specific ip in that block
+curl 203.0.113.2
+	curl the ip from any other place (assuming this is a public ip block)
+
+	
+Registry & Repository
+docker login
+	to login to a registry
+docker logout
+	to logout from a registry
+docker search
+	searches registry for image
+docker pull
+	pulls an image from registry to local machine
+docker push
+	pushes an image to the registry from local machine
+
+	
+Dockerfile
+The configuration file. Sets up a Docker container when you run docker build on it. Vastly preferable to docker commit.
+Instructions
+.dockerignore
+FROM Sets the Base Image for subsequent instructions.
+MAINTAINER (deprecated - use LABEL instead) Set the Author field of the generated images.
+RUN execute any commands in a new layer on top of the current image and commit the results.
+CMD provide defaults for an executing container.
+EXPOSE informs Docker that the container listens on the specified network ports at runtime. NOTE: does not actually make ports accessible.
+ENV sets environment variable.
+ADD copies new files, directories or remote file to container. Invalidates caches. Avoid ADD and use COPY instead.
+COPY copies new files or directories to container. Note that this only copies as root, so you have to chown manually regardless of your USER / WORKDIR setting. See https://github.com/moby/moby/issues/30110
+ENTRYPOINT configures a container that will run as an executable.
+VOLUME creates a mount point for externally mounted volumes or other containers.
+USER sets the user name for following RUN / CMD / ENTRYPOINT commands.
+WORKDIR sets the working directory.
+ARG defines a build-time variable.
+ONBUILD adds a trigger instruction when the image is used as the base for another build.
+STOPSIGNAL sets the system call signal that will be sent to the container to exit.
+LABEL apply key/value metadata to your images, containers, or daemons.
+	http://flux7.com/blogs/docker/docker-tutorial-series-part-3-automation-is-the-word-using-dockerfile/
+
+	
+Volumes
+docker volume create
+docker volume rm
+docker volume ls
+docker volume inspect
+
+
+Exposing ports
+docker run -p 127.0.0.1:$HOSTPORT:$CONTAINERPORT --name CONTAINER -t someimage
+	mapping the container port to the host port (only using localhost interface) using -p
+EXPOSE <CONTAINERPORT>
+	can tell Docker that the container listens on the specified network ports at runtime by using EXPOSE
+iptables -t nat -A DOCKER -p tcp --dport <LOCALHOSTPORT> -j DNAT --to-destination <CONTAINERIP>:<PORT>
+	EXPOSE does not expose the port itself -- only -p will do that. To expose the container's port on your localhost's port
+docker port CONTAINER $CONTAINERPORT
+	what you mapped the port to on the host container
+
+	
+Prune
+docker system prune
+docker volume prune
+docker network prune
+docker container prune
+docker image prune
+
+
+df
+docker system df presents a summary of the space currently used by different docker objects.
+
+docker commit -run='{"Cmd":["postgres", "-too -many -opts"]}' $(dl) postgres
+	Commit with command (needs Dockerfile)
+
+docker inspect $(dl) | grep -wm1 IPAddress | cut -d '"' -f 4
+	Get IP address
+	
+docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' <containername>
+	Get port mapping
+
+docker run --rm ubuntu env
+	Get Environment Settings
+	
+docker kill $(docker ps -q)
+	Kill running containers
+	
+docker rm -f $(docker ps -qa)
+	Delete all containers
+	
+docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm
+	Delete old containers
+	
+docker rm -v $(docker ps -a -q -f status=exited)
+	Delete stopped containers
+	
+docker rmi $(docker images -q -f dangling=true)
+	Delete dangling images
+	
+docker rmi $(docker images -q)
+	Delete all images
+	
+docker volume rm $(docker volume ls -q -f dangling=true)
+	Delete dangling volumes
+
+docker images -viz | dot -Tpng -o docker.png
+	Show image dependencies
+
+	
+Monitor system resource utilization for running containers
+docker stats <container>
+	check the CPU, memory, and network I/O usage of a single container
+docker stats $(docker ps -q)
+	-For all containers listed by id:
+docker stats $(docker ps --format '{{.Names}}')
+	-For all containers listed by name
+docker ps -a -f ancestor=ubuntu
+	-For all containers listed by image
+docker rmi $(docker images | grep “^” | awk '{split($0,a," "); print a[3]}')
+	Remove all untagged images
+docker ps -a | grep wildfly | awk '{print $1}' | xargs docker rm -f
+	Remove container by a regular expression
+docker rm -f $(docker ps -a | grep Exit | awk '{ print $1 }')
+	Remove all exited containers
+	
+	
+	
+Security
+This is where security tips about Docker go. The Docker security page goes into more detail.
+
+First things first: Docker runs as root. If you are in the docker group, you effectively have root access. If you expose the docker unix socket to a container, you are giving the container root access to the host.
+
+Docker should not be your only defense. You should secure and harden it.
+
+For an understanding of what containers leave exposed, you should read Understanding and Hardening Linux Containers by Aaron Grattafiori. This is a complete and comprehensive guide to the issues involved with containers, with a plethora of links and footnotes leading on to yet more useful content. The security tips following are useful if you've already hardened containers in the past, but are not a substitute for understanding.
+
+Security Tips
+For greatest security, you want to run Docker inside a virtual machine. This is straight from the Docker Security Team Lead -- slides / notes. Then, run with AppArmor / seccomp / SELinux / grsec etc to limit the container permissions. See the Docker 1.10 security features for more details.
+
+Docker image ids are sensitive information and should not be exposed to the outside world. Treat them like passwords.
+
+See the Docker Security Cheat Sheet by Thomas Sjögren: some good stuff about container hardening in there.
+
+Check out the docker bench security script, download the white papers and subscribe to the mailing lists (unfortunately Docker does not have a unique mailing list, only dev / user).
+
+You should start off by using a kernel with unstable patches for grsecurity / pax compiled in, such as Alpine Linux. If you are using grsecurity in production, you should spring for commercial support for the stable patches, same as you would do for RedHat. It's $200 a month, which is nothing to your devops budget.
+
+Since docker 1.11 you can easily limit the number of active processes running inside a container to prevent fork bombs. This requires a linux kernel >= 4.3 with CGROUP_PIDS=y to be in the kernel configuration.
+
+docker run --pids-limit=64
+Also available since docker 1.11 is the ability to prevent processes from gaining new privileges. This feature have been in the linux kernel since version 3.5. You can read more about it in this blog post.
+
+docker run --security-opt=no-new-privileges
+From the Docker Security Cheat Sheet (it's in PDF which makes it hard to use, so copying below) by Container Solutions:
+
+Turn off interprocess communication with:
+
+docker -d --icc=false --iptables
+Set the container to be read-only:
+
+docker run --read-only
+Verify images with a hashsum:
+
+docker pull debian@sha256:a25306f3850e1bd44541976aa7b5fd0a29be
+Set volumes to be read only:
+
+docker run -v $(pwd)/secrets:/secrets:ro debian
+Define and run a user in your Dockerfile so you don't run as root inside the container:
+
+RUN groupadd -r user && useradd -r -g user user
+USER user
+User Namespaces
+There's also work on user namespaces -- it is in 1.10 but is not enabled by default.
+
+To enable user namespaces ("remap the userns") in Ubuntu 15.10, follow the blog example.
+
+Security Videos
+Using Docker Safely
+Securing your applications using Docker
+Container security: Do containers actually contain?
+Linux Containers: Future or Fantasy?
+Security Roadmap
+The Docker roadmap talks about seccomp support. There is an AppArmor policy generator called bane, and they're working on security profiles.
+
+https://github.com/GDSSecurity/Docker-Secure-Deployment-Guidelines

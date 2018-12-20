@@ -1,0 +1,46 @@
+Cisco IOS
+
+INFORMATION
+show version
+show running-config
+show startup-config
+show history
+show ip interface brief
+show interface vlan 1
+	-information about the specified interface (status, protocol, duplex, speed, encapsulation, last 5 min traffic)
+show interfaces description
+show interfaces status
+show crypto key mypubkey rsa
+	-return public encryption key used for SSH
+show dhcp lease
+
+
+CONFIGURATION
+hostname SW1
+	-change switch hostname
+enable secret cisco
+	-config password (md5)
+enable password notcisco
+	-config password (cleartext)
+service password-encryption
+	-encrypt passwords
+interface vlan 1
+>ip address 172.10.1.111 255.255.255.0
+>no shutdown
+	-set router/nace ip addresss
+ip default-gateway 172.10.1.1
+	-set default gatway
+copy running-config startup-config
+	-save configuration
+
+
+ROUTER MODES
+Router>: User mode = Limited to basic monitoring commands
+Router#: Privileged mode (exec-level mode) = Provides access to all other router commands
+Router(config)#: global configuration mode = Commands that affect the entire system
+Router(config-if)#: interface mode = Commands that affect interfaces
+Router(config-subif)#: subinterface mode = Commands that affect subinterfaces
+Router(config-line)#: line mode = Commands that affect in lines modes (console, vty, aux…)
+Router(config-router)#: router configuration mode
+	
+	

