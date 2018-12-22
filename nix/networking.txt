@@ -8,6 +8,32 @@ watch ss -stlpu
 	-watch tcp/udp port in real time
 lsof -i
 	-list established connections
+ip link show
+ip a
+ip -r
+OR
+route
+	-show routing table
+nmcli device status
+nmcli connection show
+
+Assigns IP address to interface
+ip a add {ip_addr/mask} dev {interface}
+ip a add 192.168.1.200/255.255.255.0 dev eth0
+ip a add 192.168.1.200/24 dev eth0
+ADDING BROADCAST ADDRESS ON INTERFACE
+ip addr add brd {ADDDRESS-HERE} dev {interface}
+ip addr add broadcast {ADDDRESS-HERE} dev {interface}
+ip addr add broadcast 172.20.10.255 dev dummy0
+ip addr add 192.168.1.50/24 brd + dev eth0 label eth0Home
+ip addr add 127.0.0.1/8 dev lo brd + scope host
+Flush IP address from interface
+ip -s -s a f to 192.168.2.0/24
+change the state of the device
+ip link set dev {DEVICE} {up|down}
+ip link set dev eth1 down
+
+
 
 IFCONFIG
 ifconfig

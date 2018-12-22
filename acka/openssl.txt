@@ -566,3 +566,20 @@ authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints = critical,CA:FALSE
 subjectKeyIdentifier = hash
 keyUsage = digitalSignature, keyEncipherment
+
+
+
+
+
+SSL Certificate OSINT
+openssl s_client -showcerts -connect sub.doma.in:443
+	-retrieve certificate provided by server
+Rehashing SSL Certificates/SSL Cert Verification:
+wget https://certs.godaddy.com/repository/gd_bundle.crt -O 
+	-visit CA’s website to get root certificate
+c_rehash ~/.cert/certificate.authority.net/
+	-to rehash certificates create symbolic links to files named by the hash values using c_rehash
+openssl s_client -CApath ~/.cert/certificate.authority.net/ -connect
+	-test rehashed certificate
+openssl s_client -CApath ~/.cert/certificate.authority.net/ -connect sub.doma.in:443
+	-use the rehashed certificate to connect

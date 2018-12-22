@@ -7,8 +7,12 @@ go build helloworld.go
 
 go get domain.name/repo/file
 
-
-
+gofmt
+	-rewrites code into the standard format
+goimports
+	-manages imports
+	--not part of standard toolchain
+	--go get golang.org/x/tools/cmd/goimports
 
 Operations:
 
