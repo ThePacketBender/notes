@@ -1,0 +1,4 @@
+STEGONOGRAPHY
+
+steghide extract -sf picture.jpg
+steghide info picture.jpg

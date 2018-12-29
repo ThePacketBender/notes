@@ -2,3 +2,12 @@ rot13
 echo "rot13encoded" | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
 	-encrypt or decrypt
 
+base64
+echo 'text' | base64
+
+
+
+Decrypt text
+gpg -d ~/Desktop/file.doc.pgp > ~/Desktop/file.doc
+gpg --import <key>
+	-import public key

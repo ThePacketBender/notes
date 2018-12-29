@@ -20,9 +20,31 @@ snmpset -v2c -c public xx.xx.xx.xx system.sysLocation.0 s "Foo"
 snmpstatus
 snmpbulkwalk
 snmpbulkget
+snmpcheck -t 192.168.1.1 -c public
+snmpenum -t 192.168.1.1
 msf>use auxiliary/scanner/snmp/snmp_login
+
+snmpwalk -c public -v1 192.168.11.219
+	-Enumerating Entire MIB Tree
+snmpwalk -c public -v1 192.168.11.204 1.3.6.1.4.1.77.1.2.25
+	-Enumerating Windows Users
+snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.25.4.2.1.2
+	-Enumerating Running Windows Processes
+snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.6.13.1.3
+	-Enumerating Open TCP Ports
+snmpwalk -c public v1 192.168.11.204 1.3.6.1.2.1.25.6.3.1.2
+	-Enumerating Installed Software
 
 nipper --input=ios.conf --output=report.html
 
 common hostnames
 	cacti, mrtg, hpov, tivoli, nagios
+common community names
+	public, private, community, manager
+	
+	
+wget https://raw.githubusercontent.com/raesene/TestingScripts/master/snmpv3enum.rb
+	-automate username enumeration for snmpv3
+	
+/usr/share/metasploit-framework/data/wordlists/snmp\_default\_pass.tx
+	-default credentials wordlist

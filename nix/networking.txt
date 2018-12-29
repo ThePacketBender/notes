@@ -125,3 +125,18 @@ watch -n 1 cat /proc/net/wireless
 	
 wavemon
 	-curses gui
+	
+route -n
+route add -net 192.168.100.0/24 gw 192.16.50.9
+	-add static route
+route add default gw 192.168.50.9
+	-set default gateway
+echo "nameserver 192.168.100.2" >> /etc/resolv.conf
+	-set DNS server(s)
+	
+Bridging
+brctl addbr br0
+brctl addif br0 eth0
+brctl addif br0 eth1
+ifconfig br0 up
+dhclient br0

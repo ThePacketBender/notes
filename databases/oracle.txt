@@ -1,5 +1,6 @@
 ORACLE
 *on windows ORACLE must run as the "SYSTEM" account
+PORT 1521
 
 
 DEFAULT USERS

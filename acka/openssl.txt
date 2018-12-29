@@ -583,3 +583,17 @@ openssl s_client -CApath ~/.cert/certificate.authority.net/ -connect
 	-test rehashed certificate
 openssl s_client -CApath ~/.cert/certificate.authority.net/ -connect sub.doma.in:443
 	-use the rehashed certificate to connect
+	
+	
+	Enabling Self signed certificates on local website(Apache)
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -out /etc/ssl/certs/server.crt -keyout /etc/ssl/private/server.key
+a2enmod ssl
+ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/000-default-ssl.conf
+nano /etc/apache2/sites-enabled/000-default-ssl.conf
+	SSLCertificateFile    /etc/ssl/certs/server.crt
+	SSLCertificateKeyFile /etc/ssl/private/server.key
+/etc/init.d/apache2 restart
+
+
+TEST SSL
+./testssl.sh -e -E -f -p -y -Y -S -P -c -H -U $ip | aha > OUTPUT-FILE.html

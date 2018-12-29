@@ -1,0 +1,20 @@
+Port scanning alternatives
+
+bash
+(: </dev/tcp/127.0.0.1/80) &>/dev/null && echo "OPEN" || echo "CLOSED"
+
+netcat
+nc -nvv -w 1 -z 10.0.0.19 3388-3390
+	-tcp
+nc -nv -u -z -w 1 10.0-0.19 160-162
+	-udp
+
+hping3
+hping3 -c 3 -s 53 -p 80 -S 192.168.0.1
+Open = flags = SA
+Closed = Flags = RA
+Blocked = ICMP unreachable
+Dropped = No response
+
+arp-scan 192.168.50.8/28 -I eth0
+

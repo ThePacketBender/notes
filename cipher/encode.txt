@@ -1,0 +1,10 @@
+Encoding text
+
+echo -n 'text to be encrypted' | openssl md5
+
+echo 'text' | base64
+
+
+
+Encrypt text
+gpg -e ~/Desktop/file.doc

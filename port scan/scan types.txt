@@ -11,3 +11,18 @@ SCAN TYPES
 	Connect	-SYN -> SYN/ACK -> FIN
 	Maimon	-FIN ACK
 	NULL	-no flags set
+	
+	
+Ping sweeps: Send a variety of packet types (including ICMP Echo Requests, but many others as well).
+ARP scans: Identify which hosts are on the same LAN as the machine running Nmap. The ARP scan does not work through a router, because ARP traffic just goes on a single LAN.
+Connect scans: Complete the three-way handshake; are slow and easily detected. Because the entire handshake is completed for each port in the scan, the activities are often logged on the target system.
+SYN scans: Only send the initial SYN and await the SYN-ACK response to determine if a port is open. The final ACK packet from the attacker is never sent. The result is an increase in performance and a much more stealthy scan. Because most host systems do not log a connection unless it completes the three-way handshake, the scan is less likely to be detected (NOT ANYMORE).
+ACK scans: Particularly useful in getting through simple router-based firewalls. If a router allows “established” connections in (and is not using any stateful inspection), an attacker can use ACK scans to send packets into the network. ACK scans are useful for mapping, but not for port scanning.
+FIN scans: Send packets with the FIN control bit set in an effort to be stealthy and get through firewalls.
+FTP Proxy “Bounce Attack” scans: Bounce an attack off a poorly configured FTP server.
+“Idle” scans: This scan type can be used to divert attention, obscuring the attackers location on the network.
+UDP scanning: Helps locate vulnerahle UDP services. For most UDP ports, Nmap sends packets with an empty payload. But, for about a dozen specific ports, Nrnap includes an application-appropriate payload for the given port, including UDP port 53 (DNS), 111 (portmapper). 161 (SNMP), etc.
+Version scanning: Tries to detemine the version number of the program listening on a discovered port for both TCP and UDP.
+IPv6 scanning: Iterates through a series of lPv6 addresses, scanning for target systems and ports, invoked with the “-6” syntax. Today, all Nmap scan types support a -6 option. In older versions of Nmap, IPv6 scans were limited to ping sweeps to identify target host addresses in use, TCP connect scans, and version scans only.
+RPC scanning: Identifies which Remote Procedure Call services are offered by the target machine.
+TCP sequence prediction: Useful in spooling attacks, as we shall see in a short while.

@@ -44,3 +44,11 @@ where option can be:
     | IN GROUP groupname [, ...]
     | [ ENCRYPTED | UNENCRYPTED ] PASSWORD 'password'
     | VALID UNTIL 'abstime' 
+	
+	
+IMPORT FROM FILE (CSV) TO TABLE with metadata 
+>\copy table_name FROM '~/path/file.csv' WITH DELIMITER ',' CSV HEADER;
+>\copy table_name \ --Postgresql meta-operator COPY to target table_name in database
+>>FROM '~/path/to/file.csv' \ --specifying a file to cary out the copy operation from
+>>WITH DELIMITER ',' CSV HEADER; --specifying that the syntactically-relevant delimiter will be a comma (or whatever else) and that it contains a header [corresponding to column names]
+https://www.postgresql.org/docs/9.2/sql-copy.html

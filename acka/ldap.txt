@@ -1,0 +1,11 @@
+LDAP
+
+Tools:
+ldapsearch
+LDAPExplorertool2
+
+ldapsearch -h <ip> -p 389 -x -s base
+Anonymous Bind:
+ldapsearch -h ldaphostname -p 389 -x -b "dc=domain,dc=com"
+Authenticated:
+ldapsearch -h 192.168.0.60 -p 389 -x -D "CN=Administrator, CN=User, DC=<domain>, DC=com" -b "DC=<domain>, DC=com" -W

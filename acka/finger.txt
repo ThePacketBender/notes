@@ -1,0 +1,7 @@
+Finger
+
+
+fingerd
+finger @192.168.0.1
+finger -l -p user@ip-address
+Metasploit - auxiliary/scanner/finger/finger_users

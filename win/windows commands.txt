@@ -24,6 +24,10 @@ netstat -ntlp
 netstat -bano
 netsat -r
 	-routing table
+netstat -nao
+	-shows pid
+netstat -nab
+	-shows exe/dlls used
 command | findstr /C:"str"
 	-grep
 echo %userdomain%
@@ -204,6 +208,10 @@ netsh ip set dns "Local Area Connection" static 133.7.13.37
 netdom query trust /Domain:dnsname
 	OR
 nltest /domain_trusts /All_Trusts
+route print
+	-show routing table
+route add 0.0.0.0 mask 0.0.0.0 192.168.50.9
+	-add static route
 
 
 
@@ -372,6 +380,9 @@ For /f "delims=|" %i in (‘dsquery OU’) do acldiag %i
 	-ACL for all OUs
 nltest /domain_trusts /v
 	-Domain trusts info
+nltest /DCLIST:DomainName
+nltest /DCNAME:DomainName
+nltest /DSGETDC:DomainName
 repadmin /showconn *
 	-show connections for a DC 
 dsquery * forestRoot -filter (objectCategory=nTDSConnection) ?attr distinguishedName fromServer whenCreated displayName
