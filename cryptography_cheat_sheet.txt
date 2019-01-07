@@ -1,4 +1,72 @@
 Cryptography
+
+ONE-TIME PAD
+C = P (XOR) K
+Ciphertext = Plaintext XOR Random_Key
+0 XOR 0 = 0
+0 XOR 1 = 1		<Exclusive or is essential to most cryptographic functions, know it
+1 XOR 0 = 1
+1 XOR 1 = 0
+
+
+:SYMMETRIC CIPHERS:
+BLOCK CIPHERS
+-DES/3DES
+-GOST 28147-89
+-AES
+
+AES
+   P			K
+   v			v
+AddRoundKey<K0<| |
+   v		   | |
+SubBytes	   | |
+ShiftRows      |K|
+MixColumns	   |e|
+AddRoundKey<K1<|y|
+   v		   |E|
+  ...(7 Rounds)|x|
+   v		   |p|
+SubBytes	   |a|
+ShiftRows      |n|
+MixColumns	   |s|
+AddRoundKey<K9<|i|
+   v		   |o|
+SubBytes	   |n|
+ShiftRows      | |
+MixColumns	   | |
+AddRoundKey<K10| |
+   v
+   C
+  
+AddRoundKey - XORs a round key to the internal state
+SubBytes - Replaces each byte (s0,s1,..s15) with another byte according to an S-Box
+ShiftRows - Shifts the ith row of i potisions, for in range 0-3
+MixColumns - Applies the same linear transformation to each of the four columns of the state
+
+(Example S-Box)
+ s0|s4|s8|s12
+ --|--|--|--
+ s1|s5|s9|s13   
+ --|--|--|--
+ s2|s6|s10|s14
+ --|--|--|--
+ s3|s7|s11|s15
+(i0,i1,i2,i3)   
+
+Block Cipher Attack Vectors
+Meet-In-the-Middle Attacks
+
+
+Padding Oracle Attacks
+*padding oracle attacks record which inputs have a calid padding and which don't, then exploit to decrypt chosen ciphertext values
+**only effective against CBC mode with padding
+
+Stream Ciphers
+	-bluetooth, 4G, WiFi, TLS, &c...
+
+
+
 Hash Lengths
 Hash 			Size
 MD5 Hash     Length 	16 Bytes

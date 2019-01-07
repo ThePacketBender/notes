@@ -101,6 +101,10 @@ SIP Responses
 6xx			Global failure responses The request cannot be fulfilled at any	server.
 
 
+IKE
+port 500 isakmp
+
+
 
 Voice Codecs
 Codec  			MOS	   	Bandwidth 	Complexity

