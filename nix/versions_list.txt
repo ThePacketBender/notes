@@ -1,0 +1,504 @@
+Linux Versioning
+
+
+Debian
+1.1	Buzz		1996-06-17			Buzz Lightyear
+1.2	Rex			1996-12-12			Rex (the T-Rex)
+1.3	Bo			1997-06-05			Bo Peep
+2.0	Hamm		1998-07-24			Hamm (the pig)
+2.1	Slink		1999-03-09			Slinky Dog
+2.2	Potato		2000-08-15			Mr Potato Head
+3.0	Woody		2002-07-19			Woody the cowboy
+3.1	Sarge		2005-06-06			Sarge from the Bucket O' Soldiers
+4.0	Etch		2007-04-08			Etch, the Etch-A-Sketch
+5.0	Lenny		2009-02-14			Lenny, the binoculars
+6.0	Squeeze		2011-02-06			Squeeze toy aliens
+7	Wheezy		2013-05-04			Wheezy the penguin
+8	Jessie		2015-04-26			Jessie the cowgirl
+9	Stretch		2017-06-17			Rubber octopus from Toy Story 3
+10	Buster		not yet released	Andy's pet dog
+11	Bullseye	Not yet released	Woody's horse
+ 	Sid			"unstable"			The next door neighbour
+	
+
+
+Ubuntu
+4.10		Warty Warthog		2004-10-20	2006-04-30	2.6.8
+5.04		Hoary Hedgehog		2005-04-08	2006-10-31	2.6.10
+5.10		Breezy Badger		2005-10-13	2007-04-13	2.6.12
+6.06 LTS	Dapper Drake		2006-06-01	2009-07-14	2011-06-01	2.6.15
+6.10		Edgy Eft			2006-10-26	2008-04-25	2.6.17
+7.04		Feisty Fawn			2007-04-19	2008-10-19	2.6.20
+7.10		Gutsy Gibbon		2007-10-18	2009-04-18	2.6.22
+8.04 LTS	Hardy Heron			2008-04-24	2011-05-12	2013-05-09	2.6.24
+8.10		Intrepid Ibex		2008-10-30	2010-04-30	2.6.27
+9.04		Jaunty Jackalope	2009-04-23	2010-10-23	2.6.28
+9.10		Karmic Koala		2009-10-29	2011-04-30	2.6.31
+10.04 LTS	Lucid Lynx			2010-04-29	2013-05-09	2015-04-30	2.6.32
+10.10		Maverick Meerkat	2010-10-10	2012-04-10	2.6.35
+11.04		Natty Narwhal		2011-04-28	2012-10-28	2.6.38
+11.10		Oneiric Ocelot		2011-10-13	2013-05-09	3.0
+12.04 LTS	Precise Pangolin	2012-04-26	2017-04-28	3.2
+12.10		Quantal Quetzal		2012-10-18	2014-05-16	3.5
+13.04		Raring Ringtail		2013-04-25	2014-01-27	3.8
+13.10		Saucy Salamander	2013-10-17	2014-07-17	3.11
+14.04 LTS	Trusty Tahr			2014-04-17	2019-04		3.13
+14.10		Utopic Unicorn		2014-10-23	2015-07-23	3.16
+15.04		Vivid Vervet		2015-04-23	2016-02-04	3.19
+15.10		Wily Werewolf		2015-10-22	2016-07-28	4.2
+16.04 LTS	Xenial Xerus		2016-04-21	2021-04		4.4
+16.10		Yakkety Yak			2016-10-13	2017-07-20	4.8
+17.04		Zesty Zapus			2017-04-13	2018-01-13	4.10
+17.10		Artful Aardvark		2017-10-19	2018-07-19	4.13
+18.04 LTS	Bionic Beaver		2018-04-26	2028-04		4.15
+18.10		Cosmic Cuttlefish	2018-10-18	2019-07		4.18
+19.04		Disco Dingo			2019-04-18	2020-01		TBA
+
+
+Red Hat (RHEL)
+2.1	26 March 2002 		30 November 2004	31 May 2005			31 May 2009	N/A
+3	23 October 2003		20 July 2006		30 June 2007		31 October 2010		30 January 2014
+4	14 February 2005	31 March 2009		16 February 2011	29 February 2012	31 March 2017		4.9
+5	15 March 2007		8 January 2013		31 January 2014		31 March 2017		30 November 2020	5.11
+6	10 November 2010	10 May 2016			10 May 2017			30 November 2020	30 June 2024		6.10
+7	10 June 2014		Q4 2019				Q4 2020				30 June 2024		N/A					7.6
+
+Red Hat Enterprise Linux 7.0 (Maipo), June 10, 2014; uses Linux kernel 3.10.0-123
+7.1, also termed Update 1, March 5, 2015;
+kernel 3.10.0-229
+7.2, also termed Update 2, November 19, 2015;
+kernel 3.10.0-327
+systemd updated to 219
+GNOME rebased to 3.14
+7.3, also termed Update 3, November 3, 2016;
+kernel kernel 3.10.0-514
+7.4, also termed Update 4, August 1, 2017;
+kernel kernel 3.10.0-693
+GNOME rebased to 3.22
+7.5, also termed Update 5, April 10, 2018;
+kernel 3.10.0-862
+GNOME rebased to 3.26
+7.6, also termed Update 6, October 30, 2018;
+kernel 3.10.0-957
+GNOME rebased to 3.28
+Red Hat Enterprise Linux 6 (Santiago), November 10, 2010; uses Linux kernel 2.6.32-71
+6.1, also termed Update 1, May 19, 2011; 7 years ago (kernel 2.6.32-131)
+6.2, also termed Update 2, December 6, 2011; 7 years ago (kernel 2.6.32-220)
+6.3, also termed Update 3, June 20, 2012; 6 years ago (kernel 2.6.32-279)
+6.4, also termed Update 4, February 21, 2013; 5 years ago (kernel 2.6.32-358)
+6.5, also termed Update 5, November 21, 2013; 5 years ago (kernel 2.6.32-431)
+6.6, also termed Update 6, October 13, 2014; 4 years ago (kernel 2.6.32-504)
+6.7, also termed Update 7, July 22, 2015; 3 years ago (kernel 2.6.32-573)
+6.8, also termed Update 8, May 10, 2016; 2 years ago (kernel 2.6.32-642)
+6.9, also termed Update 9, March 21, 2017; 21 months ago (kernel 2.6.32-696)
+6.10, also termed Update 10, June 19, 2018; 6 months ago (kernel 2.6.32-754)
+6 ELS +, Extended Life-cycle Support (ELS) Start Date November 30, 2020;
+aka added ELS entitlement until ELS end Date June 30, 2024;
+RHEL 5
+Red Hat Enterprise Linux 5 (Tikanga), March 15, 2007; uses Linux kernel 2.6.18-8
+5.1, also termed Update 1, November 7, 2007; 11 years ago (kernel 2.6.18-53)
+5.2, also termed Update 2, May 21, 2008; 10 years ago (kernel 2.6.18-92)
+5.3, also termed Update 3, January 20, 2009; 9 years ago (kernel 2.6.18-128)
+5.4, also termed Update 4, September 2, 2009; 9 years ago (kernel 2.6.18-164)
+5.5, also termed Update 5, March 30, 2010; 8 years ago (kernel 2.6.18-194)
+5.6, also termed Update 6, January 13, 2011; 8 years ago (kernel 2.6.18-238)
+5.7, also termed Update 7, July 21, 2011; 7 years ago (kernel 2.6.18-274)
+5.8, also termed Update 8, February 20, 2012; 6 years ago (kernel 2.6.18-308)
+5.9, also termed Update 9, January 7, 2013; 6 years ago (kernel 2.6.18-348)
+5.10, also termed Update 10, October 1, 2013; 5 years ago (kernel 2.6.18-371)
+5.11, also termed Update 11, September 16, 2014; 4 years ago (kernel 2.6.18-398)
+5.11+, Extended Life-cycle Support (ELS) Start Date March 31, 2017;
+aka added ELS entitlement until ELS end Date November 30, 2020;
+RHEL 4
+Red Hat Enterprise Linux 4 (Nahant), February 15, 2005; uses Linux kernel 2.6.9-5
+4.1, also termed Update 1, June 8, 2005; 13 years ago (kernel 2.6.9-11)
+4.2, also termed Update 2, October 5, 2005; 13 years ago (kernel 2.6.9-22)
+4.3, also termed Update 3, March 12, 2006; 12 years ago (kernel 2.6.9-34)
+4.4, also termed Update 4, August 10, 2006; 12 years ago (kernel 2.6.9-42)
+4.5, also termed Update 5, May 1, 2007; 11 years ago (kernel 2.6.9-55)
+4.6, also termed Update 6, November 15, 2007; 11 years ago (kernel 2.6.9-67)
+4.7, also termed Update 7, July 29, 2008; 10 years ago (kernel 2.6.9-78)
+4.8, also termed Update 8, May 19, 2009; 9 years ago (kernel 2.6.9-89)
+4.9, also termed Update 9, February 16, 2011; 7 years ago (kernel 2.6.9-100)
+RHEL 3
+Red Hat Enterprise Linux 3 (Taroon), October 22, 2003; uses Linux kernel 2.4.21-4
+Update 1, January 16, 2004; 14 years ago (kernel 2.4.21-9)
+Update 2, May 12, 2004; 14 years ago (kernel 2.4.21-15)
+Update 3, September 3, 2004; 14 years ago (kernel 2.4.21-20)
+Update 4, December 12, 2004; 14 years ago (kernel 2.4.21-27)
+Update 5, May 18, 2005; 13 years ago (kernel 2.4.21-32)
+Update 6, September 28, 2005; 13 years ago (kernel 2.4.21-37)
+Update 7, March 17, 2006; 12 years ago (kernel 2.4.21-40)
+Update 8, July 20, 2006; 12 years ago (kernel 2.4.21-47)
+Update 9, June 15, 2007; 11 years ago (kernel 2.4.21-50)
+RHEL 2.1
+Red Hat Enterprise Linux 2.1 AS (Pensacola), March 26, 2002; uses Linux kernel 2.4.9-e.3
+Update 1, February 14, 2003; 15 years ago (kernel 2.4.9-e.12)
+Update 2, May 29, 2003; 15 years ago (kernel 2.4.9-e.24)
+Update 3, December 19, 2003; 15 years ago (kernel 2.4.9-e.34)
+Update 4, April 21, 2004; 14 years ago (kernel 2.4.9-e.40)
+Update 5, August 18, 2004; 14 years ago (kernel 2.4.9-e.49)
+Update 6, December 13, 2004; 14 years ago (kernel 2.4.9-e.57)
+Update 7, April 28, 2005; 13 years ago
+Red Hat Enterprise Linux 2.1 ES (Panama), May 2003
+
+
+Fedora
+Fedora 21 (Twenty One)
+Fedora 20 (Heisenbug)
+Fedora 19 (Schrödinger's Cat)
+Fedora 18 (Spherical Cow)
+Fedora 17 (Beefy Miracle)
+Fedora 16 (Verne)
+Fedora 15 (Lovelock)
+Fedora 14 (Laughlin)
+Fedora 13 (Goddard)
+Fedora 12 (Constantine)
+Fedora 11 (Leonidas)
+Fedora 10 (Cambridge)
+Fedora 9 (Sulphur)
+Fedora 8 (Werewolf)
+Fedora 7 (Moonshine)
+Fedora Core 6 (Zod)
+Fedora Core 5 (Bordeaux)
+Fedora Core 4 (Stentz)
+Fedora Core 3 (Heidelberg)
+Fedora Core 2 (Tettnang)
+Fedora Core 1 (Yarrow)
+
+
+Arch Linux
+(ISO release history)
+2019-01-01	2019.01.01	4.20.0	Yes	602.0 MB
+2018-12-01	2018.12.01	4.19.4	Yes	588.0 MB
+2018-11-01	2018.11.01	4.18.16	Yes	586.0 MB
+2018-10-01	2018.10.01	4.18.9	No	577.0 MB
+2018-09-01	2018.09.01	4.18.5	No	571.0 MB
+2018-08-01	2018.08.01	4.17.11	No	573.0 MB
+2018-07-01	2018.07.01	4.17.3	No	574.0 MB
+2018-06-01	2018.06.01	4.16.12	No	571.0 MB
+2018-05-01	2018.05.01	4.16.5	No	560.0 MB
+2018-04-01	2018.04.01	4.15.14	No	556.0 MB
+2018-03-01	2018.03.01	4.15.6	No	551.0 MB
+2018-02-01	2018.02.01	4.14.15	No	539.0 MB
+2018-01-01	2018.01.01	4.14.9	No	522.0 MB
+2017-12-01	2017.12.01	4.13.12	No	516.0 MB
+2017-11-01	2017.11.01	4.13.9	No	523.0 MB
+2017-10-01	2017.10.01	4.13.3	No	523.0 MB
+2017-09-01	2017.09.01	4.12.8	No	518.0 MB
+2017-08-01	2017.08.01	4.12.3	No	516.0 MB
+2017-07-01	2017.07.01	4.11.7	No	510.0 MB
+2017-06-01	2017.06.01	4.11.3	No	488.0 MB
+2017-05-01	2017.05.01	4.10.13	No	481.0 MB
+2017-04-01	2017.04.01	4.10.6	No	478.0 MB
+2017-03-01	2017.03.01	4.9.11	No	476.0 MB
+2017-02-01	2017.02.01	4.9.6	No	870.0 MB
+2017-01-01	2017.01.01	4.8.13	No	867.0 MB
+2016-12-01	2016.12.01	4.8.11	No	799.0 MB
+2016-11-01	2016.11.01	4.8.6	No	797.0 MB
+2016-10-01	2016.10.01	4.7.5	No	792.0 MB
+2016-09-03	2016.09.03	4.7.2	No	756.0 MB
+2016-08-01	2016.08.01	4.6.4	No	742.0 MB
+2016-07-01	2016.07.01	4.6.3	No	749.0 MB
+2016-06-01	2016.06.01	4.5.4	No	744.0 MB
+2016-05-01	2016.05.01	4.5.1	No	734.0 MB
+2016-04-01	2016.04.01	4.4.5	No	724.0 MB
+2016-03-01	2016.03.01	4.4.1	No	709.0 MB
+2016-02-01	2016.02.01	4.3.3	No	701.0 MB
+2016-01-01	2016.01.01	4.3.3	No	686.0 MB
+2015-12-01	2015.12.01	4.2.5	No	663.0 MB
+2015-11-01	2015.11.01	4.2.5	No	659.0 MB
+2015-10-02	2015.10.01	4.2.2	No	658.0 MB
+2015-09-01	2015.09.01	4.1.6	No	658.0 MB
+2015-08-01	2015.08.01	4.1.3	No	657.0 MB
+2015-07-01	2015.07.01	4.0.7	No	646.0 MB
+2015-06-01	2015.06.01	4.0.4	No	637.0 MB
+2015-05-01	2015.05.01	4.0.1	No	626.0 MB
+2015-04-01	2015.04.01	3.19.2	No	599.0 MB
+2015-03-01	2015.03.01	3.18.6	No	595.0 MB
+2015-02-01	2015.02.01	3.18.4	No	588.0 MB
+2015-01-01	2015.01.01	3.17.6	No	587.0 MB
+2014-12-01	2014.12.01	3.17.4	No	578.0 MB
+2014-11-01	2014.11.01	3.17.1	No	577.0 MB
+2014-10-01	2014.10.01	3.16.3	No	572.0 MB
+2014-09-03	2014.09.03	3.16.1	No	574.0 MB
+2014-08-01	2014.08.01	3.15.7	No	559.0 MB
+2014-07-03	2014.07.03	3.15.3	No	558.0 MB
+2014-06-01	2014.06.01	3.14.4	No	547.0 MB
+2014-05-01	2014.05.01	3.14.1	No	539.0 MB
+2014-04-01	2014.04.01	3.13.7	No	534.0 MB
+2014-03-01	2014.03.01	3.13.5	No	527.0 MB
+2014-02-01	2014.02.01	3.12.9	No	539.0 MB
+2014-01-05	2014.01.05	3.12.6	No	528.0 MB
+2013-12-01	2013.12.01	3.12.1	No	522.0 MB
+2013-11-01	2013.11.01	3.11.6	No	516.0 MB
+2013-10-01	2013.10.01	3.11.2	No	529.0 MB
+2013-09-01	2013.09.01	3.10.10	No	525.0 MB
+2013-08-01	2013.08.01	3.10.3	No	526.0 MB
+2013-07-01	2013.07.01	3.9.8	No	522.0 MB
+2013-06-01	2013.06.01	3.9.4	No	523.0 MB
+2013-05-01	2013.05.01	3.8.10	No	509.0 MB
+2013-04-02	2013.04.01	3.8.4	No	506.0 MB
+2013-03-01	2013.03.01	3.7.9	No	501.0 MB
+2013-02-01	2013.02.01	3.7.5	No	498.0 MB
+2013-01-04	2013.01.04	3.6.11	No	492.0 MB
+2012-12-01	2012.12.01	3.6.8	No	429.0 MB
+2012-11-01	2012.11.01	3.6.4	No	417.0 MB
+2012-10-06	2012.10.06	3.5.5	No	415.0 MB
+2012-09-07	2012.09.07	3.5.3	No	392.0 MB
+2012-08-04	2012.08.04	3.4.7	No	384.0 MB
+2012-07-15	2012.07.15	3.4.4	No	370.0 MB
+2011-08-19	2011.08.19	3.0.3	No	673.0 MB
+2010-05-16	2010.05	2.6.33.4	No	659.0 MB
+2009-08-17	2009.08	2.6.30.4	No	
+2009-02-16	2009.02	2.6.28	No	
+2008-06-24	2008.06	2.6.25.6	No	
+2007-10-07	2007.08-2	2.6.22.9	No	
+2007-09-10	2007.08.1	2.6.22.6	No	
+2007-08-05	2007.08	2.6.22.1	No	
+2007-05-28	2007.05-Linuxtag2007	2.6.21.3	No	
+2007-05-17	2007.05	2.6.21.1	No	
+2007-03-28	0.8	2.6.20.4	No	
+2006-05-18	0.7.2	2.6.16.16	No	
+2006-01-05	0.7.1	2.6.15	No	
+2005-01-24	0.7	2.6.10	No	
+2004-03-01	0.6	2.6.3	No	
+2003-07-21	0.5	2.4.21	No	
+2002-12-18	0.4	2.4.20	No	
+2002-08-07	0.3	2.4.19	No	
+2002-04-17	0.2	2.4.18	No	
+2002-03-12	0.1	2.4.18	No
+
+
+CentOS
+3	19 March 2004	20 July 2006	31 October 2010
+4	9 March 2005	31 March 2009	29 February 2012
+5	12 April 2007	31 January 2014	31 March 2017
+6	10 July 2011	10 May 2017		30 November 2020
+7	7 July 2014		Q4 2020			30 June 2024
+7.0-1406	7.0	3.10.0-123	7 July 2014			10 June 2014
+7.1-1503	7.1	3.10.0-229	31 March 2015		5 March 2015
+7.2-1511	7.2	3.10.0-327	14 December 2015	19 November 2015
+7.3-1611	7.3	3.10.0-514	12 December 2016	3 November 2016
+7.4-1708	7.4	3.10.0-693	13 September 2017	31 July 2017
+7.5-1804	7.5	3.10.0-862	10 May 2018			10 April 2018
+7.6-1810	7.6	3.10.0-957	3 December 2018		30 October 2018
+
+
+Suse
+SUSE Linux
+10.0	Prague			2005-10-06	2007-11-30	N/A	2.6.13
+10.1	Agama Lizard	2006-05-11	2008-05-31	N/A	2.6.16
+openSUSE
+10.2	Basilisk Lizard	2006-12-07	2008-11-30	N/A	2.6.18
+10.3	N/A				2007-10-04	2009-10-31	N/A	2.6.22
+11.0	N/A				2008-06-19	2010-06-26	N/A	2.6.25
+11.1	N/A				2008-12-18	2011-01-14	2012-04	2.6.27
+11.2	Emerald			2009-11-12	2011-05-12	2013-11	2.6.31
+11.3	Teal			2010-07-15	2012-01-16	N/A	2.6.34
+11.4	Celadon			2011-03-10	2012-11-05	2015-07	2.6.37
+12.1	Asparagus		2011-11-16	2013-05-15	N/A	3.1.0
+12.2	Mantis			2012-09-05	2014-01-15	N/A	3.4.6
+12.3	Dartmouth		2013-03-13	2015-01-01	N/A	3.7.10
+13.1	Bottle			2013-11-19	2016-02-03	2016-11	3.11.6
+13.2	Harlequin		2014-11-04	2017-01-16	N/A	3.16.6
+openSUSE Leap
+42.1	Malachite		2015-11-04	2017-05-17	N/A	4.1.12
+42.2	N/A				2016-11-16	2018-01-26	N/A	4.4
+42.3	N/A				2017-07-26	2019-06-30	N/A	4.4
+15.0	N/A				2018-05-25	2019-11-25	TBA	4.12
+openSUSE
+Tumbleweed	Rolling	N/A	Rolling	N/A	N/A	Latest stable
+
+
+FreeBSD
+1.0		1 November 1993		
+1.1		May 1994		fix some outstanding bugs from import of 386BSD, addition of some ported applications (XFree86, XView, InterViews, elm, nntp)
+1.1.5			
+1.1.5.1	July 1994		
+2.0		22 November 1994		replace code base with BSD-Lite 4.4 (to satisfy terms of the USL v. BSDi lawsuit settlement), new installer, new boot manager, support for more filesystems (MS-DOS, unionfs, kernfs), 64-bit offsets for large filesystems, loadable filesystems, imported loadable kernel modules from NetBSD
+2.0.5	10 June 1995		revamped VM system, full NIS client and server support, transaction TCP support, ISDN support, support for FDDI and Fast Ethernet (100Mbit) adapters, multi-lingual documentation, FreeBSD Ports bundled with installation media
+2.1		19 November 1995
+2.1.5	July 1996		bug and security fixes, PCI bus probing, addition of some drivers
+2.1.6	December 1996		bug and security fixes, improvements to installation
+2.1.7	February 1997		bug and security fixes
+2.2		March 1997		NFSv3, replaced BSD malloc with phkmalloc, Linux emulation with ELF, man section 9 for kernel routines
+2.2.1	April 1997		Bugfix release to replace 2.2. Update the Adaptec 2940 and Intel EtherExpress Pro drivers, fix CD-ROM package installer.
+2.2.2	May 1997		NFSv3 made default, virtual FTP hosting
+2.2.5	22 October 1997		update support for Cyrix and AMD processors, new VGA library
+2.2.6	25 March 1998		ATAPI floppy drives, improved Linux emulation, new sound driver, new Plug and Play (PnP) support
+2.2.7	22 July 1998		FAT32 support, update to PC98 architecture
+2.2.8	29 November 1998		Dummynet traffic shaping, bridging on multiple interfaces, support use of IDE drives larger than 8GiB
+3.0		16 October 1998		symmetric multiprocessing (SMP), CAM (Common Access Method) SCSI system, ELF executables, secure RPC, ATAPI/IDE CD burner and tape drive support, VESA video modes, Perl 5 replaced Perl 4 in base system, KerberosIV
+3.1		15 February 1999		initial USB device support, Pluggable Authentication Modules (PAM)
+3.2		17 May 1999		addition of Internet Software Consortium DHCP client to base, expanded USB device support, improved filesystem support (direct access to NTFS, Joliet extensions for ISO 9660)
+3.3		17 September 1999		improved USB support, major vinum updates, improvements to IPFW, Advanced power management, Berkeley Packet Filter enabled by default, addition of many drivers
+3.4		20 December 1999		Netgraph, RAID-5 support in vinum, ICMP and other security fixes
+3.5		24 June 2000		substantial vinum update, audio mixer updated, HTTP installation option
+4.0		14 March 2000		IPv6 support and IPsec with KAME (applications were also updated to support IPv6), OpenSSH integrated into the base system, new ATA/ATAPI driver (for all ATA compliant disks and ATAPI CDROM, CD-R, CD-RW, DVD-ROM, DVD-RAM, LS120, ZIP and tape drives), emulator for SVR4 binary files, burncd, USB ethernet adapter support, accept() filters, telnet encryption
+4.1		27 July 2000		Kqueue, improved IPsec, expanded DEC Alpha support, support for USB devices in default installation
+4.1.1	27 September 2000		virtual Ethernet device driver for bridged configurations, ATA100 controller support
+4.2		21 November 2000		basic USB scanner support, USB modem support, bug fixes for buffer overflows, FreeBSD Ports restructured
+4.3		20 April 2001		sound driver updates, TCP bug fixes, kqueue extended to the device layer
+4.4		20 September 2001		detection for new processors (Transmeta Crusoe et al.), support for Streaming SIMD Extensions (SSE), kernel support for smbfs (CIFS), update to IPv6 stack
+4.5		29 January 2002	31 December 2002	TCP improvements (throughput, performance, and Denial-of-service mitigation), Soft updates enabled by default, improved Linux emulation, boot loader updated to boot from filesystems with 16K disk blocks (from 8K)
+4.6		15 June 2002	May 2003	update XFree86 to version 4.2.0, driver additions and updates
+4.6.2	15 August 2002	May 2003	fixed ATA-related problems, fix security-related problems
+4.7		10 October 2002	December 2003	new USB devices and disk controllers, IPFW version 2 (disabled by default)
+4.8		3 April 2003	31 March 2004	basic Firewire and HyperThreading support, in-kernel cryptographic framework imported from OpenBSD, ata driver support for accessing ATA devices as SCSI devices using Common Access Method (CAM)
+4.9		28 October 2003	31 October 2004	Physical Address Extensions, IPFW fixes
+4.10	27 May 2004	May 2006	USB2 support, added ports/CHANGES and ports/UPDATING to FreeBSD Ports
+4.11	25 January 2005	31 January 2007	update XFree86 to version 4.4.0, implementation of per-interface polling for network interfaces
+5.0		14 January 2003	30 June 2003	support for UltraSPARC and IA-64 processors, SMP support via changes to kernel locking (release most of kernel from the Giant lock), GEOM, Kernel Scheduled Entities, Mandatory Access Control imported from TrustedBSD, background fsck, Bluetooth, ACPI, CardBus, devfs, UFS2 support, support for Universal Disk Format, drivers for Direct Rendering Infrastructure (DRI), Pluggable Authentication Modules, remove support for 80386 in default kernel, removal of kernfs and UUCP, traditional BSD games moved from base to FreeBSD Ports, Perl removed from base system, imported rc.d framework from NetBSD, addition of BSDPAN, cdboot boot loader used by default
+5.1		9 June 2003	February 2004	experimental support for AMD64, experimental 1:1 and M:N thread libraries for multithreaded processing, experimental Name Service Switch, Physical Address Extensions, GEOM and devfs mandatory, IPv6 support in Linux emulator, experimental ULE scheduler, removed support for Xerox Network Systems, CAM layer support for devices with more than 232 blocks, removed historic BSD boot scripts, update XFree86 to version 4.3.0, start of Danish document translations
+5.2		9 January 2004	31 December 2004	AMD64 a Tier1 supported architecture, updated swap pager, Protocol Independent Multicast, updates to IPv6, IPSec and Bluetooth, major changes to ata driver (removed from Giant lock), NFSv4 client support, start of Turkish document translation, remove floating point emulation support for i386, new or improved IDE, SATA, and 802.11a/b/g device drivers, experimental support for multithreaded filtering and forwarding of IP traffic
+5.2.1	25 February 2004	31 December 2004	bugfix release, improved ATA/IDE and SATA handling
+5.3		6 November 2004	31 October 2006	ALTQ, multi-threaded and reentrant network and socket subsystems, addition of new debugging framework KDB, dynamic and static linker support for Thread Local Storage, import pf from OpenBSD, binary compatibility interface for native execution of NDIS drivers, replace XFree86 with X.org 6.7, sound card driver reorganization, cryptography enabled by default in base
+5.4		9 May 2005	31 October 2006	import Common Address Redundancy Protocol from OpenBSD
+5.5		25 May 2006	31 May 2008	both cores of dual core processors made available for use by default in SMP-enabled kernels
+6.0		4 November 2005	31 January 2007	experimental support for PowerPC, WPA wireless security, more wireless networking adapter drivers, complete support for 802.11g, 802.11i, 802.1x and WME/WMM, filesystem and direct disk access performance improvements
+6.1		8 May 2006	31 May 2008	keyboard multiplexer, filesystem stability fixes, automatic configuration for many Bluetooth devices, drivers for ethernet, SAS and SATA RAID controllers
+6.2		15 January 2007	31 May 2008	support for Xbox architecture, OpenBSM, security event auditing, IPFW packet tagging, freebsd-update (binary updates for security fixes and errata patches), OpenIPMI (see Intelligent Platform Management Interface)
+6.3		18 January 2008	31 January 2010	X.org updated to version 7.3, reimplementation of UnionFS, addition of upgrade command to freebsd-update
+6.4		28 November 2008	30 November 2010	support for Camellia cipher, boot loader changes (enabling booting from USB devices, and GPT-labeled devices with GPT-enabled BIOSes), malloc buffer corruption protection, DVD install ISO images for AMD64 and i386
+7.0		27 February 2008	30 April 2009	ZFS and GPT, reference implementation of SCTP, add support for ARM architecture, support for Intel High Definition Audio (HDA), replacing phkmalloc with jemalloc, drop support for DEC Alpha
+7.1		4 January 2009	28 February 2011	DTrace, ULE scheduler made default scheduler for i386 and AMD64 platforms
+7.2		4 May 2009	30 June 2010	support for UltraSPARC III processors, transparent use of superpages in virtual memory subsystem, improvements to jail
+7.3		23 March 2010	31 March 2012	new boot loader gptzfsboot (support for GPT and ZFS), ZFS updated to version 13, Perl updated to version 5.10, support for VIA Nano processors
+7.4		24 February 2011	28 February 2013	add support for UltraSPARC IV, IV+, and SPARC64 V processors, IEEE 802.3 full duplex flow control (in miibus). This is the final release in the 7-STABLE branch.
+8.0		25 November 2009	30 November 2010	new USB stack, update FreeBSD jails to support modern features, ULE 3.0 scheduler, superpages, NFSv4 support
+8.1		23 July 2010	31 July 2012	High Availability Storage, IPFW and dummynet improvements, SMP in PowerPC G5 systems, MP-safe MS-DOS filesystem, zfsloader, NFSv4 ACL for UFS and ZFS
+8.2		24 February 2011	31 July 2012	import V4L into Linux emulator
+8.3		18 April 2012	30 April 2014	graid replaces ataraid; update ZFS to version 28; DTrace ability on Linux emulated binaries; mod_cc pluggable congestion control framework for TCP/IP stack
+8.4		7 June 2013	1 August 2015
+9.0		12 January 2012	31 March 2013	Userland DTrace, substitute GCC with Clang and LLVM for base system, USB 3.0 support, UFS SoftUpdates+Journal, moving ATA disk drivers to the CAM system, update ZFS to version 28, replaced sysinstall with bsdinstall.
+9.1		30 December 2012	31 December 2014	Update of sound drivers; improved performance of IPv6 stack; new C++ stack; jail support for devfs, nullfs, and ZFS; sched_ule SMT load balancing improvements
+9.2		30 September 2013	31 December 2014	ZFS support for LZ4 compression and TRIM; removal of Firewire drivers from GENERIC kernel
+9.3		16 July 2014	31 December 2016	ZFS support for bookmarks
+10.0	20 January 2014	31 January 2015	Virtualization improvements (bhyve, virtio); USB upgrades; use clang and LLVM by default; capsicum; pkgng; remove BIND; add LDNS and Unbound to base system; update ipfilter to 5.1.2; add support for Raspberry Pi, IEEE 802.11s, and FUSE; ZFS on root filesystem; replaced GNU tools with BSD-licensed versions
+10.1	14 November 2014	31 December 2016	Secure boot; UDP-Lite support for IPv4 and IPv6; new filesystem automounting utility; bhyve booting from ZFS; new console driver
+10.2	13 August 2015	31 December 2016	Update linux compability layer to support Centos 6 ports; ZFS performance and reliability improvements; update DRM for multiple X servers support
+10.3	28 March 2016	30 April 2018	improvements to UEFI boot loader and Linux compatibility; ZFS boot support and root on ZFS for UEFI; CAM Target Layer support for high availability services
+10.4	3 October 2017	31 October 2018	Full support for eMMC storage; support for Mellanox ConnectX-4 adapters; driver and software updates
+11.0	10 October 2016	30 November 2017	Improvements for wireless networking; support for the 64-bit ARM architecture
+11.1	26 July 2017	30 September 2018	Support for Microsoft Hyper-V hypervisor; support for Amazon Elastic File System in Network File System client; ZFS boot configuration utility
+11.2	28 June 2018		Meltdown and Spectre fixes; driver and software updates
+12.0	11 December 2018		Improving support for Ryzen and Epyc CPUs; Better support for modern AMD/Intel graphic cards; Optimization for Amazon EC2 cloud service; various kernel configuration tweaking
+
+
+OpenBSD
+1.1	18 October 1995		
+OpenBSD CVS repository created by Theo de Raadt.
+While the version number used at this stage was 1.1, OpenBSD 1.1 was not an official OpenBSD release in the sense which this term subsequently came to be used.
+1.2	1 July 1996		
+Creation of the intro(9) man page, for documenting kernel internals.
+Integration of the update(8) command into the kernel.
+As before, while this version number was used in the early development of the OS, OpenBSD 1.2 was not an official release in the subsequently applicable sense.
+2.0	1 October 1996		
+The first official release of OpenBSD, and also the point at which XFree86 first recognized OpenBSD as separate from NetBSD.
+Initial integration of the FreeBSD ports system.
+Replacement of gawk with the AT&T awk.
+Integration of zlib.
+Added sudo.
+2.1	1 June 1997		Replacement of the older sh with pdksh.
+2.2	1 December 1997		Addition of the afterboot(8) man page.
+2.3	19 May 1998		Introduced the haloed daemon, or aureola beastie, in head-only form created by Erick Green.
+2.4	1 December 1998		Featured the complete haloed daemon, with trident and a finished body.
+2.5	19 May 1999		Introduced the Cop daemon image done by Ty Semaka.
+2.6	1 December 1999		Based on the original SSH suite and developed further by the OpenBSD team, 2.6 saw the first release of OpenSSH, which is now available standard on most Unix-like operating systems and is the most widely used SSH suite.
+2.7	15 June 2000		Support for SSH2 added to OpenSSH.
+2.8	1 December 2000		isakmpd(8)
+2.9	1 June 2001		
+3.0	1 December 2001		
+E-Railed (OpenBSD Mix), a techno track performed by the release mascot Puff Daddy, the famed rapper and political icon.
+After license restrictions were imposed on IPFilter, the pf packet filter was developed. pf is now available in DragonFly BSD, NetBSD and FreeBSD.
+3.1	19 May 2002		Systemagic, where Puffy, the Kitten Slayer, battles evil script kitties. Inspired by the works of Rammstein and a parody of Buffy the Vampire Slayer.
+First official remote security hole - OpenSSH integer overflow
+3.2	1 November 2002		Goldflipper, a tale in which James Pond, agent 077, super spy and suave lady's man, deals with the dangers of a hostile internet. Styled after the orchestral introductory ballads of James Bond films.
+3.3	1 May 2003		
+Puff the Barbarian, born in a tiny bowl; Puff was a slave, now he hacks through the C, searching for the Hammer. It is an 80s rock-style song and parody of Conan the Barbarian dealing with open documentation.
+In 2003, code from ALTQ, which had a license disallowing the sale of derivatives, was relicensed, integrated into pf and made available in OpenBSD 3.3.
+First release adding the W^X feature, a fine-grained memory permissions layout, ensuring that memory which can be written to by application programs can not be executable at the same time and vice versa.
+3.4	1 November 2003		
+The Legend of Puffy Hood where Sir Puffy of Ramsay, a freedom fighter who, with Little Bob of Beckley, took from the rich and gave to all. Tells of the POSSE project's cancellation. An unusual blend of both hip-hop and medieval-style music, a parody of the tale of Robin Hood intended to express OpenBSD's attitude to free speech.
+i386 platform switched executable format from a.out to Executable and Linkable Format
+The GPL licensed gzip was replaced by retooling the existing compress tool to include its functionality.
+The GPL licensed grep was replaced with FreeGrep, an updated BSD licensed grep. This new grep is now also available in NetBSD.
+A public domain diff was updated and used to replace the GPL licensed diff previously included.
+Code from the LGPL licensed  was relicensed to allow pf to feature passive operating system detection.
+Address space layout randomization (ALSR) by default
+3.5	1 May 2004		
+CARP License and Redundancy must be free, where a fish seeking to license his free redundancy protocol, CARP, finds trouble with the red tape. A parody of the Fish License skit and Eric the Half-a-Bee Song by Monty Python, with an anti-software patents message.
+CARP, an open alternative to the HSRP and VRRP redundancy systems available from commercial vendors.
+GPL licensed parts of the GNU tool-set, bc , were all replaced with BSD licensed equivalents.
+AMD64 platform becomes stable enough for release and is included for the first time as part of a release.
+3.6	1 November 2004		
+Pond-erosa Puff (live) was the tale of Pond-erosa Puff, a no-guff freedom fighter from the wild west, set to hang a lickin' on no-good bureaucratic nerds who encumber software with needless words and restrictions. The song was styled after the works of Johnny Cash, a parody of the Spaghetti Western and Clint Eastwood and inspired by liberal license enforcement.
+OpenNTPD, a compatible alternative to the reference NTP daemon, was developed within the OpenBSD project. The goal of OpenNTPD was not solely a compatible license. It also aims to be a simple, secure NTP implementation providing acceptable accuracy for most cases, without requiring detailed configuration.
+Because of its questionable security record and doubts of developers for better future development, OpenBSD removed Ethereal from its ports tree prior to its 3.6 release.
+3.7	19 May 2005		The Wizard of OS, where Puffathy, a little Alberta girl, must work with Taiwan to save the day by getting unencumbered wireless. This release was styled after the works of Pink Floyd and a parody of The Wizard of Oz; this dealt with wireless hacking.
+3.8	1 November 2005	1 November 2006	Hackers of the Lost RAID,
+3.9	1 May 2006	1 May 2007	
+Attack of the Binary BLOB, which chronicles the developer's fight against binary blobs and vendor lock-in, a parody of the 1958 film The Blob and the pop-rock music of the era.
+Enhanced OpenBGPD feature-set.
+Improved hardware sensors framework.
+4.0	1 November 2006	1 November 2007	Humppa Negala, a Hava Nagilah parody with a portion of Entrance of the Gladiators and Humppa music fused together, with no story behind it, simply a homage to one of the OpenBSD developers' favorite genres of music.
+Second official remote security hole - buffer overflow by malformed ICMPv6 packets 
+4.1	1 May 2007	1 May 2008	Puffy Baba and the 40 Vendors, a parody of the Arabic fable Ali Baba and the Forty Thieves, part of the book of One Thousand and One Nights, in which Linux developers are mocked over their allowance of non-disclosure agreements when developing software while at the same time implying hardware vendors are criminals for not releasing documentation required to make reliable device drivers.
+4.2	1 November 2007	1 November 2008	100001 1010101, the Linux kernel developers gets a knock for violating the ISC-style license of OpenBSD's open hardware abstraction layer for Atheros wireless cards.
+4.3	1 May 2008	1 May 2009	Home to Hypocrisy
+4.4	1 November 2008	18 October 2009	
+Trial of the BSD Knights, summarizes the history of BSD including the USL v. BSDi lawsuit. The song was styled after the works of Star Wars.
+sparc64 port now supports many recent processors: Sun UltraSPARC IV, T1, and T2; Fujitsu SPARC64 V, VI, and VII.
+New System-on-a-Chip PowerPC port for Freescale devices
+malloc(3) randomization, guard pages, and randomized (delayed) free
+4.5	1 May 2009	19 May 2010	Games. It was styled after the works of Tron.
+4.6	18 October 2009	1 November 2010	Planet of the Users. In the style of Planet of the Apes, Puffy travels in time to find a dumbed-down dystopia, where "one very rich man runs the earth with one multinational". Open-source software has since been replaced by one-button computers, one-channel televisions, and closed-source software which, after you purchase it, becomes obsolete before you have a chance to use it. People subsist on soylent green. The theme song is performed in the reggae rock style of The Police.
+smtpd(8), privilege-separated SMTP server
+tmux(1) terminal multiplexer
+4.7	19 May 2010	1 May 2011	I'm Still Here 
+4.8	1 November 2010	1 November 2011	El Puffiachi. 
+iked(8) IKEv2 daemon
+ldapd(8) LDAP daemon
+4.9	1 May 2011	1 May 2012	The Answer. 
+rc.d(8) daemon control
+5.0	1 November 2011	1 November 2012	What Me Worry?. 
+5.1	1 May 2012	1 May 2014	Bug Busters. The song was styled after the works of Ghostbusters. 
+5.2	1 November 2012	1 November 2013	Aquarela do Linux. 
+nginx(8) HTTP server
+SSLv2 disabled
+5.3	1 May 2013	1 May 2014	Blade Swimmer. The song was styled after the works of Roy Lee, a parody of Blade Runner. 
+Position-independent executables (PIE) by default for seven hardware platforms
+5.4	1 November 2013	1 November 2014	Our favorite hacks. 
+5.5	1 May 2014	1 May 2015	Wrap in Time.
+signify(1) cryptographic signatures of release and packages
+64bit time_t on all platforms (Y2K38 ready)
+5.6	1 November 2014	18 October 2015	Ride of the Valkyries. 
+LibreSSL fork of OpenSSL
+Apache HTTPD removed from base
+5.7	1 May 2015	29 March 2016	Source Fish. 
+rcctl(8) utility to control daemons
+nginx(8) removed from base
+procfs has been removed
+5.8	18 October 2015	1 September 2016	20 years ago today, Fanza, So much better, A Year in the Life. 
+(20th anniversary release)
+doas(1) replacement of sudo
+5.9	29 March 2016	11 April 2017	Doctor W^X, Systemagic (Anniversary Edition). 
+W^X enforced in i386 kernel
+pledge(2) process restriction
+6.0	1 September 2016	9 October 2017	Another Smash of the Stack, Black Hat, Money, Comfortably Dumb (the misc song), Mother, Goodbye and Wish you were Secure, Release songs parodies Pink Floyd's The Wall and Wish You Were Here
+vmm(4) virtualization (disabled by default)
+Removed vax support
+6.1	11 April 2017	15 April 2018	Winter of 95
+syspatch(8) utility for binary base system updates
+new arm64 platform
+6.2	9 October 2017		
+inteldrm(4) Skylake/Kaby Lake/Cherryview devices
+clang(1) base system compiler on i386 and amd64 platforms
+6.3	2 April 2018		
+SMP is supported on arm64 platforms.
+Several parts of the network stack now run without KERNEL_LOCK().
+Multiple security improvements have been made, including Meltdown/Spectre (variant 2) mitigations. Intel CPU microcode is loaded on boot on amd64.
+pledge() has been modified to support "execpromises" (as the second argument).
+6.4	18 October 2018		
+unveil(2) filesystem visibility restriction. 
