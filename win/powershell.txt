@@ -107,6 +107,10 @@ PS C:\> 1..255 | % {echo "192.168.1.$_"; ping -n 1 -w 100 192.168.1.$_ | SelectS
 PS C:\> 1..1024 | % {echo ((new-object Net.Sockets.TcpClient).Connect("10.11.10.11",$_)) "Port $_ open"} 2>$null 
 	-portscan target host
 
+	
+Privilege Escalation
+get-hotfix | Sort-Object HotfixID |format-table
+	-enumerate patch levels (alternatively: wmic qfe get)
 
 
 	

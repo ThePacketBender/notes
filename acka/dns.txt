@@ -25,6 +25,7 @@ python subbrute.py google.com -o google.names
 dnsmap example.com -w /usr/share/wordlists/dnsmap.txt
 dnsmap-bulk.sh domains.txt
 dnsrecon -d example.com -D /usr/share/wordlists/dnsmap.txt -t std --xml dnsrecon.xml
+wfuzz -c -z file,/path/to/SecLists/Discovery/DNS/subdomains-top1mil-20000.txt -Z -u http://FUZZ.site.domain | grep -v '0 L'
 
 Combined attacks
 sublist3r -d google.com
