@@ -9,3 +9,8 @@ Anonymous Bind:
 ldapsearch -h ldaphostname -p 389 -x -b "dc=domain,dc=com"
 Authenticated:
 ldapsearch -h 192.168.0.60 -p 389 -x -D "CN=Administrator, CN=User, DC=<domain>, DC=com" -b "DC=<domain>, DC=com" -W
+
+
+adfind (windows)
+adfind -f "(objectClass=user)" -b "OU=People,DC=Controller,DC=dom"
+adfind -f "(objectClass=user)" -b "OU=USA,OU=People,DC=Controller,DC=dom" -s onelevel

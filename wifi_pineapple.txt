@@ -1,0 +1,37 @@
+WIFI Pineapple
+
+
+Firmware Downloads
+https://wifipineapple.com/downloads#tetra
+
+Setup Address
+172.16.42.1
+http://172.16.42.1:1471/
+
+Default Address
+172.16.42.42
+
+Address Range (Default)
+172.16.42.1/24
+
+
+Setup Internet Connectivity (windows)
+*prefer to use wifi client module on web administration network page
+win+r
+	>ncpa.cpl
+right click connection
+	>properties
+		>sharing
+			>"Allow other networks Users..."
+				>Wi-Fi (or ethernet 1, etc...)
+right click connection
+	>"this connection uses the following items"
+		>ipv4
+			>properties
+				>use the following ip address (set manually)
+					>ip address: 172.16.42.42
+					>subnet mask: 255.255.0.0
+					
+linux
+wget www.wifipineapple.com/wp6.sh
+bash wp6.sh

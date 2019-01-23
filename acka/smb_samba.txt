@@ -110,3 +110,37 @@ msf auxiliary(smb) > set JOHNPWFILE /tmp/john_http
 msf auxiliary(smb) > set SRVPORT 80
 msf auxiliary(smb) > set URIPATH /
 msf auxiliary(smb) > run
+
+
+
+Samba server
+sudo service smbd restart
+OR
+sudo /etc/init.d/smbd status
+	-samba server daemon(smbd) systemd controls
+sudo smbpasswd -a username
+	-set samba access for a given username
+sudo /etc/init.d/samba reload
+	-samba must be reloaded after user passwords are modified
+Samba server configuration
+/etc/samba/smbd.conf
+CREATE SHARE
+[sambasharename]
+    comment = Samba
+    path = /home/user/sambashare
+    read only = no
+    browsable = yes
+MAKE SAMBA localhost/network accessible only
+interfaces = 127.0.0.1, 192.168.0.31/24
+bind interfaces only = yes
+hosts allow = 127.0.0.1, 192.168.0.31, 192.168.0.32
+hosts deny = 0.0.0.0/0
+GLOBAL SECURITY DECLARATIONS
+[global]
+        security = user
+        encrypt passwords = true
+        map to guest = bad user
+        guest account = nobody
+SET PERMISSIONS DEFAULTS
+create mask = 0644
+directory mask = 0755

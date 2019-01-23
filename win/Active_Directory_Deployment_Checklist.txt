@@ -1,0 +1,114 @@
+ACTIVE DIRECTORY DOMAIN DEPLOYMENT CHECKLIST
+
+Plan and Design High-Levell Information listed only)
+	Number ofForests
+	Number of Domains
+	Namespace
+		FQDN
+		NetBIOS name
+	DNS
+	FSMO Roles
+	Sites and Services
+Stand up new domain
+	Assign Domain Name
+	Build DCs
+		DC Name
+		DC IP addressing
+		Install AD DS role
+		Configure AD DS role
+		Complete AD DS configuration
+		Restart DCs
+	Update DCs
+	FSMO placement
+		Move FSMO roles
+			Schema Master on PDCe of the forest root domain
+			Domain Naming Master on PDCe of the forest root domain
+			Place RID Master on PDCe in the same domain
+			Infrastructure Master on a non-global catalog
+			Or
+			Infrastructure Master on a global catalog when all DCs are GCs
+	Health Checks
+		Run diagnostics to ensure health
+		Check event logs
+	Time sync
+		Set PDCe to synchronization with reliable internal or external time source
+		GPO to WMI filter time synchronization to PDCe
+		Or
+		Set time settings manually on PDCe
+	Backup system state
+		As built documentation draft
+	Configure security
+		DC Security
+			Configuration
+			BitLocker
+			Security Baseline
+			AppLocker
+			Windows Defender
+			Credential Guard
+			Windows Firewall
+			Block outbound internet
+				Black hole proxy (proxy set to 127.0.0.1, allow internally)
+			Redirect
+				Computers Container
+				Users Container
+			Set OU Permissions
+				Register Schema DLL
+					Remove 2 groups - In schema
+						Account Operators
+						Print Operators
+			Adjust Add Workstation to domain
+				Remove "Authenticated Users" from being able to add computers to domain
+				Create group to add workstations to domain
+					Drop Server Team group into "Add Workstations to Domain" group
+					Drop Desktop Team(s) group into "Add Workstations to Domain" group
+					Create and drop service accounts into "Add Workstations to Domain" group
+	Administrative workstations (PAWs)
+		Configuration
+			BitLocker
+			Security Baseline
+			AppLocker
+			Windows Defender
+			Credential Guard
+			Windows Firewall
+	Install LAPS
+	Install ATA
+	Enable DS auditing
+	Set appropriate SACLs
+	Develop and implement a least-privileged access delegation model
+	Verify and audit all delegations and privileged access
+	Identify and minimize the number of users who possess privileged access in AD
+	Ensure only Domain Controllers have sufficient effective permissions to replicate secrets in the domain 
+	If modified AdminSDHolder, audit effective permissions to make sure you know what access it is actually entitling
+Create Sites
+	Site Mirroring of old/trusted domain (migration)
+DNS Configuration
+	Forklift name space(s) (migration)
+		Conditional Forwarders
+		Secondary Zone
+	Enable Scavenging
+		On server
+		On zone
+Install Central Store
+Install AD Recycle Bin
+Create base OU structure
+Create Trust (if needed)
+Extend Schema
+	Exchange
+		Gather requirements
+		Implement change
+	SCCM
+		Gather requirements
+		Implement change
+	Other.
+		Gather requirements
+		Implement change
+Baseline
+	Take a baseline snapshot of the new environment
+		Packet capture baseline traffic
+		Monitor incoming and outgoing TCP/IP traffic patterns
+		Monitor current CPU and RAM utilization levels
+		ATA learning burn-in
+Complete "As Built" documentation
+
+
+https://social.technet.microsoft.com/wiki/contents/articles/40225.active-directory-domain-deployment-checklist.aspx

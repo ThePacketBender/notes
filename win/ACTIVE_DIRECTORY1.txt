@@ -1,0 +1,64 @@
+ACTIVE DIRECTORY
+
+
+Domain-Naming context
+Distinguished Name (DN)
+Default Top-Level containers of a Domain NC
+Relative DN
+cn=Builtin					 Container for predefined built-in local security groups. Examples include Administrators, Domain Users, and Account Operators.
+cn=Computers				 Default container for computer objects representing member servers and workstations. You can change the default container with the redircmp.exe utility.
+ou=Domain Controllers		 Default organizational unit for computer objects representing domain controllers.
+cn=ForeignSecurityPrincipals Container for placeholder objects representing members of groups in the domain that are from a domain external to the forest.
+cn=LostAndFound 			 Container for orphaned objects. Orphaned objects are objects that were created in a container that was deleted from another domain controller within the same replication period.
+cn=Managed ServiceAccounts 	 Container for managed service accounts. Managed service accounts are a special type of security principal that rotate their own password. For more information on managed service accounts.
+cn=NTDS Quotas 				 Container to store quota objects, which are used to restrict the number of objects a security principal can create in a partition or container.
+cn=Program Data 			 Container for applications to store data instead of using a custom top-level container.
+cn=System 					 Container for miscellaneous domain configuration objects. Examples include trust objects, DNS objects, and group policy objects.
+cn=TPM Devices 				 Container for recovery information for Trusted Platform Module (TPM) keys.
+cn=Users 					 Default container for user and group objects. You can change the default container with the redirusr.exe utility.
+
+Configuration Naming Context
+cn=DisplaySpecifiers 	Container that holds display specifier objects, which define various display formats for the Active Directory MMC snap-ins.
+cn=Extended-Rights 		Container for extended rights (controlAccessRight) objects.
+cn=ForestUpdates 		Contains objects that are used to represent the state of forest and domain functional level changes.
+cn=LostAndFoundConfig 	Container for orphaned objects.
+cn=NTDS Quotas 			Container to store quota objects, which are used to restrict the number of objects that security principals can create in a partition or container.
+cn=Partitions 			Contains objects for each naming context, application partition, and external LDAP directory reference.
+cn=Physical Locations	Contains location objects (physicalLocation), which can be associated with other objects to denote the location of the object.
+cn=Services 			Store of configuration information about services such as the File Replication Service, Exchange, and Active Directory itself.
+cn=Sites 				Contains all of the site topology and replication objects. This includes site, subnet, siteLink, server, and nTDSConnection objects, to name a few.
+cn=WellKnown Security Principals	Holds objects representing commonly used foreign security principals, such as Everyone, Interactive, and Authenticated Users.
+
+
+Event ID Reference
+517/1102 Security Log Cleared
+528/4624 Login Succeeded
+529/4625 Login Failed
+530/4625 Login Failed (time restricted)
+531/4625 Disabled User Account
+532/4625 Account Expired
+533/4625 Login Failed (Wkrst. Restriction)
+534/4625(5461) Login Failed(Method restriction)
+535/4625 Password Expired
+539/4625 Login Failed (Account Locked)
+540/4624 Login Succeeded (Legacy, 2k, 2k3, xp)
+610/4706 Trusted Domain Created
+611/4707 Trusted Domain Removed
+620/4716 Trusted Domain Changed
+624/4720 User Account Created
+626/4722 User Account Enabled
+628/4724 User Account Password Set
+629/4725 User Account Disabled
+630/4626 User Account Deleted
+631,635,648,653,658,663/4728,4731,4744,4749,4754,4759 Group Created
+632,636,650,655,660,665/4728,4732,4746,4751,4756,4761 Group Member Added
+633,638,652,657,662,667/4730,4734,4738,4743,4748,4753 Group Deleted
+639,641,649,654,659,664/4735,4737,4745,4750,4755,4760 Group Changed
+664/4740 User Account Locked (Too Many Login Attempts)
+643/4739 Domain Policy Changed
+647/4743 Computer Deleted
+668/4764 Group Type Changed
+671/4767 User Account Unlocked
+675/4771 Auth Failed-Workstation
+
+ 

