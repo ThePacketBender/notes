@@ -1,0 +1,34 @@
+CORS Attacks
+
+Overview:
+1.Web client sends a request for some resource hosted on an external domain
+2.Web application responds to that request with some content
+3.Web client processes some web application response
+	-if a web client(e.g. browser)-managed Origin header can be manipulated the Origin request HTTP header may be supplied some arbitrary value to force the web application to provide the target arbitrary data
+	-in other cases not otherwise directly accessable content on an internal network may be requested by an attacker providing arbitrary Origin/Referer header information
+
+
+RELEVANT HEADERS
+Request:
+Host
+Origin
+Referer
+Response:
+Access-Control-Allow-Origin
+
+
+Case 1:
+Response: -
+Access-Control-Allow-Origin: *
+	-A wildcard value for any Access-Control-Allow-Origin indicates a vulnerability (insecure configuration)
+	--all domains are allowed to access the server response
+	
+	
+Case 2:
+Request: -
+Referer: https://arbitr.ary/
+Origin: https://arbitr.ary/
+Response: -
+Access-Control-Allow-Origin: https://arbitr.ary/
+	-Referer or Origin values are sometimes reflected in the Access-Control-Allow-Origin response value
+	--any arbitrary domain is then allows to access the server response

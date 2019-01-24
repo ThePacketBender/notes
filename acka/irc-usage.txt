@@ -1,0 +1,76 @@
+IRC	[FREENODE SPECIFIC]
+
+
+/HELP
+/HELP -l
+/HELP COMMAND
+/msg NickServ HELP
+/msg NickServ help COMMAND
+
+Join a server
+/SERVER [-ssl] chat.freenode.net [<port>] [<password>]
+/ADDSERVER chat.freenode.com
+
+!IMPORTANT!
+->Chosing a handle<-
+"I need a handle, man. I don't have an identity until I have a handle." -Joey
+"You know, you're right about that." -PHREAK
+"Alright. How about the Master of Disaster, huh?" -Joey
+"You're hopeless, man, utterly hopeless." -PHREAK
+"Ultra Laser" -Joey
+"Doctor Doom" -Joey
+
+Set a nickname(handle/alias)
+/NICK utterlyhopeless
+
+Register as currently set nickname
+/msg NickServ REGISTER ashorteasypassword utterlyhopeless@Ellingson.com
+
+Login
+/nick utterlyhopeless
+/msg NickServ IDENTIFY ashorteasypassword
+
+Add a currently set nickname to an account
+/msg NickServ GROUP
+Remove a nickname from an account
+/msg NickServ UNGROUP badnick
+Reclaim use of [non-current] nickname
+/msg NickServ GHOST utterlyhopeless ashorteasypassword
+
+get a list of all channels
+/ALLCHAN
+join a channel
+/join #freenode
+
+get a list of users currently on a channel
+/USERLIST
+
+Email registration passwords
+/msg NickServ SENDPASS utterlyhopeless@Ellingson.com
+
+send a message to a user
+/msg PhantomPhreak Phreakphreakphreakphreakphreak, dudedudedudedudedudedude... I gotta... 
+
+get info on current account
+/msg NickServ INFO
+get info on another user's account
+/msg NickServ INFO CerealKiller
+status information
+/msg NickServ STATUS
+list details of all clients currently authenticated as you
+/msg NickServ LISTLOGINS
+
+
+get MOTD
+/TOPIC
+ping nick
+/PING utterlyhopeless
+
+
+get a cloak
+/JOIN #freenode
+what's a user got to do to get a cloak around here?
+[wait...]
+what's a user got to do to get a cloak around here?
+[wait...]
+/QUIT
