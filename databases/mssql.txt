@@ -4,6 +4,22 @@ sqsh
 DEFAULT USERS
 sa
 
+Default/common credentials
+sa/sa
+sa/<blank>
+sa/SQL
+Creds for SALESLOGIX
+sa/SLXMaster
+sa/SLXMa$t3r
+Creds for ACT7
+sa/sage
+Creds for IMPERVA
+<db_username>/secure
+Creds for HPDSS(HP MFP Digital Sending Software)
+sa/Hpdsdb000001
+sa/hpdss
+
+
 METADATA TABLES
 INFORMATION_SCHEMA
 sys*	-catalog views

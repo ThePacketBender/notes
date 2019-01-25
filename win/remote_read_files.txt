@@ -6,9 +6,11 @@ tier 1
 %WINDIR%\win.ini
 	second test file if boot.ini cannot be found/returned
 %SYSTEMROOT%\repair\SAM
+%SYSTEMROOT%\System32\config\SAM
 %SYSTEMROOT%\System32\config\RegBack\SAM
 	stores users' passwords in a hashed format (in LM hash and NTLM hash). The SAM file in \repair is locked, but can be retired using forensic or Volume Shadow copy methods
 %SYSTEMROOT%\repair\system
+%SYSTEMROOT%\System32\config\SYSTEM
 %SYSTEMROOT%\System32\config\RegBack\system
 	key to read SAM hashes in plaintext without cracking
 %WINDIR%\repair\security
@@ -29,6 +31,7 @@ tier 2
 	--iis6 error log
 %SystemDrive%\inetpub\logs\LogFiles
 	--IIS 7’s logs location
+%WINDIR%\debug\NetSetup.log
 %WINDIR%\system32\config\AppEvent.Evt
 %WINDIR%\system32\config\SecEvent.Evt
 %WINDIR%\system32\config\default.sav
@@ -39,3 +42,11 @@ tier 2
 %USERPROFILE%\ntuser.dat
 %USERPROFILE%\LocalS~1\Tempor~1\Content.IE5\index.dat
 %WINDIR%\System32\drivers\etc\hosts
+%WINDIR%\system32\logfiles\httperr\httperr1.log
+%WINDIR%\system32\logfiles\w3svc1\exYYMMDD.log
+
+tier 3 (dir traversal confirmation only)
+%SYSTEMDRIVE%\pagefile.sys
+%SYSTEMDRIVE%\hiberfil.sys
+%SYSTEMDRIVE%\swapfile.sys
+%SYSTEMDRIVE%\AVScanner.ini

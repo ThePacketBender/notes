@@ -1,0 +1,15 @@
+Remote Read Files (Linux)
+
+CONFIRMATION + INFORMATION (expected world-readable) FILES
+/etc/issue
+/etc/motd
+/etc/passwd
+/etc/group
+/etc/resolv.conf
+/etc/mtab
+/etc/inetd.conf
+/var/log/dmessage
+
+CONFIRMATION ONLY (expected root or user readable) FILES
+/etc/shadow
+/root/.bash_history
