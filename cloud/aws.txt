@@ -1,0 +1,310 @@
+AWS
+
+
+AWS-CLI
+aws configure
+	>AWS Access Key ID [None]: key
+	>AWS Secret Access Key [None]: key
+	>Default region name [None]: region, for example us-east-1
+	>Default output format [None]: ENTER
+	-set access credentials for aws-cli
+aws configure list
+	-check the credentials used for the default profile
+aws configure list --profile saanvi
+	-check the credentials of a named profile
+	
+
+EC2
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/hostname
+http://169.254.169.254/latest/meta-data/local-hostname
+http://169.254.169.254/latest/meta-data/public-hostname
+http://169.254.169.254/latest/meta-data/ami-id
+http://169.254.169.254/latest/meta-data/reservation-id
+http://169.254.169.254/latest/meta-data/ami-launch-index
+http://169.254.169.254/latest/meta-data/iam/security-credentials/IAM_USER_ROLE_HERE
+http://169.254.169.254/latest/meta-data/iam/security-credentials/PhotonInstance
+http://169.254.169.254/latest/meta-data/reservation-id
+http://169.254.169.254/latest/meta-data/public-keys/
+http://169.254.169.254/latest/meta-data/public-keys/0/
+http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key
+http://169.254.169.254/latest/user-data
+http://169.254.169.254/latest/user-data/iam/security-credentials/IAM_USER_ROLE_HERE
+http://169.254.169.254/latest/meta-data/iam/security-credentials/dummy
+http://169.254.169.254/latest/dynamic/
+http://169.254.169.254/latest/dynamic/instance-identity/
+
+EC2 Metadata categories
+ami-id				The AMI ID used to launch the instance.	1.0
+ami-launch-index	If you started more than one instance at the same time, this value indicates the order in which the instance was launched. The value of the first instance launched is 0.	1.0
+ami-manifest-path	The path to the AMI manifest file in Amazon S3. If you used an Amazon EBS-backed AMI to launch the instance, the returned result is unknown.	1.0
+ancestor-ami-ids	The AMI IDs of any instances that were rebundled to create this AMI. This value will only exist if the AMI manifest file contained an ancestor-amis key.	2007-10-10
+block-device-mapping/ami	The virtual device that contains the root/boot file system.	2007-12-15
+block-device-mapping/ebsN	The virtual devices associated with Amazon EBS volumes, if any are present. Amazon EBS volumes are only available in metadata if they were present at launch time or when the instance was last started. The N indicates the index of the Amazon EBS volume (such as ebs1 or ebs2).	2007-12-15
+block-device-mapping/ephemeralN		The virtual devices associated with non-NVMe instance store volumes, if any are present. The N indicates the index of each ephemeral volume.	2007-12-15
+block-device-mapping/root	The virtual devices or partitions associated with the root devices, or partitions on the virtual device, where the root (/ or C:) file system is associated with the given instance.	2007-12-15
+block-device-mapping/swap	The virtual devices associated with swap. Not always present.	2007-12-15
+elastic-gpus/associations/elastic-gpu-id	If there is an Elastic GPU attached to the instance, contains a JSON string with information about the Elastic GPU, including its ID and connection information.	2016-11-30
+events/maintenance/history		If there are completed or canceled maintenance events for the instance, contains a JSON string with information about the events. For more information, see Viewing Event History.	2018-08-17
+events/maintenance/scheduled	If there are active maintenance events for the instance, contains a JSON string with information about the events. For more information, see Viewing Scheduled Events.	2018-08-17
+hostname	The private IPv4 DNS hostname of the instance. In cases where multiple network interfaces are present, this refers to the eth0 device (the device for which the device number is 0).	1.0
+iam/info	If there is an IAM role associated with the instance, contains information about the last time the instance profile was updated, including the instance's LastUpdated date, InstanceProfileArn, and InstanceProfileId. Otherwise, not present.	2012-01-12
+iam/security-credentials/role-name	If there is an IAM role associated with the instance, role-name is the name of the role, and role-name contains the temporary security credentials associated with the role (for more information, see Retrieving Security Credentials from Instance Metadata). Otherwise, not present.	2012-01-12
+identity-credentials/ec2/info		[Reserved for internal use only] Information about the credentials that AWS uses to identify an instance to the rest of the Amazon EC2 infrastructure.	2018-05-23
+identity-credentials/ec2/security-credentials/ec2-instance	[Reserved for internal use only] The credentials that AWS uses to identify an instance to the rest of the Amazon EC2 infrastructure.	2018-05-23
+instance-action	Notifies the instance that it should reboot in preparation for bundling. Valid values: none | shutdown | bundle-pending.	2008-09-01
+instance-id		The ID of this instance.	1.0
+instance-type	The type of instance. For more information, see Instance Types.	2007-08-29
+kernel-id		The ID of the kernel launched with this instance, if applicable.	2008-02-01
+local-hostname	The private IPv4 DNS hostname of the instance. In cases where multiple network interfaces are present, this refers to the eth0 device (the device for which the device number is 0).	2007-01-19
+local-ipv4		The private IPv4 address of the instance. In cases where multiple network interfaces are present, this refers to the eth0 device (the device for which the device number is 0).	1.0
+mac				The instance's media access control (MAC) address. In cases where multiple network interfaces are present, this refers to the eth0 device (the device for which the device number is 0).	2011-01-01
+network/interfaces/macs/mac/device-number			The unique device number associated with that interface. The device number corresponds to the device name; for example, a device-number of 2 is for the eth2 device. This category corresponds to the DeviceIndex and device-index fields that are used by the Amazon EC2 API and the EC2 commands for the AWS CLI.	2011-01-01
+network/interfaces/macs/mac/interface-id			The ID of the network interface.	2011-01-01
+network/interfaces/macs/mac/ipv4-associations/public-ip	The private IPv4 addresses that are associated with each public IP address and assigned to that interface.	2011-01-01
+network/interfaces/macs/mac/ipv6s					The IPv6 addresses associated with the interface. Returned only for instances launched into a VPC.	2016-06-30
+network/interfaces/macs/mac/local-hostname			The interface's local hostname.	2011-01-01
+network/interfaces/macs/mac/local-ipv4s				The private IPv4 addresses associated with the interface.	2011-01-01
+network/interfaces/macs/mac/mac						The instance's MAC address.	2011-01-01
+network/interfaces/macs/mac/owner-id				The ID of the owner of the network interface. In multiple-interface environments, an interface can be attached by a third party, such as Elastic Load Balancing. Traffic on an interface is always billed to the interface owner.	2011-01-01
+network/interfaces/macs/mac/public-hostname			The interface's public DNS (IPv4). This category is only returned if the enableDnsHostnames attribute is set to true. For more information, see Using DNS with Your VPC.	2011-01-01
+network/interfaces/macs/mac/public-ipv4s			The Elastic IP addresses associated with the interface. There may be multiple IPv4 addresses on an instance.	2011-01-01
+network/interfaces/macs/mac/security-groups			Security groups to which the network interface belongs.	2011-01-01
+network/interfaces/macs/mac/security-group-ids		The IDs of the security groups to which the network interface belongs.	2011-01-01
+network/interfaces/macs/mac/subnet-id				The ID of the subnet in which the interface resides.	2011-01-01
+network/interfaces/macs/mac/subnet-ipv4-cidr-block	The IPv4 CIDR block of the subnet in which the interface resides.	2011-01-01
+network/interfaces/macs/mac/subnet-ipv6-cidr-blocks	The IPv6 CIDR block of the subnet in which the interface resides.	2016-06-30
+network/interfaces/macs/mac/vpc-id					The ID of the VPC in which the interface resides.	2011-01-01
+network/interfaces/macs/mac/vpc-ipv4-cidr-block		The primary IPv4 CIDR block of the VPC.	2011-01-01
+network/interfaces/macs/mac/vpc-ipv4-cidr-blocks	The IPv4 CIDR blocks for the VPC.	2016-06-30
+network/interfaces/macs/mac/vpc-ipv6-cidr-blocks	The IPv6 CIDR block of the VPC in which the interface resides.	2016-06-30
+placement/availability-zone	The Availability Zone in which the instance launched.	2008-02-01
+product-codes				Marketplace product codes associated with the instance, if any.	2007-03-01
+public-hostname				The instance's public DNS. This category is only returned if the enableDnsHostnames attribute is set to true. For more information, see Using DNS with Your VPC in the Amazon VPC User Guide.	2007-01-19
+public-ipv4					The public IPv4 address. If an Elastic IP address is associated with the instance, the value returned is the Elastic IP address.	2007-01-19
+public-keys/0/openssh-key	Public key. Only available if supplied at instance launch time.	1.0
+ramdisk-id					The ID of the RAM disk specified at launch time, if applicable.	2007-10-10
+reservation-id				The ID of the reservation.	1.0
+security-groups				The names of the security groups applied to the instance. After launch, you can change the security groups of the instances. Such changes are reflected here and in network/interfaces/macs/mac/security-groups.	1.0
+services/domain				The domain for AWS resources for the region.	2014-02-25
+services/partition			The partition that the resource is in. For standard AWS regions, the partition is aws. If you have resources in other partitions, the partition is aws-partitionname. For example, the partition for resources in the China (Beijing) region is aws-cn.	2015-10-20
+spot/instance-action		The action (hibernate, stop, or terminate) and the approximate time, in UTC, when the action will occur. This item is present only if the Spot Instance has been marked for hibernate, stop, or terminate. For more information, see instance-action.	2016-11-15
+spot/termination-time		The approximate time, in UTC, that the operating system for your Spot Instance will receive the shutdown signal. This item is present and contains a time value (for example, 2015-01-05T18:02:00Z) only if the Spot Instance has been marked for termination by Amazon EC2. The termination-time item is not set to a time if you terminated the Spot Instance yourself. For more information, see termination-time.	2014-11-05
+
+EC2 Dynamic Data Categories
+fws/instance-monitoring		Value showing whether the customer has enabled detailed one-minute monitoring in CloudWatch. Valid values: enabled | disabled	2009-04-04
+instance-identity/document	JSON containing instance attributes, such as instance-id, private IP address, etc. See Instance Identity Documents.	2009-04-04
+instance-identity/pkcs7		Used to verify the document's authenticity and content against the signature. See Instance Identity Documents.	2009-04-04
+instance-identity/signature	Data that can be used by other parties to verify its origin and authenticity. See Instance Identity Documents.	2009-04-04
+
+commands
+	Send a Command Using the AWS CLI
+aws ssm send-command --document-name "AWS-RunShellScript" --comment "listing services" --instance-ids "Instance-ID" --parameters commands="service --status-all" --region us-west-2 --output text
+	-retrieve the services running on an instance
+aws ssm list-command-invocations --command-id "command ID" --details
+	-returns the output of the original Send-SSM Command
+	Launching EC2 instances
+aws ec2 run-instances --image-id ami-1a2b3c4d --count 1 --instance-type c3.large --key-name MyKeyPair --security-groups MySecurityGroup
+	-launch an EC2-Classic instance
+aws ec2 run-instances --image-id ami-abc1234 --count 1 --instance-type m4.large --key-name keypair --user-data file://my_script.txt --subnet-id subnet-abcd1234 --security-group-ids sg-abcd1234
+	-launch an instance with user data
+aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-903004f8 --subnet-id subnet-6e7f829e
+	-launch an instance in the specified subnet of a VPC
+	Terminating instances
+aws ec2 terminate-instances --instance-ids i-5203422c
+	Listing Instances
+aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro" --query "Reservations[].Instances[].InstanceId"
+	-filtered query outputs the InstanceId values for each match
+aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"
+	-lists any of your instances that have the tag Name=<Value>
+	Security Groups
+aws ec2 create-security-group --group-name my-sg --description "My security group"
+	-create security group
+aws ec2 describe-security-groups --group-ids sg-903004f8
+aws ec2 describe-security-groups --group-names my-sg
+	-view the initial information for a security group
+aws ec2 authorize-security-group-ingress --group-id sg-903004f8 --protocol tcp --port 3389 --cidr 203.0.113.0/24
+	-add a public CIDR range to a security group 
+aws ec2 authorize-security-group-ingress --group-id sg-903004f8 --protocol tcp --port 22 --cidr 203.0.113.0/24
+aws ec2 authorize-security-group-ingress --group-name my-sg --protocol tcp --port 3389 --cidr 203.0.113.0/24
+	-enable SSH or RDEKTOP to instances in a security group for EC2 or EC2-Classic
+aws ec2 delete-security-group --group-id sg-903004f8
+aws ec2 delete-security-group --group-name my-sg
+	-delete a security group
+	Key Pairs
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+	-create a key pair, use the create-key-pair command with the --query option, and the --output text option to pipe your private key directly into a file
+aws ec2 describe-key-pairs --key-name MyKeyPair
+	-describe a key-pair
+aws ec2 delete-key-pair --key-name MyKeyPair
+	-delete a key-pair
+	
+	
+S3
+wget https://my_bucket.s3.amazonaws.com/path-to-file
+
+Commands
+aws s3 ls s3://my_bucket --no-sign-request --region us-east-2
+	Download s3-stored files
+aws s3 cp s3://my_bucket/my_folder/my_file.ext my_copied_file.ext
+	-copy an object from Amazon S3 to your instance
+aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext
+	-copy an object from your instance back into Amazon S3
+aws s3 sync s3://remote_S3_bucket local_directory
+	-download an entire Amazon S3 bucket to a local directory
+	s3api commands (High-level)
+aws s3api put-bucket-acl --bucket MyBucket --grant-full-control 'emailaddress="user1@example.com",emailaddress="user2@example.com"' --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
+	-grant full control to two AWS users and read permission to everyone
+	-- --acl option to apply predefined access control lists (ACLs) to Amazon S3 objects
+	--identifier for "everyone" comes from a special URI passed as a parameter
+aws s3api put-bucket-acl --bucket MyBucket --grant-read-acp 'URI="http://acs.amazonaws.com/groups/s3/LogDelivery"' --grant-write 'URI="http://acs.amazonaws.com/groups/s3/LogDelivery"'
+aws s3api put-bucket-logging --bucket MyBucket --bucket-logging-status file://logging.json
+	-AWS user granted full control over a log file, all users have read access
+	-- --put-bucket-acl command is also required to grant the Amazon S3 log delivery system (specified by a URI) the permissions needed to read and write the logs to the bucket
+
+	
+Glacier
+*note: all S3 Glacier commands require an --account-id parameter
+aws glacier create-vault --account-id - --vault-name myvault
+	-Create a vault
+aws glacier initiate-multipart-upload --account-id - --archive-description "multipart upload test" --part-size 1048576 --vault-name myvault
+	-Create a multipart upload
+	-aws-cli outputs an upload ID when the operation is complete.
+UPLOADID="19gaRezEXAMPLES6Ry5YYdqthHOC_kGRCT03L9yetr220UmPtBYKk-OssZtLqyFu7sY1_lR7vgFuJV6NtcV5zpsJ"
+	-save upload ID to shell env var for convenience
+aws glacier upload-multipart-part --upload-id $UPLOADID --body chunka --range 'bytes 0-1048575/*' --account-id - --vault-name myvault
+aws glacier upload-multipart-part --upload-id $UPLOADID --body chunkb --range 'bytes 1048576-2097151/*' --account-id - --vault-name myvault
+aws glacier upload-multipart-part --upload-id $UPLOADID --body chunkac --range 'bytes 2097152-3145727/*' --account-id - --vault-name myvault
+	-upload a multi-part file to an s3 glacier in multiple commands
+openssl dgst -sha256 -binary chunka > hash1
+openssl dgst -sha256 -binary chunkb > hash2	
+cat hash1 hash2 > hash12
+openssl dgst -sha256 -binary hash12 > hash12hash
+openssl dgst -sha256 hash12hash
+cat hash12hash hash3 > hash123
+TREEHASH=$(openssl dgst -sha256 hash123)
+aws glacier complete-multipart-upload --checksum $TREEHASH --archive-size 3145728 --upload-id $UPLOADID --account-id - --vault-name myvault
+	-complete a multipart upload by verifying the checksum of the each part appended to the checksum derived from the hash value of the part appended to the cumulative checksum of individuall appended parts preceding it
+aws glacier describe-vault --account-id - --vault-name myvault
+	-check the status of a vault
+
+	
+IAM
+	Create IAM Group
+aws iam create-group --group-name MyIamGroup
+	-create IAM group
+aws iam create-user --user-name MyUser
+	-create an IAM user
+aws iam add-user-to-group --user-name MyUser --group-name MyIamGroup
+	-add a user to a group
+aws iam get-group --group-name MyIamGroup
+	-verify that the MyIamGroup group contains the MyUser
+	Attach IAM managed policy to IAM user
+aws iam list-policies --query 'Policies[?PolicyName==`PowerUserAccess`].{ARN:Arn}' --output text
+	-determine the ARN of the policy to attach
+export POLICYARN=$(aws iam list-policies --query 'Policies[?PolicyName==`PowerUserAccess`].{ARN:Arn}' --output text)
+echo "echo $POLICYARN"
+	-determine the ARN of the policy to attach, store as environment variable
+aws iam attach-user-policy --user-name MyUser --policy-arn arn:aws:iam::aws:policy/PowerUserAccess
+aws iam attach-user-policy --user-name MyUser --policy-arn $POLICYARN
+	-attach a policy to a policy arn
+aws iam list-attached-user-policies --user-name MyUser
+	-check policies attached to an IAM user
+
+STS
+(security token service)
+aws sts assume-role --role-arn arn:aws:iam::123456789012:role/xaccounts3access --role-session-name s3-access-example
+	-assume a role
+	--Typically, you use AssumeRole for cross-account access or federation.
+aws sts get-caller-identity
+	-returns details about the IAM identity whose credentials are used to call the API
+aws sts get-session-token
+	-returns a set of temporary credentials for an AWS account or IAM user
+	-credentials consist of an access key ID, a secret access key, and a security token
+	--Typically, you use GetSessionToken if you want to use MFA to protect programmatic calls to specific AWS APIs like Amazon EC2 StopInstances . MFA-enabled IAM users would need to call GetSessionToken and submit an MFA code that is associated with their MFA device.
+	--Using the temporary security credentials that are returned from the call, IAM users can then make programmatic calls to APIs that require MFA authentication.
+aws sts get-federation-token
+	-returns a set of temporary credentials for an IAM user
+	-credentials consist of an access key ID, a secret access key, and a federation token
+	--A typical use is in a proxy application that gets temporary security credentials on behalf of distributed applications inside a corporate network. Because you must call the GetFederationToken action using the long-term security credentials of an IAM user, this call is appropriate in contexts where those credentials can be safely stored, usually in a server-based application.
+	COMPARISON
+AssumeRole			IAM user or user with existing temporary security credentials	15m | 1hr
+	MFA support		Session Policy Support		*Cannot call GetFederationToken or GetSessionToken.
+GetFederationToken	IAM user or AWS account root user								IAM user: 15m | 36hr | 12hr/Root user: 15m | 1hr | 1hr
+	No MFA support	Session Policy Support		*Cannot call IAM API operations directly. Cannot call AWS STS API operations except GetCallerIdentity. SSO to console is allowed.
+GetSessionToken	IAM user or root user												IAM user: 15m | 36hr | 12hr/Root user: 15m | 1hr | 1hr
+	MFA support		Session Policy Support		*Cannot call IAM API operations unless MFA information is included with the request. Cannot call AWS STS API operations except AssumeRole or GetCallerIdentity. SSO to console is not allowed.
+	
+	
+SNS
+aws sns create-topic --name my-topic
+	-create a topic by name
+aws sns subscribe --topic-arn arn:aws:sns:us-west-2:123456789012:my-topic --protocol email --notification-endpoint saanvi@example.com
+	-subscribe to a topic, notification by email to specified address
+aws sns publish --topic-arn arn:aws:sns:us-west-2:123456789012:my-topic --message "Hello World!"
+	-send a message to all subscribers to a topic
+aws sns list-topics
+	-list available topics for an account
+aws sns list-subscriptions
+	-list topic subscriptions for IAM user
+aws sns unsubscribe --subscription-arn arn:aws:sns:us-west-2:123456789012:my-topic:1328f057-de93-4c15-512e-8bb22EXAMPLE
+	-unsubscribe from a topic
+aws sns delete-topic --topic-arn arn:aws:sns:us-west-2:123456789012:my-topic
+	-delete a topic
+	
+
+SWF
+(Amazon Simple Workflow Service)
+aws swf list-domains --registration-status REGISTERED
+aws swf list-domains --registration-status DEPRECATED
+	-list Amazon SWF domains registered for an AWS account
+aws swf describe-domain --name ExampleDomain
+	-detailed information description about a particular domain
+aws swf register-domain --name MyNeatNewDomain --workflow-execution-retention-period-in-days 0
+	-register a Domain
+	--two required parameters, --name, which takes the domain name to register, and --workflow-execution-retention-period-in-days, which takes an integer to specify the number of days to retain workflow execution data on Domain (max 90 days)
+aws swf deprecate-domain --name MyNeatNewDomain
+	-deprecate a domain
+	--can still see domain, but cannot create new workflow executions or register types on it
+
+
+Cloudtrail
+aws organizations enable-all-features
+aws organizations enable-aws-service-access --service-principal cloudtrail.amazonaws.com
+	-enable cloudtrail for an organization
+aws cloudtrail create-trail --name my-trail --s3-bucket-name my-bucket --is-organization-trail --is-multi-region-trail
+	-create an organization trail that delivers logs from all regions to an existing bucket
+aws cloudtrail create-trail --name my-trail --s3-bucket-name my-bucket --is-organization-trail
+	-create organization trail as a single-region trail
+aws cloudtrail update-trail --name my-trail --is-organization-trail
+	-apply an existing trail to an organization
+aws cloudtrail update-trail --name my-trail --is-multi-region-trail
+	-apply an organization cloudtrail for one region to all regions
+aws --profile devgroup cloudtrail describe-trails
+aws --profile devgroup cloudtrail get-trail-status --name Default
+	-check/describe cloudtrail status
+aws --profile devgroup cloudtrail stop-logging --name Default
+aws --profile devgroup cloudtrail start-logging --name Default
+	-start/top logging on a cloudtrail
+aws logs create-log-group --log-group-name name
+	-create a cloudtrail group
+aws logs describe-log-groups
+	-retrieve log group ARN
+	
+
+	CloudTrail uri Format
+bucket_name/prefix_name/AWSLogs/Account ID/CloudTrail/region/YYYY/MM/DD/file_name.json.gz
+
+
+
+AWS Tests
+nslookup 169.254.169.254
+-nameserver lookup should reveal which AWS region a server is locted in
+
+	
+	
+Refererence
+https://docs.aws.amazon.com/index.html
+https://docs.aws.amazon.com/cli/latest/reference/
+https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+https://docs.aws.amazon.com/general/latest/gr/aws-security-audit-guide.html

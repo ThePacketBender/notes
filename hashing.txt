@@ -1,0 +1,28 @@
+Hashing
+
+Password Hashes
+	MD5 password unsalted
+echo 'password' | md5sum
+	DES password
+openssl passwd -crypt SA password
+	Linux Passwords
+openssl passwd -1 -salt salty password
+mkpasswd -m sha-512 -S salty -s <<< password
+	Blake2 Password hashing
+echo password | b2sum
+	SHA3(Keccack) Password hashing
+printf "password" | openssl dgst -sha3-512
+
+File hashes:
+md5sum file
+b2sum file
+openssl dgst -sha3-512 file
+rhash --sha3-256 file
+
+
+OpenSSL Message digest algorithms
+blake2b512        blake2s256        gost              md4               
+md5               rmd160            sha1              sha224            
+sha256            sha3-224          sha3-256          sha3-384          
+sha3-512          sha384            sha512            sha512-224        
+sha512-256        shake128          shake256          sm3

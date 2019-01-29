@@ -1,5 +1,19 @@
 NMAP NOTES
 	/usr/share/nmap
+	
+	
+Scan with Nmap over Tor
+/etc/init.d/tor start
+	-start tor serevice
+tor-resolve target.dom
+	-test tor service is working
+proxychains4 nmap -sT -PN -n -sV -vv --top-ports 60 111.11.1.11
+	-execute connect scans over tor and test for service version
+	-- -Pn is necessary to prevent sending ICMP packets
+	-- -n prevents dns resolution/Always
+*enable proxy_dns in proxychains.conf to prevent DNS leak
+
+
 
 DNS ZONE TRANSFER
 	nmap --script dns-zone-transfer.nse \
