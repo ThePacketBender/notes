@@ -52,3 +52,25 @@ Configuration functions
 @@MAX_CONNECTIONS
 @@LANGUAGE
 @@DBTS
+
+
+
+System Tables:
+syscolumns
+	Contains one row for every column in every table and view, and a row for each parameter in a stored procedure.
+sysindexkeys
+syscomments
+sysmembers
+sysconstraints
+sysobjects
+sysdepends
+syspermissions
+sysfilegroups
+sysprotects
+sysfiles
+sysreferences
+sysforeignkeys
+systypes
+sysfulltextcatalogs
+sysusers
+sysindexes
