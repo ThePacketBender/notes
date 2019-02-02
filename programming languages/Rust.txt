@@ -1,0 +1,50 @@
+Rust
+
+
+
+https://crates.io/
+	-standard library repostiry
+
+Cargo package manager
+cargo update
+	-install/update dependencies using cargo
+cargo test
+	-run tests included with package
+cargo build
+	-execute debug build for package
+./target/debug/package_name
+	-execute a debug build binary of a package
+cargo build --release
+	-execute a release build for package
+cargo run
+OR
+cargo run package_name
+	-execute a sucessfully built package
+cargo new package_name
+	-create a new Rust-Cargo package
+cargo new package_name --lib
+	-create a new Rust-Cargo that is a library, not a binary executable
+cargo metadata
+
+Tree
+├── Cargo.lock
+├── Cargo.toml
+├── benches
+│   └── large-input.rs
+├── examples
+│   └── simple.rs
+├── src
+│   └── main.rs
+│   ├── bin
+│   │   └── executable.rs
+│   ├── lib.rs
+│   └── main.rs
+└── tests
+    └── integration-tests.rs
+	
+Cargo.toml is about describing your dependencies in a broad sense, and is written by you.
+	-manifest file in which we can specify a bunch of different metadata about our package
+Cargo.lock contains exact information about your dependencies. It is maintained by Cargo and should not be manually edited.
+
+
+RUSTC

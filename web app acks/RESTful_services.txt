@@ -1,0 +1,157 @@
+Restful Services
+
+
+
+Tools:
+Postman - https://www.getpostman.com/downloads/
+Astra	- https://github.com/flipkart-incubator/astra
+
+
+Description Languages/Resource Listings
+WSDL
+	(web service description language)
+enumeration
+	/path/to/name-of-service.wsdl
+
+	
+WADL
+	(web application description language)
+enumeration
+	/path/to/name-of-service.wadl
+
+
+Swagger
+	-json-formatted
+	/path/to/api/v1/name-of-service/swagger.json
+
+
+
+
+>How are sessions authenticated and handled?
+	*NOTE: Authentication is one of the most primary and in my experience commonly exploitable functions in RESTful APIs
+	**which in no suggests the most common Authentication vulnerabilities are easy to exploit; though they should be easy to find instances of during source code review,
+	**since most instances of insecure authentication are the result of non-cryptographic or weak cryptographic PRNGs and hashing algorithms (calls to standard libraries)
+	**or in many cases dependant on easily reversible encodings (JWT, base64 obfuscation elsewhere) for secrecy
+	authentication should be handled by a centralized IdP (Identity Provider); IdP issues authentication tokens
+		-are issued tokens sufficiently complex and random?
+			test for unpredictability
+				-generate and collect many auth tokens, are there any noticeable patterns in generated tokens?
+			-tool: Burp Sequencer
+		is a pseudorandom number generator or hashing function used to generate token values?
+			-pseudorandomly generated tokens:
+				is a cryptographic pseudorandom number generation algorithm used?
+					-vulnerabilties include backtracking (resistence) and prediction (resistance)
+						--backtracking resistence: previously generated bits should be impossible to recover; prediction resistence: future bits should be impossible to predict
+					check with statistical analysis
+						-count the number of 1 bits versus the number of 0 bits OR the distribution of 8-bit patterns
+							--measure of entropy
+						--passing statistical analysis tests does not preclude cryptographic security
+							--it is possible to design cryptographically insecure/weak PRNGs that will in most cases pass statistical analysis testing even with large sample sets
+					to ensure normaly in the result set of auth tokens, compare them with a result set obtained for a reliable sample of equal size:
+						> openssl rand <# bytes> --out outfile.ext
+					Mersenne Twister (MT) is the most commonly implemented non-cryptographic PRNG, check against known MT patterns if generation seems weak/patterned
+						--default PRNG for: C++ (in standard lib since C++11), C++ BOOST, PHP, Python, Ruby, R
+						consists in an internal state (S) consisting of 624 32-bit words
+						Ssub(k+624) = Ssub(k+397) ^ A((Ssub(k) & 0x80000000) | (Ssub(k+1) & 0x7fffffff))
+							-*note: algorithm never combines two bits of S together, only operates on bits of S with constants & (bitwise AND) and | (bitwise OR)
+							-ergo: any future state can be expressed as a bitwise XOR combination of bits from the the initation array state Ssub(1)...Ssub(624)
+							--e.g. Ssub(228+624)=Ssub(882) can be expressed as a function of Ssub(625), Ssub(228) and Ssub(229), Ssub(625) by expression in terms of Ssub(398), Ssub(1) and Ssub(2)
+							--ergo converse is subsequently true: bits fron the initial state cab be expressed as a an XOR of output bits
+					-problem is linear insecurity, algorithm involves operation on only single bits, linear combinations of those bits include max 624 variables
+					-non-linear algorithms also include products (&[AND]-combinations) of bits, which with some same seed allows for up to 2^264 variables
+					--java.util.Random() and Math.random() in java standard libraries are also commonly used and insecure/weak
+					types of cryptographically secure PRNGs (CSPRNG):
+						stream cipher
+						block cipher
+						CSPRNGs by design, e.g. algorithms Yarrow-160 or its improved derivitive Fortuna
+						combination PRNGs, combining several PRNG algorithm privimitives sufficient to remove the detectable non-randomness of each given primitive
+			hashing function-derived algorithms
+				check random-looking values for patterns matching cryptographic hashes
+					-tool: https://github.com/psypanda/hashID
+					-tool: https://code.google.com/archive/p/hash-identifier/
+					does the parameter or context of the response body indicate what the format of the hash value may be?
+						-can MASK a PRINCE rule be written to brute force the plaintext message given a hash value?
+					does tampering with the hashed value return errors?
+						-appending escape characters or sending invalid values (e.g. wrong length or charset for submitting where a hash is expected) return errors
+					does the applications produce valid responses if hashed values replaced with arbitrary valid hash values computed by an attacker
+						-are arbitrary values sent to the server within computed hash values processed by the server?
+							-are those values stored in session variables, a filesystem (is stored data serialized?) or database?
+							-will a message containing escape sequences that is computed to a hashed value be processed as a sequence escaping into operation?
+								-SSTI?
+								*any system doing this will depend upon a (likely relatively small) fixed number of pre-computed hashed message values
+		-test for other paramater modifications to recieve session tokens without properly authenticating
+	access control decision should be taken locally by REST endpoints
+		can any requests be directly accessed?
+				--do any of these constitute information disclosure vulnerabilties?
+			prior to or without authentication?
+			redirecting to an authentication page?
+				does the resulting url for the authentication page contain an open redirect?
+		-test for parameter modification if direct access is forbidden
+	Is BASIC AUTH in use?
+		APIs should support standard AUTH (JWT, OAUTH, &c)
+	Deriving session identification from cookies or headers (or local/sessionStorage)
+		What parts of the Session ID are static?
+			What portions of the Session ID are static for replicated authentication conditions?
+		What information can be deduced from the structure of the Session ID?
+			What patterns are present in Session ID struture and/or within (possibly even between) derivative partial structures  
+		What sensetive information is stored in the Session ID?
+	Does the authentication function have a max retry limit?
+>JWT (JSON WEB TOKENS)
+	Unsecure JWT
+		--not protected by a signature or MAC
+			{"alg":"none"}
+		-can the signature or MAC be brute-forced?
+		*signatures should be preferred over MACs for integrity protection
+			--a random complicated key should be in use to make brute forcing a JWT resource-intensive
+	Is the algorithm extracted from the payload?
+		-If MACs are used for integrity protection, every service that is able to validate JWTs can also create new JWTs using the same key
+			--ergo: all services using the same key have to mutually trust each other
+			--ergo: compromise of any service also compromises all other services sharing the same key
+		-algorithm should be forced on the backend (preferably HS256 or RS256)
+	Does a relying party or token consumer validate JWT by verifying its integrity and claims contained
+		--this is the most secure configuration
+		-else may rely on the information of the JWT header to select the verification algorithm
+			--this is an insecure configuration
+	Standard Claims that should be verified:
+		'iss' or issuer - is this a trusted issuer? Is it the expected owner of the signing key?
+		'aud' or audience - is the relying party in the target audience for this JWT?
+		'exp' or expiration time - is the current time before the end of the validity period of this token?
+		'nbf' or not before time - is the current time after the start of the validity period of this token?
+	Does a decoded JWT contain any information that should not be or is redundantly stored on the client system?
+		Is this sensitive information?
+	How long does the token live?
+		-TTL or RTTL should be as short as possible
+		tokens with long lifespans may allow csrf attacks or may be returned to an attacker in an xss payload
+	-tool: https://github.com/lmammino/jwt-cracker
+	-tool: https://github.com/mike-engel/jwt-cli
+	-tool, burp extension: https://github.com/mvetsch/JWT4B
+	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
+>OAUTH
+	Is redirect_uri validated on the server-side?
+		-only whitelisted URLs should validate
+		Can the IP be spoofed using an arbitrary X-Forwarded-For: Header value?
+	Does OAUTH exchange for code or token?
+		-always prefer code over tokens
+			--don't allow response_type=token
+	Is the state parameter used with a random hash on the OAuth authentication process?
+		-else CSRF attacks may be possible
+	Are the default scope and validate scope parameters defined for each application?
+	Replay attacks?
+	Session fixation?
+	XML Signature wrapping?
+>API Keys
+	Is the API key required for every request to each protected endpoint?
+	Is HTTP response code 429 "Too Many Requests" ever returned while rapidly making requests?
+	Is an API key revocation functionality in place?
+		-does it strictly comply with application's usage agreement?
+>SSL
+	Is the application also hosted as plaintext?
+	Is the HSTS header sent in HTTP responses?
+	Is certificate-pinning enabled for the FQDN?
+>IDOR
+	(Insecure Direct Object Reference)
+	*common to find endpoints that don't perform authorization checks that should
+		e.g. /something/api/v1/service_name/users/666/
+		*GET Requests may allow access to sensetive user information
+		*POST requests are more likely to allow manipulating user information
+		
