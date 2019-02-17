@@ -112,6 +112,14 @@ Privilege Escalation
 get-hotfix | Sort-Object HotfixID |format-table
 	-enumerate patch levels (alternatively: wmic qfe get)
 
+	
+Local Network Enumeration
+Get-NetTCPConnection
+	-enumerate localhost connections (like netstat)
+Get-NetNeighbor
+Find-NetRoute 192.168.1.101
+Test-NetConnection -Port 80 -ComputerName 192.168.1.111
+	-simple port scan
 
 	
 LINKS, COME GET YOUR LINKS! READ ALL ABOUT IT!

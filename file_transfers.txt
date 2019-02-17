@@ -1,0 +1,68 @@
+file transfers
+
+TFTP
+HOSTING
+atftpd --daemon --port 69 /var/www/html
+RETRIEVING
+	WIN
+tftp -i 10.10.10.111
+	NIX
+tftp 10.10.10.111
+
+>get file
+>get file localfilename
+>put file
+>put file remotefilename
+>mode [ascii|binary]
+	-default mode ascii
+>connect hostname
+
+
+FTP
+HOSTING
+sudo apt-get install pure-ftpd
+groupadd ftp
+useradd -g ftp -d /dev/null -s /etc ftper
+pure-pw useradd ftper -u ftper -d /var/www/
+pure-pw mkdb
+cd /etc/pure-ftpd/auth
+ln -s ../conf/PureDB 60pdb
+mkdir -p /var/www/ftp
+chown -R ftper:ftp /var/www/ftp
+/etc/init.d/pure-ftpd start
+RETRIEVING
+	WIN
+ftp 10.10.10.111
+	NIX
+ftp 10.10.10.111
+update-alternatives --list ftp
+OR
+sudo apt-get install filezilla
+
+>get file
+>put file
+>dir
+>cd dir
+>passv
+
+	WIN ftp non-interactive
+echo 'open 10.10.10.111 21'>ftp.txt
+echo 'USER ftper'>>ftp.txt
+echo 'ftp'>>ftp.txt
+echo 'bin'>>ftp.txt
+echo 'GET file.exe'>ftp.txt
+echo 'bye'>>ftp.txt
+ftp -v -n -s:ftp.txt
+
+
+SMB/SAMBA
+sudo apt-get install samba
+groupadd smb
+useradd -g smb -d /dev/null -s /etc smber
+smbpasswd -a username
+(add to) /etc/samba/smb.conf
+[www]
+	comment = webroot share
+	path = /etc/www
+	read only = yes
+	browsable = yes

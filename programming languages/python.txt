@@ -1,0 +1,14 @@
+PYTHON
+
+
+compile python
+	NIX
+pip install py_compile
+python -m py_compile file.py
+pip install pyinstaller
+pyinstaller file.py
+	WIN (on NIX, cross-compile)
+wget https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi
+wine msiexec /i python-2.7.9.amd64.msi /qb
+python -m pip install pyinstaller
+c:\Python27\Scripts\pyinstaller.exe file.py
