@@ -1,4 +1,4 @@
-Google Cloud
+Google Cloud Platform (GCP)
 
 
 requires header Metadata-Flavor: Google OR X-Google-Metadata-Request: True
@@ -20,3 +20,79 @@ http://metadata.google.internal/computeMetadata/v1beta1/instance/service-account
 	-Get access token
 http://metadata.google.internal/computeMetadata/v1beta1/instance/attributes/kube-env?alt=json
 	-kubernetes
+
+
+GCP Buckets/Google Storage
+
+Enumeration
+
+HEAD https://www.googleapis.com/storage/v1/b/BUCKET_NAME HTTP/1.1
+-400/404/4xx response indicates that a bucket does not exist
+
+Google Storage TestIamPermissions API can be used to determine level of access (if any) to target bucket [authenticated or unauthenticated].
+—A bucket that grants the “storage.objects.list” permission to “allUsers” would output the message “UNAUTHENTICATED LISTABLE (storage.objects.list)
+
+GCP Storage Privesc
+
+For any buckets found, check what privileges were granted to “allUsers” or “allAuthenticatedUsers” by using the TestIamPermissions API as both an authenticated and unauthenticated user.
+
+If it was found that they had permission to write to the bucket policy (storage.buckets.setIamPolicy), we would have privilege escalation.
+—Privesc is possible from unathenticated access if “allAuthenticatedUsers” group is a member of the role “roles/storage.legacyBucketOwner”
+legacyBucketOwner Role permissions:
+storage.buckets.get
+storage.buckets.getIamPolicy
+storage.buckets.setIamPolicy
+storage.buckets.update
+storage.objects.create
+storage.objects.delete
+storage.objects.list
+—“storage.objects.getIamPolicy” and “storage.objects.setIamPolicy” permissions may omitted because they will throw an error on any bucket that is setup to disable object-level permissions, but for buckets that enable object-level permissions, those values can be included
+
+storageAdmin Role permissions:
+firebase.projects.get
+resourcemanager.projects.get
+resourcemanager.projects.list
+storage.buckets.create
+storage.buckets.delete
+storage.buckets.get
+storage.buckets.getIamPolicy
+storage.buckets.list
+storage.buckets.setIamPolicy
+storage.buckets.update
+storage.objects.create
+storage.objects.delete
+storage.objects.get
+storage.objects.getIamPolicy
+storage.objects.list
+storage.objects.setIamPolicy
+storage.objects.update
+
+gsutil iam ch group:allAuthenticatedUsers:admin gs://BUCKET_NAME
+—add allAuthenticatedUsers to admin group on bucket (if storage.buckets.setIamPolicy or storage.objects.setIamPolicy permissions are granted) to expand user permissions to those of storageAdmin
+—“ch” command appends to instead of overwriting the policy
+—“gsutil iam ch” command requires permission to read the target bucket’s policy, because it first reads the policy, then adds your addition to it, then writes the new policy
+—if have policy write permissions, but not policy read permission directly overwrite the existing policy rather than using “ch” *-> risk causing errors in environment by revoking access to an account role used by a service that depends of it
+-invoking the “storage.buckets.delete” privilege may allow a user to delete a bucket, then create a bucket of the same name on an attacker-owned GCP account to steal the name (thereby exploit applications pulling resources from target GCP bucket)
+
+
+
+
+https://github.com/RhinoSecurityLabs/GCPBucketBrute
+python3 gcpbucketbrute.py -k target -s 5 -u -o out.txt
+—Scan for buckets using “target” as the keyword, using 5 concurrent subprocesses(default), never prompting for authentication and outputting results to out.txt
+python3 gcpbucketbrute.py -k target -f sa.pem
+—scan for “target” buckets authenticating with a GCP service account whose credentials are stored in sa.pem
+
+
+
+IAM
+
+https://www.googleapis.com/storage/v1/b/BUCKET_NAME/iam/testPermissions?permissions=storage.objects.list
+—test_iam_permissions API calls not supported by gsutil, but is supported by Google Storage Python library 
+
+gsutil iam get gs://BUCKET_NAME
+—read the bucket policy, receive a valid response when pulling the bucket policy if “allUsers” or “allAuthenticatedUsers” are allowed to read the bucket policy, else returns access denied
+
+
+gsutil
+-cli GCP

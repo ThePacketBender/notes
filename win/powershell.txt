@@ -99,6 +99,7 @@ PS C:\> Get-ChildItem "C:\Users\" - recurse -include *passwords*.txt
 	
 ACTIVE DIRECTORY ENUMERATION
 Get-ADGroupMember -Credential $cred -server master.local "Domain Admins"
+Get-NetComputer -UnConstrained
 
 
 WORKGROUP/Local Network Enumeration
@@ -120,6 +121,8 @@ Get-NetNeighbor
 Find-NetRoute 192.168.1.101
 Test-NetConnection -Port 80 -ComputerName 192.168.1.111
 	-simple port scan
+Test-NetConnection 10.10.11.111 -Port 445 -quiet
+       -Port scan outputs connection attempt as BOOL value, good for building conditional statements around in scripts
 
 	
 LINKS, COME GET YOUR LINKS! READ ALL ABOUT IT!

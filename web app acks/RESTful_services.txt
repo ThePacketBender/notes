@@ -23,6 +23,16 @@ enumeration
 Swagger
 	-json-formatted
 	/path/to/api/v1/name-of-service/swagger.json
+Swagger-Tools
+https://www.getpostman.com/
+https://portswigger.net/bappstore/6bf7574b632847faaaa4eb5e42f1757c
+https://github.com/RhinoSecurityLabs/Swagger-EZ
+https://editor.swagger.io/
+(Conversion tools)
+https://apimatic.io/transformer
+https://openapi.tools/
+
+
 
 
 

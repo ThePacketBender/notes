@@ -79,3 +79,61 @@ Vulnerable Response:
 succesful access to http-hosted enumeratedservice or error for processing declarations
 	-in the later case read access is enumerated, but discovered service formatting cannot be processed
 		--unprocessed formats may included various markdown, non-html markup, compressed or git format files
+
+
+LOCAL DTD
+
+
+
+ENCODED XML
+	-bypass WAFs by encoding xml
+echo -n '<?xml version="1.0" encoding="UTF-16BE"' >dtd.xml
+echo '?><a>31337</a>' | iconv -f UTF-8 -t UTF-16BE >>dtd.xml
+		--transcode a message body into UTF-16BE without a BOM [explanation follows] following a legal & expected ASCII XML declaration falsely declaring document encoding as UTF-16BE
+	--cat dtd.xml | xxd
+	---plaintext of encoding should appear to seperate standard unicode characters with '.' as a delimiter and hex representation should appear as a 16-bit character representation consisting of an 8-bit ascii character value followed by an 8-bit null value
+		---UTF-16 Big Endian, therefore represents U+003F as 0x003F (00000000 00111111), operations beginning most significant WORD (byte-pair) 0x00 (00000000) in natural order -high byte transfered first-, which is therefore followed by (lower-addressed byte) 0x3f as 0x3f00; UTF-16LE would invert the ordering of a byte-pair sequence (lower byte preceding higher byte) as 0x003f
+		---exceptions in both encoding being made for 4-byte surrogate pairs combining two common symbols from the reserved range U+D800 to U+DFFF one half (WORD/byte-pair) of which is not valid
+			---In a surrogate pair each of the characters is inverted singly. This is designed for backwards compatibility with Unicode 1.0, where all symbols were encoded using two bytes only.
+Parsers (WAFs in this case) detect an encoding in four ways:
+	External information of encoding
+		--generally for protocols built on the MIME standard (SMTP, HTTP, WebDav)
+	Byte Order Mark (BOM)
+		--a character with U+FEFF code
+		---If a parser finds a BOM at the beginning of the document, then an encoding is determined by the binary code of the BOM
+		Encoding 	BOM 									Example 	
+		UTF-8 		EF BB BF 	EF BB BF 3C 3F 78 6D 6C 				...<?xml
+		UTF-16BE 	FE FF 		FE FF 00 3C 00 3F 00 78 00 6D 00 6C 	...<.?.x.m.l
+		UTF-16LE 	FF FE 		FF FE 3C 00 3F 00 78 00 6D 00 6C 00 	..<.?.x.m.l.
+		---BOM only works at the beginning of the document. In the middle a BOM will be read as a special space
+	By the first symbols of the document
+		Encoding 	Document 	
+		UTF-8
+		ISO 646
+		ASCII 		3C 3F 78 6D 	<?xm
+		UTF-16BE 	00 3C 00 3F 	.<.?
+		UTF-16LE 	3C 00 3F 00 	<.?.
+		--only works for documents that start with an xml declaration
+	From XML declaration
+		<?xml version="1.0" encoding="UTF-8"?>
+		--in order to read the declaration, a parser will have to know the encoding in which the declaration was written
+		---declaration is useful to clarify between ASCII-compatible encodings
+cat original.xml | iconv -f UTF-8 -t UTF-16BE > dtdencoded.xml
+	--transcode a message body into UTF-16BE without a BOM
+encode a document using two encodings simultaneously
+	--when a parser reads an encoding from the XML-declaration, the parser immediately switches to it
+		---WAFs don’t support parsing of such multi-encoded documents for now
+an xml parser may or may not switch which encoding it's interpreting immediately after reading an encoding attribute delcaration later at the end of the element
+	E.g. parses at end of declaration element (Xerces2 [Java Parser]):
+		echo -n '<?xml version="1.0" encoding="UTF-16BE"?>' > payload.xml
+		echo '<a>1337</a>' | iconv -f UTF-8 -t UTF-16BE >> payload.xml
+	E.g. parses at end of encoding attribute (libxml2):
+		echo -n '<?xml version="1.0" encoding="UTF-16BE"' > payload.xml
+		echo '?><a>1337</a>' | iconv -f UTF-8 -t UTF-16BE >> payload.xml
+	--A parser may be capabale of using many different encodings, check library source code to troubleshoot exploitation attempts with encoded payloads
+	---UTF-7 and UTF-16 most commonly known encoding by parsers (other than ASCII and UTF-8, of course)
+
+
+Character Data (CDATA) vs Parsed Character Data (PCDATA)
+PCDATA is text that WILL be parsed by a parser. The text will be examined by the parser for entities and markup.
+CDATA is text that will NOT be parsed by a parser.

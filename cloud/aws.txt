@@ -210,6 +210,40 @@ aws iam attach-user-policy --user-name MyUser --policy-arn $POLICYARN
 	-attach a policy to a policy arn
 aws iam list-attached-user-policies --user-name MyUser
 	-check policies attached to an IAM user
+AWS-CLI credential storage file locations:
+*nix
+/home/USERNAME/.aws/credentials
+/root/.aws/credentials
+WIN
+C:\Users\USERNAME\.aws\credentials
+**also check (*nix:) ‘export -p’, ‘cat */.env’ (WIN:) ‘env’, ‘dir / .env | type ‘
+AWS Privesc Roles:
+iam:AddUserToGroup
+iam:AttachGroupPolicy
+iam:AttachRolePolicy
+iam:AttachUserPolicy
+iam:CreateAccessKey
+iam:CreatePolicyVersion
+iam:CreateLoginProfile
+iam:PassRole
+iam:PutGroupPolicy
+iam:PutRolePolicy
+iam:PutUserPolicy
+iam:SetDefaultPolicyVersion
+iam:UpdateAssumeRolePolicy
+iam:UpdateLoginProfile
+sts:AssumeRole
+ec2:RunInstances
+lambda:CreateEventSourceMapping
+lambda:CreateFunction
+lambda:InvokeFunction
+lambda:UpdateFunctionCode
+dynamodb:CreateTable
+dynamodb:PutItem
+glue:CreateDevEndpoint
+glue:UpdateDevEndpoint
+cloudformation:CreateStack
+datapipeline:CreatePipeline
 
 STS
 (security token service)
@@ -301,6 +335,18 @@ AWS Tests
 nslookup 169.254.169.254
 -nameserver lookup should reveal which AWS region a server is locted in
 
+
+AWS Tools:
+Pacu (AWS Exploitation Framework)
+python3 pacu.py
+top modules-
+confirm_permissions – Enumerates a list of confirmed permissions for the current account
+privesc_scan – Abuses 20+ different privilege escalation methods to gain further access
+cloudtrail_csv_injection – Injects malicious formulas into CloudTrail CSV exports
+disrupt_monitoring – Targets GuardDuty, CloudTrail, Config, CloudWatch, and VPC to disrupt various monitoring and logging capabilities
+backdoor_users_[keys/passwords] – Establish backdoor account access by adding credentials to other IAM user accounts
+sysman_ec2_rce – Abuses the AWS Simple Systems Manager to try and gain root (Linux) or SYSTEM (Windows) level remote code execution on various EC2 instances
+backdoor_ec2_sec_groups – Adds backdoor rules to EC2 security groups to give you access to private services
 	
 	
 Refererence

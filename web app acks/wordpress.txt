@@ -1,0 +1,96 @@
+WORDPRESS
+
+.htaccess
+favicon.ico
+index.php
+license.txt
+readme.html
+wp-activate.php
+wp-blog-header.php
+wp-comments-post.php
+wp-config.php
+wp-config-sample.php
+wp-cron.php
+wp-links-opml.php
+wp-load.php
+wp-login.php
+wp-mail.php
+wp-settings.php
+wp-signup.php
+wp-trackback.php
+xmlrpc.php
+\cgi-bin
+\css
+\wp-admin
+	\css
+	\images
+	\include
+\wp-content
+	debug.log
+	index.php
+	\gallery
+	\language
+		--stores language files for non-english WordPress sites
+	\plugins
+		\akismet
+			.htaccess
+			LICENSE.txt
+			akismet.php
+			\_inc
+			\views
+	\themes
+		index.php
+		\twentynineteen
+	\upgrade
+		--temporary folder created by WordPress during upgrade to a newer version
+	\uploads
+		--stores image and media uploads
+		\year
+			\month
+	\w3tc-config
+\wp-includes
+	cache.php
+		--handles the processes of adding and removing data from the cache
+	links.php
+		--includes functions that power WordPress’ links feature
+	functions.php
+	version.php
+	\certificates
+	\fonts
+	\js
+	\theme-compat
+	\widgets
+\wp-json
+	\wp
+		\v2
+			\users
+				\0
+			
+
+.htaccess
+	Unaltered wordpress .htaccess file:
+		# BEGIN WordPress
+		&lt;IfModule mod_rewrite.c&gt;
+		RewriteEngine On
+		RewriteBase /
+		RewriteRule ^index\.php$ - [L]
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteCond %{REQUEST_FILENAME} !-d
+		RewriteRule . /index.php [L]
+		&lt;/IfModule&gt;
+		# END WordPress
+
+		
+wp-config.php
+	// ** MySQL settings - You can get this info from your web host ** //
+	/** The name of the database for WordPress */
+	define('DB_NAME', 'notarealname');
+	/** MySQL database username */
+	define('DB_USER', 'notarealuser');
+	/** MySQL database password */
+	define('DB_PASSWORD', 'notarealpassword');
+	/** MySQL hostname */
+	define('DB_HOST', 'localhost');
+important read target lines
+	
+	
