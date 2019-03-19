@@ -8,6 +8,8 @@ WINDOWS COMMANDS
 			ThePacketBender
 		\<3\<3\<3\<3\<3\<3\<3\
 
+https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
+		
 BASIC
 systeminfo
 ver

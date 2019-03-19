@@ -42,6 +42,8 @@ system resources
 	disk
 df
 df /dev/sda1
+du
+btrfs fi df /dev/sdb1
 mount /dev/sdb /user
 	memory
 vmstat

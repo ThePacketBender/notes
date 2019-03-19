@@ -61,7 +61,19 @@ inviteflood eth0 <target_extension> <target_domain> <target_ip number_of_packets
 	--target sip gateways/proxies and sip phones
 
 
+Asterisk
+asterisk -rx "<command>"
+	--issue a command to Asterisk from the shell
+asterisk -rx "channel originate SIP/<trunk>/<number> application echo"
+	--originate an echo call from a SIP trunk on an Asterisk server to a specified number
+asterisk -rx "sip show peers"
+	--print details of SIP accounts
+asterisk -rx "sip show users"
+	--print passwords of SIP accounts
+asterisk -rx "core show channels"
+	--print current active channels
 
+	
 
 Signaling Protocols
 ITU-T H.323

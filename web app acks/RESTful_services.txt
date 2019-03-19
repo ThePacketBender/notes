@@ -140,6 +140,8 @@ https://openapi.tools/
 	Is redirect_uri validated on the server-side?
 		-only whitelisted URLs should validate
 		Can the IP be spoofed using an arbitrary X-Forwarded-For: Header value?
+		OAUTH open redirect example exploit:
+			http://target.dom/endpoint?redir=http://attacker.dom/target.dom
 	Does OAUTH exchange for code or token?
 		-always prefer code over tokens
 			--don't allow response_type=token

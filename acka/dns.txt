@@ -5,18 +5,23 @@ nslookup
 >server ns1.google.com
 >google.com
 
-dig
-dig sub.domain.ext PTR
+Enumeration
+dig sub.domain.name PTR
+whois domain.name
+host -a domain.name
+dnsenum domain.name
 
-whois google.com
-
-host -a google.com
+Enumerate Name Server(NS) for domain
+host -t ns domain.name
 
 Zone-transfer
-perl fierce.pl -dns google.com
-host -t axfr domain.name dns-server
-dig axfr @dns-server domain.name
+perl fierce.pl -dns domain.name
+host -t axfr domain.name ns1.namesever.dom
+dig axfr @ns1.namesever.dom domain.name
 dnswalk -r -d example.com
+host -l domain.name ns1.namesever.dom
+nmap --script dns-zone-transfer.nse --script-args dns-zone-transfer.domain=target.dom target.dom -p 53,80,443
+dnsrecon -d domain.name -t axfr
 
 Subdomain Brute forcing
 perl fierce.pl -dns google.com hosts.txt
@@ -32,8 +37,86 @@ sublist3r -d google.com
 
 
 
-A Records- Maps an IP Address to a hostname.For e.g. 74.125.236.80 for google.com.
-NS Records-Delegates a given zone to use the given authoritative nameserver. For e.g. ns1.google.com is an authoritative nameserver for google.com
-MX Records-This basically tells us which server is responsible for receiving mails sent to that domain name.
-TXT Records-This consists of arbitrarily human readable text in a record.
-CNAME Records- Gives an alias of one name to another.
+Tools Listing
+sublist3r
+fierce.pl
+dnswalk
+dnsrecon
+subbrute.py
+	python subbrute.py google.com -o google.names
+	python subbrute.py -t domainslist.txt
+dnsmap
+dnsmap-bulk.sh
+altdns
+	https://github.com/infosec-au/altdns
+	python altdns.py -i subdomains.txt -o data_output -w words.txt -r -s results_output.txt
+Amass
+	https://github.com/OWASP/Amass.git
+	amass -d domain.name
+		--basic use, includes reverse DNS lookups and name alterations
+	amass -src -ip -brute -min-for-recursive 3 -d domain.name
+		---https://github.com/OWASP/Amass/blob/master/doc/user_guide.md
+aquatone
+ffuf
+subfinder
+subjack
+waybackurls
+inception
+
+
+
+A Records - Maps an IP Address to a hostname.For e.g. 74.125.236.80 for google.com.
+AAAA Records - Similar to the A record, but allowed to point the domain to an Ipv6 address.
+AFSDB Records - Location of AFS cell database server or DCE cell’s authenticated server.
+ATMA Records - Maps domain name to ATM address.
+CAA Records - Authorize specific third party vendors to issue SSL certificates on behalf of domains. Requires CAs to check for the presence of a CAA record and, if one is found, verify that they are authorized prior to issuing certificates for this domain. If a CAA record is not present the CA can issue a certificate for the domain.
+CERT Records - CERT resource records are used for storing certificates in DNS. CERT records store and provide information that involves verifying the authenticity of the sending and receiving parties.
+CNAME Records - (Canonical NAME) gives an alias of one name to another; records map an alias name to a Fully Qualified Domain Name (FQDN).
+DNAME Records - DNAME records make a CNAME record for every subdomain of a domain and point it to another.
+DNSKEY Records - Cryptographic method for declaring configuration for security in DNSSEC.
+HINFO Records - Identifies host hardware and OS type.
+ISDN Records - Maps host name to ISDN address(phone number).
+NAPTR Records - Map telephone numbers and email addresses for VoIP users to SIP servers via SRV records to initiate calls.
+NS Records - Delegates a given zone to use the given authoritative nameserver configured to respond to queries against a particular domain name. For e.g. ns1.google.com is an authoritative nameserver for google.com
+MX Records -(Mail Exchanger) directs email to a particular mail server. Like a CNAME, MX Entries must point to a domain and never point directly to an IP address.
+	MB - Associates host with specified mailbox [experimnetal]
+	MG - Associates host name with mail group [experimental]
+	MINFO - Specifies mailbox name responsible for mail group [experimental]
+	MR - Specifies mailbox name that is proper rename of other mailbox [experimental]
+PTR Records - Maps address to a host name for reverse lookup.
+SOA Records - (Start of Authority) record can show the primary name server for the domain name, the serial number (when the last revision was made to the DNS configuration for the zone if it's shown in the correctly specified date format), and other pertinent information relating to how the zone is run by the administrator.
+	RP - (Responsible person) is an email address of whom to contact in the event of a misconfiguration or some other issue relating to the DNS zone. Contained within SOA Record.
+	RT - Specifies intermediate host that routes packets to destination host
+		X.25 - Maps host name to X.121 address (X.25 networks)
+TXT Records - Originally intended to consist of arbitrarily human readable text in a record. Are dynamic and can be used for several purposes.
+	SPF - (Sender Policy Framework) records; records used by mail systems to help identify if an email is coming from a trusted source, helping filter out spam or messages pretending to be from some domain(spoofing).
+		---https://www.openspf.net/
+	DKIM - (DomainKeys) used to verify that email directed from a trusted source.
+		---https://www.dkim.org/
+SRV Records - (Service) record points one domain to another domain name using a specific destination port. SRV records allow specific services, such as VOIP or IM, to be be directed to a separate location. Commonly SIP and XMPP (chat) servers
+WINS Records - Allows lookup of host portion of domain name through WINS server.
+WINS-R Records - Reverses lookup through WINS server.
+WKS Records - Describes services provided by specific protocol on specific port.
+
+Glossary
+Zone File:
+    Where all the DNS records are stored for a domain.
+Host Record:
+    Domain or subdomain used. The @ symbol is used to indicate the root domain itself.
+Points to:
+    Destination server that the domain or subdomain is sending the traffic to.
+TTL:
+    'Time to live' value indicates amount of time a record is cached by DNS Server. Sefault (and lowest accepted) value is 14400 seconds (4 hours).
+Action:
+    Allows modification or removal f existing records.
+Weight:
+    Priority, controls the order in which multiple records are used. Records are grouped with other records that have the same Priority value. As with MX Entries, lower numbers are used before higher numbers.
+		--Weight are determined by preference numbers in the rance 0-65535
+
+	
+Regional Authorities and in-addr.arpa
+	African Network Information Center (AfriNIC)
+    American Registry for Internet Numbers (ARIN)
+    Asia-Pacific Network Information Center (APNIC)
+    Latin America and Caribbean Network Information Center (LACNIC)
+    NCC Reseaux IP Europeens Network Coordination Center (RIPE)

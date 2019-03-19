@@ -1,0 +1,18 @@
+Printer Exploitation
+
+
+CUPS Commands
+http://localhost:631 (browser)
+	--manage printers through CUPS
+lp myfile.txt
+	--rint file from command line
+lpq
+	--display print queue
+lprm 545
+	--remove print job from queue
+/var/log/cups
+	--log location
+cupsreject printername
+	--Reject new jobs
+cupsaccept printername
+	--Accept new jobs

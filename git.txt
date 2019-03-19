@@ -39,3 +39,13 @@ git diff [first-branch]...[second-branch]
 	-shows content differences between two branches
 git show [commit]
 	-outputs metadata and content changes of the specified commit
+
+	
+Exploitation Tools:
+GitLeaks
+	https://github.com/zricethezav/gitleaks.git
+gitleaks --repo=https://github.com/gitleakstest/gronit -v
+gitleaks --repo=https://github.com/gitleakstest/gronit --report=gronit_results.csv
+gitleaks --github-org=gitleakstestorg
+gitleaks --github-user=gitleakstest
+gitleaks -l /path/to/repo --report=/home/usr/repo_results.csv

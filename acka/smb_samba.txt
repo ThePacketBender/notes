@@ -1,3 +1,5 @@
+SMB/SAMBA/CIFS
+
 	SMB/rtc/microsoft-ds
 smbclient -L 192.168.1.111 -U administrator -N
 	-make smb fileshare login request as -U parameter without attempting password to try enumerating sharenames, servers and workgroups
@@ -16,21 +18,65 @@ smb: \> commands
 	get filename -download file
 	put filename -upload file
 	
-
+Enumerate Hostnames
 nbtscan 192.168.1.0/24
 nmblookup -A 10.11.1.10
 	-status return <03> is currently logged-in user
+
+List Shares
+smbmap -H 192.168.1.111
+smbmap -H [ip] -d [domain] -u [user] -p [password]
+smbclient -L //192.168.1.111/
+nmap -sV --script smb-enum-shares -p 139,445 192.168.1.111
+
+Null Session Enumeration
+smbmap -H 192.168.1.111
+rpcclient -U "" -N 192.168.1.111
+smbclient \\\\192.168.1.111\\$IPC
+
+Version Detection
+nmap -sV -p 139,445 192.168.1.111
+From Pane 1:
+ngrep -i -d tap0 's.?a.?m.?b.?a.*[[:digit:]]' port 139
+	OR
+ngrep -i -d tap0 's.?a.?m.?b.?a.*[[:digit:]]' port 445
+From Pane 2:
+echo exit | smbclient -L 192.168.1.111
+echo <<EOF > smbver.share
+if [ -z $1 ]; then echo "Usage: ./smbver.sh RHOST {RPORT}" && exit; else rhost=$1; fi
+if [ ! -z $2 ]; then rport=$2; else rport=139; fi
+tcpdump -s0 -n -i tap0 src $rhost and port $rport -A -c 7 2>/dev/null | grep -i "samba\|s.a.m" | tr -d '.' | grep -oP 'UnixSamba.*[0-9a-z]' | tr -d '\n' & echo -n "$rhost: " &
+echo "exit" | smbclient -L $rhost 1>/dev/null 2>/dev/null
+sleep 0.5 && echo ""
+EOF
+bash smbver.sh 192.168.1.111
+
+Scan for SMB Vulnerabilties
+nmap -sV --script smb-vuln* -p 139,445 192.168.1.111
+
+Thorough Enumeration Scan (unauthenticated)
+enum4linux -a 192.168.1.111
+python3 nullinux.py 192.168.1.111
 enum4linux -u guest -p "" -a 127.0.0.1
 python3 nullinux.py -shares -U 'Domain\User' -P 'Password1' 10.0.0.1,10.0.0.5
 python3 nullinux.py -users -quick DC1.Domain.net
 python3 nullinux.py -all -r 500-600 192.168.0.1
-smbget -R smb://127.0.0.1/dir
+
+Other smb enumeration:
 smbpasswd
-smbmap
 smbcontrol
 smbcacls
+
+Other SMB Clients:
+smbget -R smb://127.0.0.1/dir
+
+SMB Mounting:
 smbmount //198.168.1.1/share /mnt/here -o user=uname,password=pword
 mount -t cifs -o user=uname,password=pword //198.168.1.1/share /mnt/here
+
+Wireshark Filters:
+ntlmssp.ntlmv2_response
+smb.native_lanman
 
 cme smb 192.168.1.0/24
 	-map network hosts

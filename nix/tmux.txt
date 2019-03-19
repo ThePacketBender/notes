@@ -14,6 +14,8 @@ setw -g mode-keys vi
 setw -g mode-mouse off
 setw -g monitor-activity on
 set -g visual-activity on
+tmux source-file ~/.tmux.conf
+	--reload tmux configuration
 
 SHORTCUTS					 *C=ctrl+b
 Function                     vi              emacs
@@ -52,6 +54,8 @@ COMMANDS
 
 ~/.tmux.conf
 
+#set default shell for tmux to load with to bash
+set -g default-shell /bin/bash
 #increase history scrollback per-pane
 set-option -g history-limit 50000
 #per window

