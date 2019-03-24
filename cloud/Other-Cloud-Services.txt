@@ -1,0 +1,19 @@
+OTHER CLOUD SERVICES
+
+PacketCloud
+https://metadata.packet.net/userdata
+
+Oracle Cloud
+http://169.254.169.254/opc/v1/instance/
+	--https://docs.us-phoenix-1.oraclecloud.com/Content/Compute/Tasks/gettingmetadata.htm
+
+Alibaba
+http://100.100.100.200/latest/meta-data/
+http://100.100.100.200/latest/meta-data/instance-id
+http://100.100.100.200/latest/meta-data/image-id
+	--https://www.alibabacloud.com/help/faq-detail/49122.htm
+	
+OpenStack/RackSpace
+http://169.254.169.254/openstack
+	--https://docs.openstack.org/nova/latest/user/metadata-service.html
+

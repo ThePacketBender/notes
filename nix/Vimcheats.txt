@@ -4,6 +4,7 @@ quick commands
 u			undo
 ^R			redo
 +y			copy higlighted
+"*y			(Copy to OS clipboard) - without entering a registry("), to the OS clipboard(*), yank the hilighted text(y)
 :w			write file(save)
 :w file		write file as file
 :q			quit
@@ -32,6 +33,26 @@ qk			record edits to register k
 dd			delete current line
 p			paste contents of clipboard to here
 
+Buffers
+:buffers	list buffers
+b1, b2		switch buffers by number
+b <name>	switch buffers by name
+:bdelete
+:bd			close a buffer
+
+Movement
+0			beginning of line
+$			end of line
+w			beginning of next word
+W			beginning of next word, defined by white space
+e			end of the next word
+E			end of the next word, defined by white space
+b			beginning of previous word
+B			end of previous word
+f<char>		next arbitrary character, e.g. f,
+gg			start of file
+G			end of file
+
 PATTERN SEARCHING
 /		search for following pattern
 *		search for word currently under cursor
@@ -44,7 +65,8 @@ PATTERN REPLACEMENT
 	-replace each instance of a pattern with new pattern
 :%s/,\(\S\)/, \1/g
 	-add a space following each comma
-
+r<char>		replace character under cursor with arbitrary character, e.g. rX
+	
 AUTOCOMPLETION
 ctrl+n		next word completion
 ctrl+p		previous word completion
@@ -70,3 +92,12 @@ cat file | vim -
 	open contents of file as new document in vim
 $TOVIM = ""; for FILE in $(locate pattern); do $TOVIM+=$(tail -n +1 $FILE); done && printf "$TOVIM" %s | vim -
 	find all files matching pattern, concatenate with filename as header and open stdout as new document in vim
+	
+Plugins
+	Install
+Add program to .vimrc
+:PluginInstall
+	https://github.com/VundleVim/Vundle.vim
+	
+	
+https://github.com/amix/vimrc

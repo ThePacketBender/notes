@@ -14,6 +14,22 @@ dnsenum domain.name
 Enumerate Name Server(NS) for domain
 host -t ns domain.name
 
+DNS Dumpster
+	--https://dnsdumpster.com
+	https://github.com/zeropwn/dnsdmpstr.git
+		python3 ddump.py -u target.dom --all
+			OR ipython/Jupyter Notebook
+		import dnsdmpstr
+		dnsdump = dnsdumpstr()
+			#return complete result set
+		print(json.dumps(dnsdump.dump("target.dom"), indent=1))
+			#return partial result sets
+		print(dnsdump.hostsearch(target))
+		print(dnsdump.reversedns(target))
+		print(dnsdump.dnslookup(target))
+		print(dnsdump.pagelinks(target))
+		print(dnsdump.httpheaders(target))
+
 Zone-transfer
 perl fierce.pl -dns domain.name
 host -t axfr domain.name ns1.namesever.dom

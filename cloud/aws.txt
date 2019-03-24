@@ -18,21 +18,41 @@ EC2
 http://169.254.169.254/latest/meta-data/
 http://169.254.169.254/latest/meta-data/hostname
 http://169.254.169.254/latest/meta-data/local-hostname
+http://169.254.169.254/latest/meta-data/local-ipv4
+http://169.254.169.254/latest/meta-data/mac
 http://169.254.169.254/latest/meta-data/public-hostname
+http://169.254.169.254/latest/meta-data/public-ipv4
 http://169.254.169.254/latest/meta-data/ami-id
+http://169.254.169.254/latest/meta-data/ami-launch-index
+http://169.254.169.254/latest/meta-data/ami-manifest-path
 http://169.254.169.254/latest/meta-data/reservation-id
 http://169.254.169.254/latest/meta-data/ami-launch-index
 http://169.254.169.254/latest/meta-data/iam/security-credentials/IAM_USER_ROLE_HERE
 http://169.254.169.254/latest/meta-data/iam/security-credentials/PhotonInstance
+http://169.254.169.254/latest/meta-data/security-groups
 http://169.254.169.254/latest/meta-data/reservation-id
 http://169.254.169.254/latest/meta-data/public-keys/
 http://169.254.169.254/latest/meta-data/public-keys/0/
 http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key
+http://169.254.169.254/latest/meta-data/block-device-mapping/
+http://169.254.169.254/latest/meta-data/events/
+http://169.254.169.254/latest/meta-data/instance-action
+http://169.254.169.254/latest/meta-data/instance-id
+http://169.254.169.254/latest/meta-data/instance-type
+http://169.254.169.254/latest/meta-data/metrics/
+http://169.254.169.254/latest/meta-data/network/
+http://169.254.169.254/latest/meta-data/placement/
+http://169.254.169.254/latest/meta-data/services/
 http://169.254.169.254/latest/user-data
 http://169.254.169.254/latest/user-data/iam/security-credentials/IAM_USER_ROLE_HERE
 http://169.254.169.254/latest/meta-data/iam/security-credentials/dummy
 http://169.254.169.254/latest/dynamic/
+http://169.254.169.254/latest/dynamic/fws/instance-monitoring
 http://169.254.169.254/latest/dynamic/instance-identity/
+http://169.254.169.254/latest/dynamic/instance-identity/document
+http://169.254.169.254/latest/dynamic/instance-identity/pkcs7
+http://169.254.169.254/latest/dynamic/instance-identity/signature
+	--http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
 
 EC2 Metadata categories
 ami-id				The AMI ID used to launch the instance.	1.0

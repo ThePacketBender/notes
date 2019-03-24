@@ -1,0 +1,12 @@
+Pattern Matching
+
+
+GREP
+
+
+SED
+
+
+AWK
+awk 'NR==FNR{a[$0];next}!($0 in a)' file2 file1
+	--Compare 2 files and return the unique lines in first file

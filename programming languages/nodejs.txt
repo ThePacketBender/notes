@@ -1,0 +1,38 @@
+Node.js
+
+
+
+Toolchain
+NPM
+npm install
+npm install -g
+npm install-test
+npm clean-install
+npm clean-install-test
+npm audit
+npm audit fix
+npm start server
+npm run
+
+YARN
+
+
+
+
+Tools:
+	Static Analysis
+NodeJsScan
+https://ajinabraham.github.io/NodeJsScan/
+	Setup
+			GUI
+		git clone https://github.com/ajinabraham/NodeJsScan.git
+		cd NodeJsScan
+		pip3 install -r requirements.txt
+		python3 migrate.py
+		python3 app.py
+		gunicorn -b 0.0.0.0:9090 app:app --workers 3 --timeout 10000
+			--point browser to http://localhost:9090
+			CLI
+		pip install nodejsscan
+		nodejsscan -d /var/www/nodejsapp -o /reports/nodejsscan/nodejsapp.json
+		nodejsscan -f /path/to/node.js -o /reports/nodejsscan/node.js.json
