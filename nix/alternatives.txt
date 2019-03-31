@@ -1,0 +1,31 @@
+Alternatives
+
+Convention for setting software versions called by generic references to a program executed by reference to a file name only -without prefacing an absolute or relative path-, e.g. in a directory referenced by the PATH environment variable.
+
+
+/ETC/ALTERNATIVES
+
+
+UPDATE-ALTERNATIVES
+update-alternatives --get-selections
+	return a list of set version alternatives, if this is your first time setting default versions, these were likely all set by auto (or that kid who owned you)
+update-alternatives --display java
+OR
+update-alternatives --query vi
+	-return information about the link group
+update-alternatives --list java
+	-list versions of a program available on the system
+update-alternatives --set java /usr/path/to/openjdk-1.11.0-java/bin
+	-set the version of a program to use by reference to the absolute path of an executable file
+		--replaces symlink in a PATH directory
+update-alternatives --config java
+	-list available alternatives for link group entering REPL to select version alternative by number
+update-alternatives --all
+	-enter REPL to select versions for all entries in alternatives
+update-alternatives --install link name path priority [--slave link name path]
+	-Add  a  group  of  alternatives  to the system.
+		--arguments after --slave are the generic name, symlink name in the alternatives directory and the alternative path for a slave link
+			--multiple --slave may be specified
+update-alternatives --auto java
+	-switch the link group behind the alternative for name to automatic mode.
+		--alternatives are given priority rank, the highest proriority version or alternative will be set

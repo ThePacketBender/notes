@@ -39,14 +39,45 @@ journalctl -k
 	-display kernel-level messages
 
 system resources
-	disk
+	DISK/STORAGE
 df
 df /dev/sda1
 du
 btrfs fi df /dev/sdb1
 mount /dev/sdb /user
-	memory
+	PHYSICAL MEMORY
 vmstat
+vmstat -s
+free -m
+cat /proc/meminfo
+top
+	-returns report on cpu, % memory usage, total memory usage and total RAM usage for system and processes allocated the greatest quantity of those resources
+htop
+	-verbose `top`(see previous) report continuously polling in a curses-based UI
+	RAM
+top
+sudo dmidecode -t 17
+	CPU
+top
+htop
+	-"look up"
+	
+
+Display
+xrandr
+xrandr --verbose
+	--return information about he current display configuration and display options
+xrandr -s 1920x1080 -r 60hz
+	--set display resolution and frequency at which to output video to display on the display(s) currently being output to without 
+gtf 1024 600 60
+	--a "Modeline" value, which can be input to xrandr to intialize a new display rendering mode
+xrandr --newmode "1024x768_60.00"  64.11  1024 1080 1184 1344  768 769 772 795  -HSync +Vsync
+	--intialize more for resolving display output in xrandr
+xrandr --addmode HDMI1 "1024x768_60.00"
+	--attach redering mode configured in xrandr to a display device
+xrandr --output HDMI1 --mode "1024x768_60.00"
+	--pipe output display to file handle linked for shortname of display device for which the rendering mode specified has been previously configured 
+
 
 filesystem managemnet
 ls -lashR .

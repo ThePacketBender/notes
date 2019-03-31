@@ -188,6 +188,8 @@ Example Poc:
 
 "Repairing" Vulnerable Application - Exploitation
 Injecting property on the prototype of Object often interrupts normal runtime execution.
+	-Client side Javascript, read: node, executes on a single, shared runtime, so by comparison to, say, PHP, globals may become set as global (such as an object prototype) accross sessions and until the node server is rebooted to init a new runtime env.
+		--this is why Dos is so easily exploitable via this vector
 	--to mount a non-DoS exploit, figure ways to “repair” the application
 
 -Figure out why the application crash with the property we have.

@@ -1,6 +1,7 @@
 JAVA
 
 tool-chain
+java -version
 java -jar java.jar
 java -cp nomain.jar class.function -t flag
 javac ajar.java
@@ -24,3 +25,43 @@ gradle clean
 gradle check
 gradle assemble
 gradle build
+gradle scan
+
+
+
+Install Oracle Java JDK8/9 in Debian-based Operating systems (some actions and components are Kali-specific)
+apt install software-properties-common python-software-properties apt-file -y
+cat <<EOF > /usr/sbin/add-apt-repository
+echo #!/bin/bash
+if [ $# -eq 1 ]
+NM=`uname -a && date`
+NAME=`echo $NM | md5sum | cut -f1 -d" "`
+then
+	ppa_name=`echo "$1" | cut -d":" -f2 -s`
+	if [ -z "$ppa_name" ]
+	then
+		echo "PPA name not found"
+		echo "Utility to add PPA repositories in your debian machine"
+		echo "$0 ppa:user/ppa-name"
+	else
+		echo "$ppa_name"
+		echo "deb http://ppa.launchpad.net/$ppa_name/ubuntu oneiric main" >> /etc/apt/sources.list
+		apt-get update >> /dev/null 2> /tmp/${NAME}_apt_add_key.txt
+		key=`cat /tmp/${NAME}_apt_add_key.txt | cut -d":" -f6 | cut -d" " -f3`
+		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $key
+		rm -rf /tmp/${NAME}_apt_add_key.txt
+	fi
+else
+	echo "Utility to add PPA repositories in your debian machine"
+	echo "$0 ppa:user/ppa-name"
+fi
+EOF
+
+chmod o+x /usr/sbin/add-apt-repositories
+chown root:root /usr/sbin/add-apt-repositories
+
+#edit /etc/lsb_release to identify as ubuntu
+echo -e "DISTRIB_ID=Ubuntu\nDISTRIB_RELEASE=18.10\nDISTRIB _CODENAME=Cosmic Cuttlefish\nDISTRIB_DESCRIPTION="Ubuntu 18.10 LTS"" >> /etc/lsb-release
+
+#revert changes
+echo -e "DISTRIB_ID=Kali\nDISTRIB_RELEASE=Kali Linux 2019.1\nDISTRIB _CODENAME=n/a\nDISTRIB_DESCRIPTION="Kali GNU/Linux Rolling"" >> /etc/lsb-release

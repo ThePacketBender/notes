@@ -18,6 +18,31 @@ TAR
 	tar xjf file.tar.xz
 	unxz file.tar.xz && tar xvf file.tar
 	
+	
+Password-protect encrypted file archives
+	TAR
+tar czvf - directory | gpg --symmetric --cipher-algo aes256 -o passwordprotectedarchive.tar.gz.gpg
+	-gpg encrypt a gnu-zipped tarball (.tar.gz/.tgz)
+gpg -d passwordprotectedarchive.tar.gz.gpg | tar xzvf -
+	-decrpyt password-protected gzipped tarball archive
+	GZIP
+mcrypt -z plaintext
+	-Compress & Encrypt
+mdecrypt -z plaintext.gz.nc
+	-Decrypt and extract
+		-m(de)crypt flag -z to compress at gzip archive
+cat plaintext | gzip | aespipe > plaintext.gz.aes
+cat plaintext.gz.aes | aespipe -d | gunzip > plaintext
+	7ZIP
+7z a -p<password> <someprotectedfile>.7z file1.txt file2.txt
+	-password protect (a) file(s) archived as 7z
+cat <somefile> | 7z a -si -p<password> <someprotectedfile>.7z
+	-password protect (a) file(s) archived as 7z taking stdin as file handle
+	BCRYPT
+bcrypt -r plaintext
+bcrypt -r plaintext.bfe
+	
+
 cracking
 .zip
 	fcrackzip –u –c 1 –p aaaaaaaa ‘/root/Desktop/Test.zip’
