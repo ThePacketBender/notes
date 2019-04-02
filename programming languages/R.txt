@@ -1,0 +1,15 @@
+R Programming Language
+
+
+Versions
+install.packages("installr")
+	--for RGui (Win, not M RGui)
+R.Version()
+R.version.string
+
+Package management
+(.packages())
+	-return list of currently loaded packages
+
+install.packages(c("stringr", "devtools")
+devtools::install_github("org/repo")

@@ -80,7 +80,14 @@ waybackurls
 inception
 
 
+Web databases
+https://dnsdumpster.com
+https://securitytrails.com/
+https://www.robtex.com/
 
+
+
+DNS RECORDS TYPES:
 A Records - Maps an IP Address to a hostname.For e.g. 74.125.236.80 for google.com.
 AAAA Records - Similar to the A record, but allowed to point the domain to an Ipv6 address.
 AFSDB Records - Location of AFS cell database server or DCE cell’s authenticated server.

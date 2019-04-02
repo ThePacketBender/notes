@@ -10,7 +10,11 @@ ssh user@X.X.X.X | cat /dev/null > ~/.bash_history
 
 processes/services
 ps -aux
-kils ####
+kill ####
+	-send sighup to target process (usually causing it to exit)
+kill -9 `ps aux | grep firefox`
+	-send sigterm (-9) to all processes matching a pattern (causing the them to fail on exit)
+		--great to cause firefox-esr to crash if it causes errors, but don't want to lose your open tabs
 netstat -ntpl
 service --status-all
 ls /etc/init.d
@@ -30,6 +34,16 @@ systemctl reboot
 systemctl poweroff
 systemctl emergency
 systemctl default
+ls /etc/init.d
+systemctl list-unit-files
+	-list services
+systemctl list-units --type=service --state=active
+systemctl list-units --type service --state=running
+systemctl list-units --type=service --state=exited
+	--list active, running or exited services
+systemctl list-unit-files | grep enabled
+systemctl list-unit-files --type service --state enabled,generated
+	--list enabled services still under init/startup run execution
 journalctl
 journalctl -u name.service
 	-see messages for service
