@@ -53,12 +53,38 @@ journalctl -k
 	-display kernel-level messages
 
 system resources
-	DISK/STORAGE
+	DISK/STORAGE (SCSI devices)
 df
 df /dev/sda1
 du
+cat /etc/fstab
 btrfs fi df /dev/sdb1
-mount /dev/sdb /user
+mount /dev/sdb1 /user
+mount
+fdisk -l
+	-list storage disk devices
+fdisk /dev/sdb
+>m
+	-ask fdisk REPL for help
+>n
+>d
+	-create/delete a partition
+>w
+	-write new partition table and exit (followin creation [n])
+	formatting a disk/partition
+fdisk -l | grep '^Disk'
+fdisk /dev/sdb
+>n
+>>1
+>>
+>>
+>w
+mkfs.ext3 /dev/sdb1
+mount /dev/sdb1 /mnt
+df -H
+echo '/dev/sdb		/mnt		ext3	defaults' >> /etc/fstab
+e2label /dev/sdb	/mounty
+echo 'LABEL=/mounty /disk2 ext3	defaults 1 2'
 	PHYSICAL MEMORY
 vmstat
 vmstat -s

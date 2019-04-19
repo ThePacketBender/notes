@@ -109,3 +109,15 @@ ip rule add fwmark 1 lookup 100
 ip -6 route add local default dev lo table 100
 ip -6 rule add fwmark 1 lookup 100
 sudo SSH_AUTH_SOCK="$SSH_AUTH_SOCK" $HOME/tree/sshuttle.tproxy/sshuttle  --method=tproxy ...
+
+
+
+
+WINDOWS
+	*this is for windows' (recently added) builtin ssh client [not putty]
+Private Keys
+	-when getting error message 'It is required that your private key files are NOT accessible by others.'
+modify private keys to single-user accessbility
+cmd /c icacls id.pem /c /t /inheritance:d
+cmd /c icacls id.pem /c /t /grant %username%:F
+cmd /c icacls id.pem  /c /t /remove Administrator BUILTIN\Administrators BUILTIN Everyone System Users
