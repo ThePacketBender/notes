@@ -359,3 +359,4 @@ obj.constructor // undefined
 https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf?raw=true
 https://www.reddit.com/r/programming/comments/7xxqx1/prototype_pollution_attack/
 https://hackerone.com/reports/310443
+https://hackerone.com/reports/309391

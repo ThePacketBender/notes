@@ -140,3 +140,40 @@ brctl addif br0 eth0
 brctl addif br0 eth1
 ifconfig br0 up
 dhclient br0
+
+
+
+PROXYING SETTINGS
+
+   Proxy Environment Variables:
+http_proxy: Proxy server for HTTP Traffic
+https_proxy: Proxy server for HTTPS traffic
+ftp_proxy: Proxy server for FTP traffic
+no_proxy: Patterns for IP addresses or domain names that shouldn’t use the proxy
+
+
+/etc/environment
+	standard settings
+#standard proxies							  #authenticating proxies
+http_proxy="http://myproxy.server.com:8080/"  #"http://user_name:password@myproxy.server.com:8080/"
+https_proxy="http://myproxy.server.com:8080/" #"https://user_name:password@myproxy.server.com:8080/"
+ftp_proxy="http://myproxy.server.com:8080/"
+no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+
+
+	#instead use ~/.bashprofile to apply changes without resatarting
+vi ~/.bashprofile
+>export http_proxy=username:password@proxyhost.com:8080
+>export https_proxy=username:password@proxyhost.com:8081
+>export no_proxy=localhost, 127.0.0.1, *.my.lan
+source ~/.bashprofile
+
+
+	Proxy apt, apt-get, aptitude, yum, &c package management
+touch /etc/apt/apt.conf.d/95proxies
+vi /etc/apt/apt.conf.d/95proxies
+>Acquire::http::proxy "http://myproxy.server.com:8080/";
+>Acquire::ftp::proxy "ftp://myproxy.server.com:8080/";
+>Acquire::https::proxy "https://myproxy.server.com:8080/";
+
+

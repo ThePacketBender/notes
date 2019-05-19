@@ -157,7 +157,36 @@ application/soap+xml
 application/rfc+xml
 
 
-
+Request Tampering Bypass Methods (manual [telnet/nc/ncat/openssl -sclient, &c)
+prepend requests with crlf (\r\n) line
+	-write method in lowercase
+	get /test /HTTP/1.1
+	--apache httpd
+tab space before method
+		GET /test.aspx HTTP/1.1
+	--iis
+tamper ? parameter seperator encodings
+	GET /test.php?shell.exec HTTP/1.1
+	GET /test.php?shell[exec HTTP/1.1
+	GET /test.php?shell%5bexec HTTP/1.1
+	GET /test.php?shell%2eexec HTTP/1.1
+	GET /test.php?shell%5fexec HTTP/1.1
+	GET /test.php?shell%20exec HTTP/1.1
+	GET /test.php?pam_param=test1&pam[param=test2&pam%5bparam=test3
+	GET /test.php?hello%00another_text=world HTTP/1.1
+HTTP Request - absoluteURI
+	GET http://localhost/test.php HTTP/1.1
+Double host header
+	GET /test HTTP/1.1
+	Host: site.dom
+	Host: localhost
+Lowercase Host header title
+	GET /test HTTP/1.1
+	Host: site.dom
+Host with tab instead of space
+	GET /test HTTP/1.1
+	Host:	site.dom
+	
 Tools:
 WAFNinja
 		Fuzzing

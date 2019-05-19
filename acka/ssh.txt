@@ -52,7 +52,8 @@ cat /usr/share/wordlists/metasploit/adobe_top100_pass.txt | while read pass; do 
 	-We tried logging in to ssh but it was asking for a passphrase. So, we created the following script to find the correct password.
 ssh2john id_rsa > id_rsa.john; john –wordlist=/usr/share/wordlists/rockyou.txt id_rsa.john
 
-
+ssh user@X.X.X.X | cat /dev/null > ~/.bash_history
+	-clear user history remotely
 
 USING SSH
 ssh-keygen -t rsa -C newserver -f ~/.ssh/id_rsa

@@ -7,13 +7,17 @@ nslookup
 
 Enumeration
 dig sub.domain.name PTR
+dig +short domain.name
+	-return ip address of server listed for target domain
+	--very useful for pipping to other commands, implementing in scripts
 whois domain.name
 host -a domain.name
-dnsenum domain.name
-
-Enumerate Name Server(NS) for domain
+	-return all records for a domain querying against host-configured primary DNS server
 host -t ns domain.name
-
+	-Enumerate Name Server(NS) for domain
+dnsenum domain.name
+	
+	OSINT
 DNS Dumpster
 	--https://dnsdumpster.com
 	https://github.com/zeropwn/dnsdmpstr.git
@@ -30,53 +34,68 @@ DNS Dumpster
 		print(dnsdump.pagelinks(target))
 		print(dnsdump.httpheaders(target))
 
-Zone-transfer
+	Zone-transfer
+host -l domain.name ns1.namesever.dom
 perl fierce.pl -dns domain.name
 host -t axfr domain.name ns1.namesever.dom
 dig axfr @ns1.namesever.dom domain.name
 dnswalk -r -d example.com
-host -l domain.name ns1.namesever.dom
+dnsbulkwalk
 nmap --script dns-zone-transfer.nse --script-args dns-zone-transfer.domain=target.dom target.dom -p 53,80,443
 dnsrecon -d domain.name -t axfr
 
-Subdomain Brute forcing
+	Subdomain Brute forcing
 perl fierce.pl -dns google.com hosts.txt
 sublist3r -b -d google.com
 python subbrute.py google.com -o google.names
+python subbrute.py -t domainslist.txt
 dnsmap example.com -w /usr/share/wordlists/dnsmap.txt
 dnsmap-bulk.sh domains.txt
 dnsrecon -d example.com -D /usr/share/wordlists/dnsmap.txt -t std --xml dnsrecon.xml
 wfuzz -c -z file,/path/to/SecLists/Discovery/DNS/subdomains-top1mil-20000.txt -Z -u http://FUZZ.site.domain | grep -v '0 L'
+amass -active -brute -o hosts.txt -d domain.name
 
-Combined attacks
+	Certificate Transparency Logs
+openssl s_client -connect google.com:443 -ct -CApath /etc/ssl/certs/
+	--verify Certificate Transparency is being used on an SSL connection
+	--see SCTs provided over a connection
+findomain
+	https://github.com/Edu4rdSHL/findomain
+	https://github.com/Edu4rdSHL/findomain/tree/master/bin/windows
+	https://github.com/Edu4rdSHL/findomain/tree/master/bin/osx
+	findomain -i -f infile.ext -o csv -t domain.name
+
+	Domain Flyovers
+aquatone
+cat hosts.txt | aquatone -ports 80,443,3000,3001
+cat hosts.txt | aquatone -ports large
+cat scan.xml | aquatone -nmap
+
+	OSINT Discovery
+waybackurls
+	
+	Combined attacks
 sublist3r -d google.com
-
-
-
-Tools Listing
-sublist3r
-fierce.pl
-dnswalk
-dnsrecon
-subbrute.py
-	python subbrute.py google.com -o google.names
-	python subbrute.py -t domainslist.txt
-dnsmap
-dnsmap-bulk.sh
-altdns
-	https://github.com/infosec-au/altdns
-	python altdns.py -i subdomains.txt -o data_output -w words.txt -r -s results_output.txt
 Amass
 	https://github.com/OWASP/Amass.git
 	amass -d domain.name
 		--basic use, includes reverse DNS lookups and name alterations
 	amass -src -ip -brute -min-for-recursive 3 -d domain.name
 		---https://github.com/OWASP/Amass/blob/master/doc/user_guide.md
-aquatone
+
+	
+	Subdomain wordlist mangling
+altdns
+	https://github.com/infosec-au/altdns
+	python altdns.py -i subdomains.txt -o data_output -w words.txt -r -s results_output.txt
+
+
+dnsrecon
+dnsmap
+dnsmap-bulk.sh
 ffuf
 subfinder
 subjack
-waybackurls
 inception
 
 
@@ -143,3 +162,7 @@ Regional Authorities and in-addr.arpa
     Asia-Pacific Network Information Center (APNIC)
     Latin America and Caribbean Network Information Center (LACNIC)
     NCC Reseaux IP Europeens Network Coordination Center (RIPE)
+
+	
+Reference/Further reading:
+https://www.certificate-transparency.org/

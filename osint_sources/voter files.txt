@@ -1,0 +1,31 @@
+Voter Files
+
+https://github.com/pablobarbera/voter-files
+
+Colorado
+http://coloradovoters.info/download.html
+wget -r -l 3 -nc -np --no-check-certificate -x -v http://coloradovoters.info/downloads/
+Connecticut
+http://connvoters.com/download.html
+Deleware
+http://delawarevoters.info/downloads.html
+Florida
+http://flvoters.com/downloads.html
+Georgia
+https://elections.sos.ga.gov/Elections/voterhistory.do
+Michicagan
+http://michiganvoters.info/download.html
+Ohio
+https://www6.sos.state.oh.us/ords/f?p=VOTERFTP:STWD:::#stwdVtrFiles
+North Carolina
+https://dl.ncsbe.gov/
+Okalhoma
+http://oklavoters.com/download.html
+Rhode Island
+http://rivoters.com/
+Washington
+https://www.sos.wa.gov/elections/vrdb/extract-requests.aspx
+https://www.sos.wa.gov/_assets/elections/vrdbdatabasefields.pdf
+Washington D.C.
+https://github.com/ajschumacher/dc_voter_reg
+git clone https://github.com/ajschumacher/dc_voter_reg.git

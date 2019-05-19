@@ -1,0 +1,105 @@
+RTL-SDR
+
+
+apt-get install kali-linux-sdr rtl-sdr librtlsdr0 rtlsdr-scanner soapysdr-tools soapyremote-server ipmitool hackrf airspy bladerf hamradio-sdr killerbee audacity
+	-install rtl-sdr tools from repositories (kali linux)
+
+SDR Architecture
+	--radios have 3 main components:
+		RF (Radio Frequency) Amplifier/Low Noise Amplifier (LNA)
+			-boost weak signals
+			-user-specified gain value dB (decibals) controls quantity of amplification
+				--insufficient gain risks losing signals
+				--excessive gain risks distorting signals
+			--radios allow either user set levels of gain or Automatic Gain Control (AGC)
+		tuner (mixer)
+			-selects the portion of radio sepctrum to analyze
+			--high end radios operate tuner in steps including gain at intermediate frequency (IF) and baseband (BB)
+		ADC (analog-to-digital converter)
+			-converts analog waveform to digital bitstream
+				--process called 'sampling'
+			--samples at set rates
+			--sample rate measured in millions of samples per second (MSPS)
+	   \\            SDR Overview
+		\\	 |------------------------------|
+		 >>o |		  Tuner					|				GNU Radio
+		// | |		_________	  _______	| Tune to	|---------------|
+	   //  | | |\  |		 |	 |  ADC	 |	|<----------|				|
+	antenna|---| \_|__>(x)---|---|		 |	| 111.1MHz	|				|
+			 | | / |  mixer	 |	 |-------|	|			|				|
+			 | |/  |---------|				| Streaming |  ------------	|
+			 | RF  || local || 				|------------->| osmocom  |	|
+			 | Amp ||oscilla||tor			|  Samples	|  |  sink	  | |
+			 |	   |---------|				|			|  ------------	|
+			 |	   -----------				|			-----------------
+			 --------------------------------
+Antenna Types
+	Isotropic
+		-picks up signals equally well from unimpeded directions
+	Directional
+		-high gain antennas
+		--'yagi'
+		--'cantenna'
+SDR initial setup 
+	-install necessary packages (listing of packages found in Linux Packages section of Appendix
+	lsusb
+		--check that device is registered
+	rtl_test
+		--check that device is recognized as SDR device
+			--may not recognize hackrf or bladerf
+	hackrf_info
+		--get info for hackrf device
+			--should be automatically recognized if displayed in lsusb stdout and correct firmware installed
+Standard FM
+	Dump1090
+		git clone https://github.com/MalcolmRobb/dump1090.git
+		--Mode S decoder
+APSR Decoding
+	gqrx
+		--gui program
+	144.39MHz
+		-NFM (Narrow FM mode)
+		APSR trasmission frequency
+		>tools>APSR decoder
+Pager traffic decoding
+	POCSAG (Post Office Code Standardization Advisory Group) pager standard
+	--pagers still used in medical and industrial industries
+	Common Frequencies:
+		152-163MHz (VHF)
+		454-465MHz (UHF)
+		929-931MHz (UHF)
+	--easy to recognize by shape
+	--visual representation should have distinct peaks on each end of the channel
+	
+		
+		
+		
+Linux Packages:
+kali-linux-sdr
+librtlsdr0
+librtlsdr-dev
+gqrx
+gqrx-sdr
+multimon-ng
+rtlsdr
+hackrf
+bladerf
+libpulse0
+libpulse-dev
+gnuradio
+gnuradio-dev
+gnuradio-doc
+gr-air-modes
+gr-dab
+gr-fcdproplus
+gr-fosphor
+gr-gsm
+gr-hpsdr
+gr-iio
+gr-limesdr
+gr-osmosdr
+libair-modes0
+libgnuradio-*
+rtlsdr-scanner
+soapysdr-module-rtlsdr
+sox

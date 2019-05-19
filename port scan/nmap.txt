@@ -67,7 +67,7 @@ nseinfo usage smb-psexec
 nseinfo --show-all --category discovery
 
 
-Nmap 7.70SVN ( https://nmap.org )                                                                                                                                                                         [58/1888]
+Nmap 7.70SVN ( https://nmap.org )
 Usage: nmap [Scan Type(s)] [Options] {target specification}
 TARGET SPECIFICATION:                       
   Can pass hostnames, IP addresses, networks, etc.

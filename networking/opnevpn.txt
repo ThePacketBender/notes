@@ -1,0 +1,13 @@
+OpenVPN
+
+
+Create gnome network manger VPN profile from opnvpn config file 
+	sudo apt install network-manager-openvpn-gnome openvpn-systemd-resolved
+		--install dependencies
+	sudo nmcli connection import type openvpn file config.ovpn
+		--import openvpn connection profile from file
+	nmcli connection up config
+		-launch connection
+	nmcli connection show config
+		-show status of connection
+	settings > VPN + > import from file...

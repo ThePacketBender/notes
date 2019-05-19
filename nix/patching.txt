@@ -1,0 +1,18 @@
+Unix Patching
+
+patch -p1 < ../patch-2.6.13-something
+	--patch a file
+	--patched file specified in REPL
+patch -Rp1 < patch-2.6.13-sometag
+	--remove patch from a file
+	
+*note: patching often requires development versions of packages for accessible source files
+
+
+	Create a patch
+make distclean
+	--if a makefile/cmake is used
+diff -uNr linux-2.6.13-orig linux-2.6.13-mine > patch-2.6.13-mytag
+	--make a patch file using diff
+tr -d '\r' < patch-2.6.13-mytag.dosmode > patch-2.6.13-mytag.unixmode
+	--trim crlf from DOS mode files for Unix-mode installation

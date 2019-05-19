@@ -36,3 +36,6 @@ https://ajinabraham.github.io/NodeJsScan/
 		pip install nodejsscan
 		nodejsscan -d /var/www/nodejsapp -o /reports/nodejsscan/nodejsapp.json
 		nodejsscan -f /path/to/node.js -o /reports/nodejsscan/node.js.json
+		
+		
+https://www.npmjs.com/advisories

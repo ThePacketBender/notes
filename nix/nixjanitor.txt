@@ -119,7 +119,7 @@ xrandr --output HDMI1 --mode "1024x768_60.00"
 	--pipe output display to file handle linked for shortname of display device for which the rendering mode specified has been previously configured 
 
 
-filesystem managemnet
+filesystem management
 ls -lashR .
 chown file
 chmod +1741 file /path-to-files

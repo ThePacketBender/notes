@@ -1,0 +1,42 @@
+DHCP
+
+DHCP
+Dynamic Host Configuration Protocol
+
+
+LINUX
+dhclient
+	-configure network interfaces using the Dynamic Host Configuration Protocol, BOOTP protocol, or if these protocols fail, by statically assigning an address
+
+	Get DHCP lease on a new device
+sudo ifconfig wlan1 up
+sudo dhclient wlan0
+
+	Renew or Release a dynamically-allocated IP address on an interface device
+sudo dhclient -v -r eth0
+sudo dhclient -v eth0
+
+
+nmcli
+	--command-line tool for controlling NetworkManager and getting its status
+nmcli con
+	--get list and status of network connections
+nmcli con down id 'connection_name'
+	--force end NetworkManager daemon-controlled connection to release dhcp
+nmcli con up id 'connection_name'
+	--dhcp request automatically made for new connections by NetworkManager daemon by default
+
+
+dhcp lease troubleshooting:
+	/sbin/NetworkManager --print-config
+	--common problem that NetworkManager will overwrite /etc/resolv.conf with non-existent dns sever on local subnet (likely to installing krb5 or other similar network auth client)
+	Simplest fix:
+		sudo vi /etc/NetworkManager/NetworkManager.conf
+		to section [main] add line
+			dns=none
+	Most universal dhcp resolution solution:
+		with sudo vi open
+			/etc/dhcp/dhclient.conf
+				add line:
+			supersede domain-name-servers 1.1.1.1;
+	

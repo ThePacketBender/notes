@@ -18,6 +18,8 @@ TAR
 	tar xjf file.tar.xz
 	unxz file.tar.xz && tar xvf file.tar
 	
+tar -C /home/me -xvf yourfile.tar
+	--extract archive to target directory
 	
 Password-protect encrypted file archives
 	TAR

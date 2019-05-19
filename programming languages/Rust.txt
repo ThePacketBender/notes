@@ -1,6 +1,8 @@
 Rust
 
 
+install cargo (debian/ubuntu/kali):
+sudo apt-get install rustc cargo cargo-doc rust-gdb rust-lldb rust-doc 
 
 https://crates.io/
 	-standard library repostiry

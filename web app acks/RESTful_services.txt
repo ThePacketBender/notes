@@ -107,9 +107,22 @@ https://openapi.tools/
 		What sensetive information is stored in the Session ID?
 	Does the authentication function have a max retry limit?
 >JWT (JSON WEB TOKENS)
+	-string composed by 3 parts separated by a "."
+		header
+			-JOSE header (JSON Object Signing and Encryption header)
+			-metadata that describes which algorithm is used for signature and/or encryption
+		payload
+			-contains data that can be serialized to a JSON string
+		signature
+			-used to by server to ensure confidentiality and verify integrity of payload
+	--each part can be encoded using base-64
+		echo $jwtstring | base64 -d
+	--can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA
+		echo -n "value" | openssl dgst -sha256 -hmac "key"
 	Unsecure JWT
 		--not protected by a signature or MAC
 			{"alg":"none"}
+		-unsecured JWT are simple base64-encoded strings
 		-can the signature or MAC be brute-forced?
 		*signatures should be preferred over MACs for integrity protection
 			--a random complicated key should be in use to make brute forcing a JWT resource-intensive
@@ -118,6 +131,10 @@ https://openapi.tools/
 			--ergo: all services using the same key have to mutually trust each other
 			--ergo: compromise of any service also compromises all other services sharing the same key
 		-algorithm should be forced on the backend (preferably HS256 or RS256)
+		What algorithms are considered insecure?
+			HMAC keys shorter than 256 bits
+			AES keys shorter than 128 bits
+			 RSA keys shorter than 1024 bits
 	Does a relying party or token consumer validate JWT by verifying its integrity and claims contained
 		--this is the most secure configuration
 		-else may rely on the information of the JWT header to select the verification algorithm
@@ -129,11 +146,41 @@ https://openapi.tools/
 		'nbf' or not before time - is the current time after the start of the validity period of this token?
 	Does a decoded JWT contain any information that should not be or is redundantly stored on the client system?
 		Is this sensitive information?
+		-only the server should know the "secret" that is used to generate the JWT
+			--if data contained in JWT is modified, server should fail to decode it
 	How long does the token live?
 		-TTL or RTTL should be as short as possible
 		tokens with long lifespans may allow csrf attacks or may be returned to an attacker in an xss payload
+	Where is the JWT stored?
+		-JWT stored in client browser LocalStorage can be returned via DOM interaction and is made especially vulnerable with weak CORS policies
+	Can the JWT ever be sent over unecrpyted/plaintext HTTP?
+		-an MitM and/or MitB attack forcing HTTP downgrade can trivially intercept token if sent over plaintext
+		--unlike cookies, JWT cannot be flagged as 'http-only' or 'secure'
+			--only limited to defined origin and attacks impeded by potential SOP violation
+	Cracking 'secure' JWT tokens
+		--what's needed to brute force?
+		Token
+			-HS256 JWT Token
+		Alphabet
+			-alphabet to use for brute force attempt
+			--character array of all values to iterate over
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		--expect 20-60mins to crack using high-end desktop (i9-9800X (Skylake-X architecture, 10core/20thread [3.5GHz])) complex high entropy token; 40-100mins using high-end laptop (i7-9850H (Coffee Lake-H architecture, 6core/12thread [2.6GHz])) CPU-based brute force
 	-tool: https://github.com/lmammino/jwt-cracker
+		--HS256 brute force cracking tool
+		npm install --global jwt-cracker
+		jwt-cracker <token> [<alphabet>] [<maxLength>]
+		jwt-cracker "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ" "abcdefghijklmnopqrstuwxyz" 9
+	-tool: https://github.com/lmammino/distributed-jwt-cracker
+		npm i -g distributed-jwt-cracker
+		jwt-cracker-server <jwtToken> [options]
+		jwt-cracker-server 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ' -a="abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" -p 4444 -P 5555 -b 5000000
+			--start a new server
+		jwt-cracker-client [options]
+		jwt-cracker-client --host=3.124.41.213 --port=4444 --pubPort=5555
+			--start a new client
 	-tool: https://github.com/mike-engel/jwt-cli
+	-tool, gui, html: https://github.com/ticarpi/jwt_tool
 	-tool, burp extension: https://github.com/mvetsch/JWT4B
 	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
 >OAUTH
@@ -151,6 +198,9 @@ https://openapi.tools/
 	Replay attacks?
 	Session fixation?
 	XML Signature wrapping?
+>SSO
+	--single sign on
+	
 >API Keys
 	Is the API key required for every request to each protected endpoint?
 	Is HTTP response code 429 "Too Many Requests" ever returned while rapidly making requests?
@@ -166,4 +216,6 @@ https://openapi.tools/
 		e.g. /something/api/v1/service_name/users/666/
 		*GET Requests may allow access to sensetive user information
 		*POST requests are more likely to allow manipulating user information
-		
+	-out of range index errors are fairly common given a an integer value
+		--e.g. /path/to/endpoint/666 where index item 666 is uninitialized, thus Null
+		--may return verbose respones containing source code or revealing backend framework, data storage system, &c

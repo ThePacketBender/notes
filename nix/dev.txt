@@ -1,0 +1,81 @@
+Unix Device and File I/O
+/dev
+	-allows programs to access devices themselves
+	--directory in standard unix filesystem architecture for handling device i/o
+/sys
+	-used to view information and manage devices
+	--(virtual) filesystem
+
+device files (file handles) interfacing with hardware are found in the /dev directory
+ls -asl /dev
+	> brw-rw----   1 root disk	9,	0 May 9 22:33 sda
+	  ^-first bit on each line describes type of file
+	  b - block
+		-device that transfers data in large fixed-sized blocks
+		--e.g. hard raw disk interfaces, disk partitions, formatted filesystems
+	  c - character
+		-device that transfers data, but only one character concurrently
+		--most psudo devices (e.g. /dev/null) are character devices
+	  p - pipe
+		-named pipes allow two or more processes to communicate with each other
+		--transfer data at a rate of one character character concurrently, but -unlike character-type devices- instead of having output sent to a device, it's sent to another process
+	  s - socket
+		-facilitates communication between processes
+		--transfers data at a rate of one character (one 8-bit hex byte) concurrently, but -unline named pipes- transfers data to many devices simultaneously instead of outputting to only one process
+	  > brw-rw----   1 root disk	8,	0 May 9 22:33 sda
+									^-major device type
+										^-minor device type
+		major device number
+			-represents device driver that is used
+		minor device number
+			-kernel which unique device it is in this driver class
+				--case 0 represents first device (a, sda)
+
+SCSI Devices
+	-Small Computer System Interface
+	--pronounced ("scuzzy")
+	-protocol for communication between different device types
+	--represented by prefix sd (SCSI disk)
+	/dev/sda
+	/dev/sda1
+pseudo devices
+	--devices which are not really physically connected to the machine, but they allow operating system some additional functionality
+	--generally emulate character devices
+	/dev/null
+		-accepts and discards all input
+		--null output
+	/dev/random
+		-produces pseudorandom number block
+	/dev/urandom
+		-produces pseudorandom number stream
+	/dev/zero
+		-accepts and discards all input
+		--produces a continuous stream of NULL bytes
+PATA Devices
+	-Parallel ATA devices
+	--used in some legacy systems
+	--represents disk drives with hd prefix
+	/dev/hda
+	/dev/hda1
+	
+sysfs
+	-manages on system outside of /dev directory file i/o structure
+	-virtual filesystem, mounted to the /sys directory
+	/sys
+		--more verbose information than than /dev file i/o
+		--contains all the information for all devices on system
+	ls -a /sys/block/sda
+
+udev
+	--prior to udev:
+		mknod /dev/sdb1 b 8 3
+			-create device node
+		rm /dev/sdb1
+	-udev system dynamically creates and removes device files depending on whether or not they are actively system connected
+	udevd daemon
+		--listens for messages from the kernel about devices connected to the system
+		--parse device information from kernel match the data with the rules that are specified in /etc/udev/rules.d
+			--creates device nodes and symbolic links for devices
+	udevadm
+		--program to view udev database and sysfs
+	udevadm info --query=all --name=/dev/sda
