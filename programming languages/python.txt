@@ -12,3 +12,318 @@ wget https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi
 wine msiexec /i python-2.7.9.amd64.msi /qb
 python -m pip install pyinstaller
 c:\Python27\Scripts\pyinstaller.exe file.py
+
+
+
+Command Execution, disclosure and file access in standard library:
+Command execution:
+	os.system('ls -ashl')
+		-execute and try to return command with any options or parameters
+	os.execl(path, arg0, arg1, ...)
+	os.execle(path, arg0, arg1, ..., env)
+	os.execlp(file, arg0, arg1, ...)
+	os.execlpe(file, arg0, arg1, ..., env)
+	os.execv(path, args)
+	os.execve(path, args, env)
+	os.execvp(file, args)
+	os.execvpe(file, args, env)
+		-exec functions all execute a new program, replacing the current process
+		--do not return
+		--current process is replaced immediately
+			--open file objects and descriptors are not flushed
+	os.popen(cmd, mode='r', buffering=-1)
+		-open a pipe to or from command cmd
+		--return value is an open file object connected to the pipe, which can be read or written depending on whether mode is 'r' (default) or 'w'
+	subprocess.check_output(['id'])
+	os.abort()
+		-SIGABRT signal to the current process
+System information:
+	os.name()
+		-return OS-dependant module imported ('posix', 'nt', 'java')
+	os.uname
+		-return system-dependent version information
+		--return value is (iterable, tuple-like) object with 5 attributes:
+			sysname - operating system name
+			nodename - name of machine on network (implementation-defined)
+				--Some systems truncate nodename to 8 characters or leading component; return hostname calling socket.gethostname() or socket.gethostbyaddr(socket.gethostname()) as best practice
+			release - operating system release
+			version - operating system version
+			machine - hardware identifier
+	sys.platform
+		-return system information with higher granularity
+Environment Information:
+	os.ctermid()
+		-return filename corresponding to controlling terminal of the process
+			--*nix only, cmd.exe is not tty type repl
+	os.envron()
+		-mapping object representing the string environment
+			--equivalent to getenv("HOME") in C
+		--mapping captured the first time the os module is imported, viz. when the interpreter is loaded
+	os.environb()
+		-bytes version of environ
+	os.getenv(key, default=None)
+		-return the value of the environment variable key if it exists, or default if it doesn’t
+	os.getenvb(key, default=None)
+		--use if filesystem encoding in sys.getfilesystemencoding() is not desired encoding
+		--test that os.supports_bytes_environ() returns to for support
+	os.get_exec_path(env=None)
+		-return directories searched for a named executable when launching a process
+		--env should be an environment variable dictionary to lookup the PATH in
+			--default is os.environ
+	os.getsid(pid)
+		-system call getsid()
+		--posix-compliant systems only
+	os.getpid
+		-return current process id
+	os.getppid()
+		-return the parent’s process id
+		--where parent process has exited:
+			--return id of init process (1) [posix]
+			--return same id, may be reused by another process [NT]
+	os.getgrp()
+		-return id of the current process group
+		--posix-compliant systems only
+	os.getpgid(pid)
+		-return process group id of process with process id "pid"
+		--posix-compliant systems only
+	os.umask()
+		-return current numeric umask
+Environment Manipulation:
+	os.putenv(key, value)
+		--set env var 'key' to string 'value'
+		--effects os.system(), popen() or fork() and execv()
+		x--on FreeBSD and Mac OS X, setting environ may cause memory leaks. Refer to the system documentation for putenv
+		--where supported putenv() assigned items in os.environ are automatically translated into corresponding calls to putenv(); contrawise, calls to putenv() don’t update os.environ
+			--preferable to assign to items of os.environ as best practice
+	os.unsetenv()
+		--unset environment variable named key
+		--effects os.system(), popen() or fork() and execv()
+		--where supported unputenv() items deleted in os.environ are automatically translated into corresponding calls to unstenv(); contrawise, calls to unsetenv() don’t update os.environ
+			--preferable to delete items of os.environ as best practice
+	os.setsid()
+		--system call setsid()
+		--posix-compliant systems only
+	os.setresuid(ruid, euid, suid)
+	os.setreuid(ruid, euid)
+	os.setuid(uid)
+		--set the current process’s user id
+		--posix-compliant systems only
+	os.seteuid(euid)
+		--set the current process’s effective user id
+		--posix-compliant systems only
+	os.setresgid(rgid, egid, sgid)
+	os.setregid(rgid, egid)
+	os.setgid(gid)
+		--set the current process’s group id
+		--posix-compliant systems only
+	os.setegid(egid)
+		--set the current process’s effective group id
+		--posix-compliant systems only
+	os.setgroups(groups)
+		--set the list of supplemental group ids associated with the current process to groups
+		--'groups' must be a sequence, and each element must be an integer identifying a group
+		--superuser operation, should only work for root(0), sudoers and/or adm(4)
+		--posix-compliant systems only
+	os.setpgrp()
+		--system call setpgrp() or setpgrp(0, 0) depends version implemented
+		--posix-compliant systems only
+	os.setpgid(pid, pgrp)
+		--system call setpgid() to set the process group id of the process with id pid to the process group with id pgrp
+		--posix-compliant systems only
+	os.umask(mask)
+		--set current numeric umask and return the previous umask
+	pop()
+	clear()
+User permissions information:
+	os.getlogin()
+		--return the name of the user logged in on the controlling terminal of the process
+		--pwd.getpwuid(os.getuid())[0] to get the login name of the current real user id
+		--should prefer getpass.getuser in best practice
+	getpass.getuser()
+		--return the 'login name' of the user executing interpreter process
+		--checks env vars LOGNAME, USER, LNAME and USERNAME, in order; returns first value set to non-empty string
+			--For Unix will revert to pwd.getpwuid(os.getuid())[0] if all strings empty
+	os.getresuid()
+		--return tuple of current process real(ruid), effective(euid), and saved(suid) user ids
+		--posix-compliant systems only
+	os.geteuid()
+		--effective user id of the current process
+		--'set id' bit on file executed in the current process
+		--posix-compliant systems only
+	os.getegid()
+		--effective group id of the current process
+		--'set id' bit on file executed in the current process
+		--posix-compliant systems only
+	os.getuid()
+		--return real user id of the current process
+		--posix-compliant systems only
+	os.getresgid()
+		--return tuple of current process real(rgid), effective(egid), and saved(sgid) group ids
+		--posix-compliant systems only
+	os.getgid()
+		--return real group id of the current process
+		--posix-compliant systems only
+	os.getgrouplist(user, group)
+		--return list of group ids that user belongs to
+		--posix-compliant systems only
+	os.getgroups()
+		--return list of supplemental group ids associated with the current process
+		--posix-compliant systems only
+	getpass.getpass(prompt='Password: ', stream=None)
+		--prompts user for a password without echoing
+		--prompt written to file-handle object stream
+			--defaults to the controlling terminal (/dev/tty), else sys.stderr while replacing error handler
+				x--on error password input may be echoed
+				--tty access errors ignorned of windows for lack of a tty device type
+				--if echo free input is unavailable getpass() reverts to outputting warning to stream, the reads from sys.stdin while issuing UserWarning subclass GetPassWarning
+Filesystem (access):
+	os.access(path, mode, *, dir_fd=None, effective_ids=False, follow_symlinks=True)
+		--test for access to path using effective/inherited uid/gid
+		--returns bool
+		with open("file") as fp:
+			return fp.read()
+				--return the contents of a file to stdout using fsendconding
+			--calling access() to check user auth before calling open() creates a potential vulnerability: user might exploit the short time interval between checking and opening the file to manipulate it
+			--stdio operations may fail where access() indicates success, e.g. operations on network filesystems may have permissions semantics beyond the usual POSIX permission-bit model
+	os.fdopen(fd, *args, **kwargs)
+		-return an open file object connected to the file descriptor fd
+			--opens a file handle kernel object
+		--alias of the open() built-in function
+			--diff: first argument of fdopen() must always be an integer
+		--low-level I/O and must be applied to a file descriptor as returned by os.open() or pipe()
+	os.close(fd)
+		-close file descriptor fd
+		--for file object returned by functions open(), popen() or fdopen(), use its .close() method
+	os.closerange(fd_low, fd_high)
+		--close all file descriptors from fd_low (inclusive) to fd_high (exclusive), ignoring errors
+	os.getcwd()
+		--return string representation of current working directory
+	os.getbcwd()
+		--return bytestring representation of current working directory
+	os.dup(fd)
+		-return a duplicate of file descriptor fd
+		--new file descriptor is non-inheritable
+			--except Windows, when duplicating a standard stream (0:stdin, 1:stdout, 2:stderr)
+	os.dup2(fd, fd2, inheritable=True)
+		-duplicate file descriptor fd to fd2, closing the latter first if necessary; returns fd2
+		--new file descriptor flagged to be inheritable or not
+	os.listdir(path='.')
+		-return directory listing
+	os.scandir(path='.')
+		-return directory listing with additional file attributes
+		--significant performance benefits over listdir()
+	os.walk(top, topdown=True, onerror=None, followlinks=False)
+		-return the file names in a directory tree by walking the tree either top-down or bottom-up
+		--setting followlinks to True can lead to infinite recursion if a link points to a parent directory of itself
+	os.fspath(path)
+		--return the file system representation of the path
+	sys.getsizeof(object[, default])
+		-return the size of an object in bytes
+			--only memory consumption directly attributed to the object is accounted for, not memory consumption of objects it refers to
+		--object can be any type of object interpreter writes to memory (e.g. file handle)
+	os.readlink(path, *, dir_fd=None)
+		-return a string representing the path to which target symlink points
+	os.stat(path, *, dir_fd=None, follow_symlinks=True)
+		-return status of file or file descriptor
+		--equivalent of a stat() system call
+	os.listxattr(path=None, *, follow_symlinks=True)
+		-return a list of the extended filesystem attributes
+		--posix-compliant systems only
+	os.getxattr(path, attribute, *, follow_symlinks=True)
+		-return value of extended filesystem attribute
+		--posix-compliant systems only
+	
+Filesystem (manipulation):
+	os.chmod(path, mode, *, dir_fd=None, follow_symlinks=True)
+		-change the mode of path to the numeric mode
+		--mode takes one of the following values (as defined in the stat module) or bitwise ORed combinations of them:
+			stat.S_ISUID
+			stat.S_ISGID
+			stat.S_ENFMT
+			stat.S_ISVTX
+			stat.S_IREAD
+			stat.S_IWRITE
+			stat.S_IEXEC
+			stat.S_IRWXU
+			stat.S_IRUSR
+			stat.S_IWUSR
+			stat.S_IXUSR
+			stat.S_IRWXG
+			stat.S_IRGRP
+			stat.S_IWGRP
+			stat.S_IXGRP
+			stat.S_IRWXO
+			stat.S_IROTH
+			stat.S_IWOTH
+			stat.S_IXOTH
+		--can support specifying a file descriptor, paths relative to directory descriptors and not following symlinks
+		--Win may only set the file read-only flag (via stat.S_IWRITE and stat.S_IREAD or int value)
+		--prior to 3.6 does not support path-like objects
+	os.fchmod(fd, mode)
+		--equivelant to os.chmod(fd, mode)
+	os.chown(path, uid, gid, *, dir_fd=None, follow_symlinks=True)
+		-change the owner and group id of path to the numeric uid and gid
+		--posix-compliant systems only
+	shutil.chown()
+	os.chdir(path)
+		--change pwd/$PATH of interperter environment
+	os.fchdir(fd)
+		--change the current working directory to the directory represented by the file descriptor fd
+	os.chroot(path)
+		-set root directory of the current process to path
+		--posix-compliant systems only
+	os.remove(path, *, dir_fd=None)
+		--remove (delete) target file
+	os.rename(src, dst, *, src_dir_fd=None, dst_dir_fd=None)
+		--rename file or dir src to dst
+	os.mkdir(path, mode=0o777, *, dir_fd=None)
+		-create a directory
+	os.rmdir(path, *, dir_fd=None)
+		-remove (delete) target directory
+		--directory must be empty, else error will be raised
+	os.removedirs(name)
+		-remove dirctory and child directories recursively until error raised
+	os.mkfifo(path, mode=0o666, *, dir_fd=None)
+		-create a FIFO (named pipe)
+		--posix-compliant systems only
+	os.symlink(src, dst, target_is_directory=False, *, dir_fd=None)
+		-create a symbolic link pointing to src named dst
+	os.unlink(path, *, dir_fd=None)
+		--delete target file
+		--semantically identical to os.remove()
+		--posix-compliant systems only
+	os.mknod(path, mode=0o600, device=0, *, dir_fd=None)
+		--create a filesystem node (file, device special file or named pipe)
+		--posix-compliant systems only
+	os.utime(path, times=None, *, [ns, ]dir_fd=None, follow_symlinks=True)
+		-set the access and modified times of the file specified
+	os.sync
+		--for write of everything to disk
+		--posix-compliant systems only
+	os.setxattr(path, attribute, value, flags=0, *, follow_symlinks=True)
+		-set extended filesystem attribute
+		--posix-compliant systems only
+	os.removexattr(path, attribute, *, follow_symlinks=True)
+		-remove extended filesystem attribute
+		--posix-compliant systems only
+Filesystem (troubleshooting):
+	str(sys.getfilesystemencoding())
+		-return the name of the encoding used to convert between Unicode filenames and bytes filenames
+		--In the UTF-8 mode, the encoding is utf-8 on any platform
+		--On Mac OS X, the encoding is 'utf-8'
+		--On Unix, the encoding is the locale encoding
+		--On Windows, the encoding may be 'utf-8' or 'mbcs', depending on user configuration
+	sys.getfilesystemencodeerrors()
+		-return the name of the error mode used to convert between Unicode filenames and bytes filenames
+	os.device_encoding(fd)
+		--return a string describing the encoding of the device associated with fd if it is connected to a terminal
+	os.fsencode(filename)
+		--encode path-like filename to the filesystem encoding
+	os.fsdecode(filename)
+		--decode path-like filename from the filesystem encoding
+	
+	
+	
+	
+	
+Undocument Methods leading to command execution

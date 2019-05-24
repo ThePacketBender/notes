@@ -94,3 +94,11 @@ wp-config.php
 important read target lines
 	
 	
+	
+tools:
+wpscan
+wpscan --url https://www.target.dom/blog/
+wpscan --url https://www.target.dom/blog/ --stealthy
+	--alias for --random-user-agent --detection-mode passive --plugins-version-detection passive
+
+gobuster -u https://blog.site.dom/ -l -e -w /SecLists/Discovery/Web-Content/CMS/wordpress.fuzz.txt

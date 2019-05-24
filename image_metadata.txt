@@ -1,0 +1,9 @@
+Image Metadata
+
+View metadata
+identify -verbose image.png
+exiv2 image.png
+exiftool image.jpg
+exif image.jpg
+mediainfo image.jpg
+find . -iname "*.jpg" -exec mediainfo {} \;

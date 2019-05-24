@@ -39,3 +39,25 @@ https://ajinabraham.github.io/NodeJsScan/
 		
 		
 https://www.npmjs.com/advisories
+
+
+Bugs in NodeJS:
+	-discloses significantly more information than different javascript implementations
+		--information disclosure (debugging) in the interpreter
+	V8:
+	d8 -e 'print(this)'
+		-returns type [object.global]
+	Spidermonkey:
+	js -e 'print(this)'
+		-returns type [object.global]
+	NodeJS:
+	node -e 'print(this)'
+		-returns array of initialized global variables
+	-NodeJS does not behave the same way when parsing the same code with different forms of input
+	CLI:
+	node -e 'console.log(this)'
+		-return array of environment information in which node CLI is launched
+			--similar to `env` or `export -p`
+	File:
+	echo "console.log(this)" > file.js && node file.js
+		-returns initialized array with no values declared
