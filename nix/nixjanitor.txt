@@ -101,7 +101,10 @@ sudo dmidecode -t 17
 top
 htop
 	-"look up"
-	
+echo '/dev/sdb1	/mnt/x	ext4	defaults	0	0' >> /etc/fstab
+	-add drive to mount at boot time
+fdisk -l /dev/sdb
+	--check for an '*' in 'boot column at /dev/sdb1 row entry to verify that addition to fstab was successful
 
 Display
 xrandr
