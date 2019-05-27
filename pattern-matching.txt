@@ -5,8 +5,15 @@ GREP
 
 
 SED
-
+sed 's/[[:space:]]//g'
+	-trim whitespaces from a file
 
 AWK
 awk 'NR==FNR{a[$0];next}!($0 in a)' file2 file1
 	--Compare 2 files and return the unique lines in first file
+awk NF -
+	--remove newlines from stdin
+	
+
+xclip -selection clipboard -o | sed 's/[[:space:]]//g' | awk NF - >http_response_codes.txt
+	--remove all whitespace and newlines from a copied selection of text (from clipboard)

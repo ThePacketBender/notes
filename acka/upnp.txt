@@ -1,0 +1,20 @@
+UPNP
+
+UDP 1900 port
+uses XML/SOAP(html+xml) to query+control remote devices
+
+UPnP Phases:
+0 Addressing
+	-control point & devices lease IP addressing information from router via dhcp
+1 Discovery
+	-control point discovers device
+2 Description
+	-control point queries device capabilities
+3 Control
+	-control point invokes action on device
+4 Eventing
+	-control point listens to device state changes
+5 Protocol
+	-control point interacts with device continuously
+
+

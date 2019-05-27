@@ -93,6 +93,10 @@ http
 nc -lvp 80 < ./file.ext
 while true ; do nc -l 80 < test.html ; done
 ncat -ssl -klvp 443 < ./file.ext
+nc -lk -p 8080 --sh-exec "echo -e 'HTTP/1.1 200 OK\r\n'; cat index.html"
+	--linux
+ncat -lk -p 8080 --sh-exec "echo HTTP/1.1 200 OK& echo(&type index.html"
+	--windows
 	BUSYBOX
 busybox httpd -f -p 8000
 	WEBFS

