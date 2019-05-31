@@ -55,7 +55,8 @@ COMMANDS
 ~/.tmux.conf
 
 #set default shell for tmux to load with to bash
-set -g default-shell /bin/bash
+set-option -g default-shell /bin/bash
+set-option -g default-command "/bin/bash -i"
 #increase history scrollback per-pane
 set-option -g history-limit 50000
 #per window
@@ -79,12 +80,12 @@ unbind '"'
 unbind %
 
 # Enable mouse mode (tmux 2.1 and above)
-set -g mouse on
+set-option -g mouse on
 #<2.1
 # Enable mouse control (clickable windows, panes, resizable panes)
-set -g mouse-select-window on
-set -g mouse-select-pane on
-set -g mouse-resize-pane on
+set-option -g mouse-select-window on
+set-option -g mouse-select-pane on
+set-option -g mouse-resize-pane on
 
 # switch panes using Alt-arrow without prefix
 bind -n M-Left select-pane -L

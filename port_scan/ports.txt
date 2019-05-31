@@ -39,6 +39,8 @@ TCP
 3306mysql
 3372msdtc			microsoft distributed transaction coordinator
 3389ms-wbt-server	
+4070spotify			
+27020steam			
 32768filenet-tms	
 
 

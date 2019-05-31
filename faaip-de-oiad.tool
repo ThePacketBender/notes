@@ -1,5 +1,0 @@
-I, I don't have a whole lot of time. Um, OK, I'm a former employee of Area 51. I, I was let go on a medical discharge about a week ago and, and... [chokes] I've kind of been running across the country. Damn, I don't know where to start, they're, they're gonna, um, they'll triangulate on this position really soon.
-
-OK, um, um, OK, what we're thinking of as, as aliens, they're extradimensional beings, that, an earlier precursor of the, um, space program they made contact with. They are not what they claim to be. Uh, they've infiltrated a, a lot of aspects of, of, of the military establishment, particularly the Area 51.
-
-The disasters that are coming, they, the military, I'm sorry, the government knows about them. And there's a lot of safe areas in this world that they could begin moving the population to now. They are not! They want those major population centers wiped out so that the few that are left will be more easily controllable.

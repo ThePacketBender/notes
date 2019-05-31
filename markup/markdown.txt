@@ -1,0 +1,37 @@
+Markdown
+
+
+--.md and .markdown extensions recognized
+
+**bold**
+__bold__
+*italic*
+_italic_
+_**bold italic**_
+~~strikethrough~~
+[link to site](https://site.dom)
+https://site.dom
+	--links are also automatic
+1. Numbered (ordered)
+2. List
+* bullet
+* point
+- dashes
+- nest
+	- bullet
+	- points
+# H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
+======
+	--alt-H1
+------
+	--alt-H2
+![Image](/images/image.jpg)
+> block
+> quote
+`<addr>`
+	--inlide code
