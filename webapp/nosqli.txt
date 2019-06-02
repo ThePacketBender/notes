@@ -1,9 +1,21 @@
 NoSQLi
 
 
-MongoDB
+--queries execute within a procedural language, rather than in declarative SQL language
+--often less mitigation when attacking through REST API
+	--filtering of common HTML special characters < > & ; will not prevent attacks against a JSON API, where special characters include / { } : 
 
-payloads
+
+MongoDB
+	--$where operator typically is used as a simple filter or check
+		db.myCollection.find( { $where: "this.here == this.there" } );
+	--JavaScript may also evaluate
+		db.myCollection.find( { $where: function() { return obj.here - obj.there < 0; } } );
+
+Escape Chars:
+	' " \ ; { }
+
+Payloads:
 true, $where: '1 == 1'
 , $where: '1 == 1'
 $where: '1 == 1'

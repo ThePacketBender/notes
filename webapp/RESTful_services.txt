@@ -5,48 +5,64 @@ Restful Services
 Tools:
 Postman - https://www.getpostman.com/downloads/
 Astra	- https://github.com/flipkart-incubator/astra
+BurpSuitePro
+OWASP Zaproxy
+wfuzz
 
 
-Description Languages/Resource Listings
+Important Commands:
+curl -v -k --ssl-no-revoke -x 'http://127.0.0.1:8080' -H "Authorization: <uuid-pattern>" -H "Content-Type: application/json; charset=utf-8" -X POST 'https://api.webservice.dom/v2/path/to/endpoint' --data '{}'
+	-Pipe (RESTful) API request to proxy
+
+
+RESTful Servicce Description Languages & ENUMERATION:
+Description Languages/Resource Listings:
 WSDL
 	(web service description language)
-enumeration
+	enumeration:
 	/path/to/name-of-service.wsdl
-
-	
 WADL
 	(web application description language)
-enumeration
+	enumeration:
 	/path/to/name-of-service.wadl
-
-
 Swagger
 	-json-formatted
 	/path/to/api/v1/name-of-service/swagger.json
-Swagger-Tools
-https://www.getpostman.com/
-https://portswigger.net/bappstore/6bf7574b632847faaaa4eb5e42f1757c
-https://github.com/RhinoSecurityLabs/Swagger-EZ
-https://editor.swagger.io/
-(Conversion tools)
-https://apimatic.io/transformer
-https://openapi.tools/
-
+	Swagger-Tools:
+	https://www.getpostman.com/
+	https://portswigger.net/bappstore/6bf7574b632847faaaa4eb5e42f1757c
+	https://github.com/RhinoSecurityLabs/Swagger-EZ
+	https://editor.swagger.io/
+	(Conversion tools)
+	https://apimatic.io/transformer
+	https://openapi.tools/
 iOS
 	/.well-known/apple-app-site-association
-
 XML Sitemaps
 	/sitemap.xml
 	/XMLSitemap
 	/wp-includes/wlwmanifest.xml
 	/XMLSchema
-
-
+RSDL
+	--RESTful Service Description Language
+RAML
+	--Restful API Modeling Languages
+Apache Avaro
+Barrister
+Hypermedia
+CloudRail
+Google Cloud Endpoints
+OData
+	--Open Data Protocol
+	--OASIS standard
+	--Microsoft-developed
+SERIN
+	--Semantic Restful Interfaces
+Hydra
+	--Hydra Core Vocabulary
 Standard
 	/robots.txt
 	/robots-dissallow.txt
-
-
 
 
 >How are sessions authenticated and handled?
@@ -118,6 +134,22 @@ Standard
 			What patterns are present in Session ID struture and/or within (possibly even between) derivative partial structures  
 		What sensetive information is stored in the Session ID?
 	Does the authentication function have a max retry limit?
+		Is the there a strong ReCaptcha mechanism protecting against further attempts?
+	Are multiple concurrent sessions allowed/possible?
+>API Access Tokens
+	Generating sufficiently many tokens in (as near simultaneously as possilbe) succession, how much entropy is measured in the generated tokens?
+	Are there any noticeable patterns in the generated tokens by either examining successively (e.g. incrementation) or common patterns noticeable between tokens without examining them in sequential order?
+		Examing the series of generated tokens converted to hexidecimal notation, are can any patterns be discerned in the same ways now? Can bitwise operations explain any patterns noticed in the plaintext?
+		Most commonly discovered patterns:
+			static string as (hyphen-seperated) segment (usually leading) segment of all keys
+				--repeat process at different time if time or incrementation input 
+			repeated sub-string in multiple tokens?
+	What is the character set used to generate the access token?
+		alphabetic? alphanumeric?
+		case sensitive?
+	Given key length, accounting for measured entropy and patterns discovered that reduce the complexity of generating likely valid (in use by another user) key; how many keys we would need to be generated and tested by making an api request to perform non-targeted impersonation as a brute force attack?
+		Are there any other unique header fields, uri segments, or request body values the service application validates the api key, e.g. a user/organization/&c identifier, against on every endpoint?
+		-prefer testing against "ping"/"status"/"online" key against endpoints for less intrusive and to recieve most immediate possible response
 >JWT (JSON WEB TOKENS)
 	-string composed by 3 parts separated by a "."
 		header
@@ -218,6 +250,59 @@ Standard
 	Is HTTP response code 429 "Too Many Requests" ever returned while rapidly making requests?
 	Is an API key revocation functionality in place?
 		-does it strictly comply with application's usage agreement?
+>Privilege Escalation (vertical or horizontal)
+	Can other users be enumerated?
+		How many requests would be required to discover the identity of an arbitrary target or all users?
+		Possible Methods:
+			Query a list/table/collection/(other representation of an array) of users
+				Can a full index of users be returned?
+					-Wildcard Injection
+						*--wildcard characters or phrases may or may not require precession by an escape sequence, subquery encapsulation, (non-)particular sorting function phrase(s) or additional comparison operation AND/OR succession by an endline character, comment invocation, sequence unescape, subquery endcap, sorting phrase adjective or comparison operation (either conjoining with a preceding referenced value given some new equivelancy relation or being disjoined by resolving a false equivelance/equality via an injected identifier, e.g. rendering identifiers in an injected statement falesly equivelant values by expecting all to be cast as types for which comparison can be evaluated)
+						SQL: * (SELECT statement injection), % (LIKE statement injection; matches 1+ character), _ (LIKE statement injection; matches exactly 1 character)
+						MongoDB: *, /.*/ (JavaScript regex), {'$regex': ''} (regex typedef), { $ne: 1 } (resolves to JavaScript null type, evalutes as declared uninitialized value), {$exists:true}, {$exists:false}
+				Can any indexed data other than the queried user identifier (username, email) be queried?
+					Can any of the queried attributes be iterated over for each unique user?
+				Can bulk user information returned in a single object, does it need to paginated over or can unique queries be requested serially for ordered values following the final value in the series included in a most recent previous response?
+					If all possible values are queried, should all indexed items be expected to be returned in at least 1 response?
+						Iterating over all possible queries:
+						e.g.:
+							crunch 4 13 mixalpha-numeric-all-space -o word.lst \
+							for i in `cat word.lst`; do curl -X POST https://api.target.dom/v2/search --data '{ "querystring": \"$i\" }' | awk -f json-parse.awk - >> /tmp/placehold && sort -u /tmp/placeholder -o /tmp/placeholder ; done
+						--results must be ordered (non-pseudo-random)
+							--test by making same request at multiple different time intervals
+						--sufficiently many results must be returned or be capable of being paginated over in qeury requests for each unique possible query
+							--not measurable without knowing length of index
+			Registration page harvesting:
+				On parameter submission, either asynchronously or form data submission request body, are any expected unique user attributes (e.g. username, email address, phone number, &c) declared unavailable (not unique) in the response body?
+					Do errors caused by parameter validaty and uniqueness return identical responses (Status Code & Response Body)?
+						In which order does the API evaluate (assuming accorded response) validity and uniqueness?
+							If validity is evaluated prior to uniqueness actually creating accounts may be required to test if a username is in use.
+				Does the registration function require multiple steps to complete?
+					Does it require making requests to (an) endpoint(s) or accross multiple pages or screens?
+						If so validation and parameter unicity are in most cases capable of being tested without creating any new accounts.
+			Login page harvesting:
+				Does login failure return an error message or response?
+					Does the returned login attempt message or response body indicate distinctly whether the username is valid (for an existing account)?
+				Are the there protections against many authentication attempts?
+					account lockout
+						are email warnings sent?
+							are the likely to be caught by spam filters? 
+						time-based or requiring some user interaction?
+					ip address ban (usually temporary)
+						--perform test using clustered instances on cloud-hosting services
+					client-side controls
+						check cookies, parameter values, DOM object values
+			Unique user endpoint harvesing:
+				where is the unique identifier located?
+					uri segment
+					uri parameter
+					request body parameter
+					subdomain name
+				what type of unique identifier is the target field?
+					username/orgname
+					email
+					uuid
+					account number (incremented)
 >SSL
 	Is the application also hosted as plaintext?
 	Is the HSTS header sent in HTTP responses?
@@ -231,3 +316,110 @@ Standard
 	-out of range index errors are fairly common given a an integer value
 		--e.g. /path/to/endpoint/666 where index item 666 is uninitialized, thus Null
 		--may return verbose respones containing source code or revealing backend framework, data storage system, &c
+>Rate Limiting
+	-HTTP status code for rate limiting defined as 429 by RFC 6585
+		-RFC 6584 reappropriates 503 Status Code header 'Retry-After:' for use with 429 Responses
+		Other common indications that an API rate limit has been hit:
+			Legacy Status Response Code 420
+				--still implemented in pre-standardization APIs and ocassionally in newly written APIs
+				--originally used by twitter API with response “420 - Enhance Your Calm”; some engineers really liked that joke and don't want it to die
+			Status Response Code 403 combined with an error code
+				--Google API services and Github v3 API (distinct from the newer GraphQL API) use status code 403 Forbidden for rate limiting and include JSON message bodies
+				--Google and Github host additional external APIs and other (services/libraries) remain modeled after them, check the response body of 403 Responses when querying an API
+					--rarely will APIs have a mechanism for forbidden file access as a response, because they generally do not serve files from a webroot
+			Rate limit responses may be included in API headers, e.g.:
+				X-RateLimit-Limit:
+				X-RateLimit-Remaining:
+				X-RateLimit-Reset:
+	How have you been rate-limited?
+		-APIs most commonly use one or both of two factors determining when an API rate limit has been reached:
+			API Key/AUTH Key
+				--especially true of premium/paid APIs
+				x-trivially bypassed for freely-accessed APIs if multiple API Key-generating accounts can be created
+					--may require multiple contact address accounts or in some cases even multiple domain names
+			IP Address
+				--especially true of APIs that do not require user authentication
+				x-trivially bypassed clustering cloud-hosting service instances to make additional requests originating from
+		--For responses indicating a 'Retry', 'Reset' or similar header or body response in Unix Epoch Time(UTC) (or any datetime format that can be converted to an int value) a shared key, e.g. in Redis, tracking request availability time or set with an expiry period may be the most efficient method to stagger programmatic or daemonized requests in accordance with expected or agreed service usage terms.
+			--Test that sleep does not block background processes from processing other jobs
+			--can happen in languages where sleep sleeps the whole process and that process is running multiple types job on the same thread
+	Where have you been rate-limited?
+		Is the entire API rate-limited or are only endpoints within certain paths?
+			--NGINX rate-limiting configured by two main directives:
+				limit_req
+					--counts universally
+				limit_req_zone
+					--counts within location for defined virtualhosted service
+			Do Paths share rate limits or are limits counted exclusive to a path?
+				--NGINX limit_req_zone applies only within singular zone configuration, e.g.:
+					limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
+					server {
+						location /path/ {
+							limit_req zone=alimit;
+				
+		
+
+
+Best Practices:
+Prefer to scan/fuzz item update/modification requests rather than creation requests
+
+
+
+Appendix 1:
+Common Languages/Libraries used to implement APIs
+	node.js
+		ExpressJS
+		Electron
+		node-restify
+		Sails.js
+	Python
+		Flask
+			flask-restful
+			flask-restless
+			Flask-Potion
+		Django
+			Django-REST-Framework
+			django-tastypie
+		Bottle
+		Cherrypy
+		Twisted
+		webpy
+		restless
+	Java
+		Scala
+			Akka
+		Glassfish
+			Jersey
+		Netty
+			Wildfly
+				--formerly JBoss Application Server
+			RestExpress
+	PHP
+		Symphony2
+		Laravel
+		Slim
+		Microrest
+	Ruby
+		Rails
+		Sinatra
+		Grape
+	ASP.NET
+		Nancy
+	Go
+		gocrud
+		go-rest
+			go-json-rest
+		sleepy
+Web Server API Management gateways (API Gateways):
+NGINX
+	OpenResty
+		--NGINX+Lua
+	Kong
+		--Scalable, distributed, and plugin oriented API gateway on NGINX backend
+	Tyk
+		--Lightweight API gateway with analytics logging
+		--written in Go
+Express Gateway
+	--Microservices API Gateway built on ExpressJS
+Node Server
+	--server.js

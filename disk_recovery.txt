@@ -1,0 +1,129 @@
+physcal storage (hdd/ssd) recovery
+
+
+GParted
+
+Linux
+fsck
+
+
+
+Windows
+cmd.exe
+	"hard disk corrupt or unreadable"
+chkdsk
+	-checkdisk
+	--attempts to repair file system errors, locate bad sectors, and recover readable information from those bad sectors
+	chkdsk e: /r
+		-run chkdsk on an entire volue
+		-/r -locate bad sectors and recover information from them
+			--assumes /f flag
+		-/f -fix errors
+		--if chkdsk cannot lock the disk, will prompt to run the command the next time you restart Windows
+	chkdsk c:\Users\yourname\path\to\corrupted.file
+		--run chkdsk on only a corrupted file
+	chkdsk /spotfix
+	chkdsk /scan
+sfc
+	-system file checker
+		--scan and fix windows system files
+	sfc /scannow
+		-perform an immediate scan of system and replace files as necessary
+		--if errors found, reboot likely required for internal (boot) disks
+	sfc /verifyfile=c:\windows\system32\kernel32.dll
+	sfc /scanfile=d:\windows\system32\kernel32.dll /OFFBOOTDIR=d:\ /OFFWINDIR=d:\windows /OFFLOGFILE=c:\log.txt
+	sfc /scanonce
+		-schedule to perform scan next time system is restarted
+	sfc /scanboot
+		-schedules a scan to be performed on every system boot
+	sfc Revert
+		-return System File Checker to its default settings
+fsutil/fsutils
+	fsutil fsinfo drives
+	fsutil fsinfo drivetype c:
+	fsutil fsinfo volumeinfo c:
+	fsutil fsinfo ntfsinfo c:
+	fsutil fsinfo statistics c:
+	fsutil volume diskfree c:
+	fsutil repair enumerate c:
+		--enumerate the entries of a volume’s corruption log
+	fsutil repair initiate c: 1
+		--initiate NTFS volume self-healing
+	fsutil repair state c:
+		--query the corruption state of the volume
+	fsutil repair set c: 1
+		--set the self healing state of the volume
+	fsutil dirty query C:
+		--display the status of dirty attribute on drive
+	fsutil dirty set C:
+		--set the dirty attribute for volume C:
+			--At the next reboot, the system will automatically perform a disk check using the chkdsk utility
+DISM
+	-Deployment Image Servicing and Management tool
+	--DISM enumerates, installs, uninstalls, configures, and updates features and packages in Windows images. The commands that are available depend on the image being serviced and whether the image is offline or running.
+DISM /Online /Cleanup-Image /RestoreHealth
+	"Boot Issues"
+bootrec.exe /fixboot
+bootrec.exe /fixmbr
+	"Other"
+cipher
+	cipher /W:path
+		-/W -removes data on unused portions of a volume
+			--removes artifacts of deleted files
+			
+Powershell
+	Repair-Volume
+	    [-DriveLetter] <Char[]>
+		[-OfflineScanAndFix]
+		[-SpotFix]
+		[-Scan]
+		[-CimSession <CimSession[]>]
+		[-ThrottleLimit <Int32>]
+		[-AsJob]
+		[-WhatIf]
+		[-Confirm]
+		[<CommonParameters>]
+	Repair-Volume
+      -ObjectId <String[]>
+      [-OfflineScanAndFix]
+      [-SpotFix]
+      [-Scan]
+      [-CimSession <CimSession[]>]
+      [-ThrottleLimit <Int32>]
+      [-AsJob]
+      [-WhatIf]
+      [-Confirm]
+      [<CommonParameters>]
+	Repair-Volume
+      -Path <String[]>
+      [-OfflineScanAndFix]
+      [-SpotFix]
+      [-Scan]
+      [-CimSession <CimSession[]>]
+      [-ThrottleLimit <Int32>]
+      [-AsJob]
+      [-WhatIf]
+      [-Confirm]
+      [<CommonParameters>]
+	Repair-Volume
+		-FileSystemLabel <String[]>
+		[-OfflineScanAndFix]
+		[-SpotFix]
+		[-Scan]
+		[-CimSession <CimSession[]>]
+		[-ThrottleLimit <Int32>]
+		[-AsJob]
+		[-WhatIf]
+		[-Confirm]
+		[<CommonParameters>]
+	Repair-Volume
+		-InputObject <CimInstance[]>
+		[-OfflineScanAndFix]
+		[-SpotFix]
+		[-Scan]
+		[-CimSession <CimSession[]>]
+		[-ThrottleLimit <Int32>]
+		[-AsJob]
+		[-WhatIf]
+		[-Confirm]
+		[<CommonParameters>]
