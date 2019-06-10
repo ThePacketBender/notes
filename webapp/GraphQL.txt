@@ -1,0 +1,85 @@
+GraphQL
+
+
+	--data query language
+	--developed by Facebook, public release: 2015
+		--high adaptation rate since (esp. in enterprise)
+	--Burp Suite and other intercepting proxies as do not currently evaluate GraphQL syntax (may interpret request as invalid xml)
+
+	GraphQL Endpoints (common):
+/graphql/
+/graphql/console/
+/graphql.php
+/graphiql/
+/graphiql.php
+/graphql.php?debug=1
+		--graphql api endpoints range in verbosity from fully interactive request debuggers to low information JSON error response body
+	/graphql/?query={}
+		--if expected GraphQL API endpoint returns a response not indicative of its purpose provide empty GraphQL request {} as parameter value
+			--parameter name in some cases may be non-obvious and require brute force enumeration
+		--parameter may be accepted as paramter for only one of GET/POST/&c request method
+
+	Design Philosophy:
+		Queries always return predictable results
+		Return all data necessary for application operations in a single request
+			--typically RESTful APIs requires requesting data from with one or multiple different sets of parametesrs to multiple URI endpoints
+				--organized in terms of types and fields, not endpoints
+		Access all application data making requests to only a single endpoint
+			--multiple interior endpoints resolve to a single forward-facing endpoint
+		Strongly Typed
+			--(on error/enumration) application asks only what it is possible to request
+			--(on error) returns distinct and verbose error messages
+		New fields and types can be added to GraphQL API without impacting existing queries
+			--depricated fields can be hidden from returning within query requests
+				--also hidden from standard enumeration requests processing (hidden from application)
+	3 Distinct Request Types:
+		Query
+		Mutation
+		Subscription
+	Query Language Syntax:
+		query{
+			Object{
+				Field,
+				Fields
+			}
+		}
+	--Returns JSON-formatted response
+	x-GraphQL framework does not provide any means for securing data
+		--developers implement access control
+			"However, for a production codebase, delegate authorization logic to the business logic layer". -The Documentation
+		x--first test whether a user without proper authentication and/or authorization can request the whole underlying database from the server
+	x--security vulnerabilities most commonly result from architecture and/or code-level choices on how the application maps data to queries for some chosen database technology
+		Vulnerabilaties (likely, some others possible for some DBMS):
+			Broken Access Controls
+			Insecure Direct Object Reference (IDOR)
+			Injections (SQL/NSQL)
+		e.g.:
+		query{
+			userid(id: 16161){
+				...clip...
+				password
+			}
+		}
+			--Broken Access Control: a request querying unexpected field password, but not explicity defining sufficient access controls, may return a hash value used to validate an access credential for some other user with horizontal or vertically greater privileges
+	x-Injection (SQL/NoSQL)
+		--GraphQL is just a layer between client apps and the database
+		x-Variables not properly sanitized lead directly to classic SQL Injection
+		x-NoSQL injection (esp. MongoDB and CouchDB) unlikely to occur passing first-order payloads, because GraphQL lacks capacity for type juggling
+			--vulnerable segmnet of code most likely reside in the application layer developed to fetch variables from GraphQL queries in order to query mapped database
+	x-DoS(/second-order ReDOS)
+		-occurs in GraphQL where overly complex nested queries may be evaluated, consuming entirety of server resources
+		--mitigation: set timeout, maximum depth or query complexity threshold value
+	x-Information Disclosure
+		--illegal queries are still forwarded to DBMS, potentially evaluated thereby and potentially return sensitive information in verbose error responses later returned in json response body
+	Encoding Vectors
+		
+	
+Tools:
+	https://github.com/doyensec/graph-ql/
+		GraphQL_Introspection.py
+			-enumerates a GraphQL endpoint (with introspection) in order to pull out documentation
+				--useful for examining the GraphQL schema looking for information leakage, hidden data and fields that are not intended to be accessible
+	https://github.com/andev-software/graphql-ide
+		-IDE for exploring GraphQL APIs manually
+	https://github.com/br3akp0int/GQLParser
+		-GraphQL parsing and scanning BurpSuite extension

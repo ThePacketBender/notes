@@ -33,6 +33,11 @@ sshuttle
 sshuttle -r username@sshserver 0.0.0.0/0
 sshuttle --dns -r username@sshserver 0/0
 
+Plink
+plink.exe
+	--binary for windows
+	plink.exe 111.11.1.2 -P 22 -C -N -D 1080 -l uname -pw pword
+
 TCP Relaying with Netcat
 nc -lvp 22
 nc -lvp 4444 | nc localhost 22

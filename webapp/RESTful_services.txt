@@ -307,6 +307,8 @@ Standard
 	Is the application also hosted as plaintext?
 	Is the HSTS header sent in HTTP responses?
 	Is certificate-pinning enabled for the FQDN?
+>Application Templating Engine
+	
 >IDOR
 	(Insecure Direct Object Reference)
 	*common to find endpoints that don't perform authorization checks that should
@@ -357,6 +359,8 @@ Standard
 						location /path/ {
 							limit_req zone=alimit;
 				
+
+		
 		
 
 

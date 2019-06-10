@@ -61,3 +61,12 @@ Bugs in NodeJS:
 	File:
 	echo "console.log(this)" > file.js && node file.js
 		-returns initialized array with no values declared
+
+
+
+
+Frameworks:
+	Electron:
+Tools:
+	https://github.com/doyensec/electronegativity
+		npm install @doyensec/electronegativity -g

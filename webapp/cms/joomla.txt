@@ -1,0 +1,78 @@
+Joomla
+
+
+-php-based CMS
+--all built-in Joomla filtering methods are based on blacklisting
+	--see phpinputfilter/inputfilter.php in Joomla install libraries directory
+	--blacklisting methods are case-sensitive
+--often bundled with phpmyadmin
+
+
+Tools:
+	joomlavs
+	joomlascan
+	joomscan
+	kum0nga
+Wordlists
+/SecLists/Discovery/Web-Content/CMS/joomla-plugins.fuzz.txt
+/SecLists/Discovery/Web-Content/CMS/joomla-plugins.themes.txt
+/SecLists/Discovery/Web-Content/URLs/urls-joomla-3.0.3.txt
+	
+	
+Detection:
+	indicative files
+/Joomla.xml
+/robots.txt
+/readme.txt
+/htaccess.txt
+/configuration.php
+/administrator/index.php
+<meta name="generator" content="Joomla! - Open Source Content Management" />
+	--in <head> section of html source
+	
+	common joomla directories
+	--check if directory listing available or return empty 200 status codes
+/bin/
+/cache/
+/cdn-cgi/
+/cli/
+/components/
+/images/
+/includes/
+/installation/
+/js/
+/language/
+/layouts/
+/libraries/
+/logs/
+/media/
+/modules/
+/phpmyadmin/
+/plugins/
+/templates/
+/tmp/
+
+
+Enumeration:
+Specific Version information
+/administrator/manifests/files/joomla.xml
+/language/en-GB/en-GB.xml
+/language/en-US/en-US.xml
+Extensions:
+	http://extensions.Joomla.org
+		--joomla extensions website for full listing (scrape for wordlist creation)
+	test for installed plugins
+/index.php?option=<nameofplugin>
+Joomla uri schema
+	index.php?option=com_abcdef&product=441&productid=12
+	index.php= [calls the component which you are going to visit]
+	Option= [identifies a particular characteristic of object based on some
+	value]
+	Abcdef [name of the component in this case]
+	Productid= [ID of product, might be useful some time, but not much]
+
+
+Exploitation
+<script type="application/json" class="joomla-script-options new">{"csrf.token":"594006e22d7061cf6a085d844ab70711","system.paths":{"root":"","base":""}}</script>
+	--scrape CSRF tokens from head value
+/phpmyadmin/

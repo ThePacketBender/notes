@@ -1,0 +1,32 @@
+Tomcat
+
+
+Enumeration:
+/admin/j_security_check
+	--path of the Apache Tomcat Administration page
+/docs/
+/examples/
+/host-manager
+/host-manager/
+/host-manager/html
+/manager
+	-By default the Manager is only accessible from a browser running on the same machine as Tomcat.
+		--configure host-based access controls $CATALINA_HOME/conf/context.xml
+	--401 response for authentication-based access; 403 response for host-based access
+/manager/
+/manager/html
+/manager/status
+/META-INF/context.xml
+/WEB-INF/
+/WEB-INF/web.xml
+
+
+Enumeration:
+404 "- Not Found" pages should return with Tomcat version information
+	--compare against https://wiki.apache.org/tomcat/TomcatVersions	
+
+Target files:
+?? $CATALINA_HOME == usr/local/tomcat
+$CATALINA_HOME/conf/tomcat-users.xml
+$CATALINA_HOME/conf/server.xml
+

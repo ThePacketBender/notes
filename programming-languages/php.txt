@@ -1,5 +1,24 @@
 PHP
 
+
+PHP Interpreter Runtime
+php -i
+	--return phpinfo()
+php file.php
+	--execute non-interactive php script
+php -f file.php
+	--simple php file execute and parse
+php -F file.php
+	--execute interactive php script for every input line
+php -R file.php
+	--execute php after processing all input lines
+php -a
+	--run php interactively
+php -S localhost:8888
+	--run php built-in server on localhost at portno
+	
+
+
 Vulnerable functions
 Local/Remote file inclusion:
 include()

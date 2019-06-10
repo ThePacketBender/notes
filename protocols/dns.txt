@@ -106,6 +106,35 @@ https://www.robtex.com/
 
 
 
+DNSSEC:
+	-adds cryptographic signatures to DNS records checked to verify that a record came from the correct DNS server
+	-implements 2 additional record types: DNSKEY and DS
+	--DNSSEC zones are assigned a set of zone signing keys (ZSK)
+		--private and public ZSK
+		--adds additional security layer: DNSSEC zones contain a second DNSKEY records containing a key signing key (KSK), which verifies the authenticity of the public ZSK
+	DS record is used to verify the authenticity of child zones** of DNSSEC zones
+		--DS key record on a parent zone contains a hash of the KSK in a child zone
+		>DNSSEC resolver can therefore verify the authenticity of the child zone by hashing its KSK record
+			--varifies by comparing against parent zone’s DS record
+			
+DNS Attacks:
+	DNS spoofing/cache poisoning
+	DNS tunnelling
+	DNS hijacking
+	NXDOMAIN attack
+		--DoS attack against DNS Zone
+		-DNS flood attack where an attacker inundates a DNS server with requests, asking for records that don’t exist
+			--auto-generate unique subdomains for each request
+			--alternatively, target a recursive resolver with the goal of filling the resolver’s cache with junk requests
+	Phantom domain attack
+		--DoS attack agaisnt DNS Resolver
+		-attack configuring multitude of of ‘phantom’ domain servers which either respond to requests very slowly or not at all
+			--resolver is then hit with a flood of requests to these domains and the resolver gets tied up waiting for responses
+	Random subdomain attack
+	Domain lock-up attack
+	Botnet-based CPE attack
+
+
 DNS RECORDS TYPES:
 A Records - Maps an IP Address to a hostname.For e.g. 74.125.236.80 for google.com.
 AAAA Records - Similar to the A record, but allowed to point the domain to an Ipv6 address.
@@ -116,6 +145,7 @@ CERT Records - CERT resource records are used for storing certificates in DNS. C
 CNAME Records - (Canonical NAME) gives an alias of one name to another; records map an alias name to a Fully Qualified Domain Name (FQDN).
 DNAME Records - DNAME records make a CNAME record for every subdomain of a domain and point it to another.
 DNSKEY Records - Cryptographic method for declaring configuration for security in DNSSEC.
+DS Records - Contains a hash of a DNSKEY record for validation; hash type DNSSEC(NSEC3) within TXT record
 HINFO Records - Identifies host hardware and OS type.
 ISDN Records - Maps host name to ISDN address(phone number).
 NAPTR Records - Map telephone numbers and email addresses for VoIP users to SIP servers via SRV records to initiate calls.
