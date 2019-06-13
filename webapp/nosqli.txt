@@ -4,6 +4,15 @@ NoSQLi
 --queries execute within a procedural language, rather than in declarative SQL language
 --often less mitigation when attacking through REST API
 	--filtering of common HTML special characters < > & ; will not prevent attacks against a JSON API, where special characters include / { } : 
+	--type juggling attacks more commonly passable through JSON object fields
+	--GraphQL APIs mitigate the common vulnerabilities in RESTful APIs, but are somewhat likely to be vulnerable when implementing Custom Scalar Types
+
+NoSQLi targets:
+	Expose information
+	Modify data
+	Escalate privileges
+	DoS
+	Code (JavaScript) Injection [now highly unlikely]
 
 
 MongoDB
@@ -11,6 +20,13 @@ MongoDB
 		db.myCollection.find( { $where: "this.here == this.there" } );
 	--JavaScript may also evaluate
 		db.myCollection.find( { $where: function() { return obj.here - obj.there < 0; } } );
+	--searches may be executed on the MongoDB service by regex, which more likely leads to to wildcard injection
+		--query response limits may be defined to some extent or entirely by client-side controls
+		--Or responses may allow indefinite pagination
+		-wildcard injection potentially allows entire collections to be returned
+	--applications accepting skip or limit values passed to MongoDB queries from request parameters may return excessively long responses, allow the equivelent of a wildcard injection, or bypass rate-limiting
+		--Sufficiently heavy queries returning potentially gigabytes-long responses may further cause DoS conditions -for data access at minimum- for other application users, either by allocating excessive system resources, exceeding bandwidth limits or repeating a malicious query beyond set limits for application cluster expansion
+			--may be mitigated in some cases by storing collection records in cloud object storage (e.g. AWS S3) and populating ephemeral NoSQL databases with metadata and references to collection objects held in cloud storage
 
 Escape Chars:
 	' " \ ; { }
@@ -37,4 +53,5 @@ db.injection.insert({success:1});return 1;db.stores.mapReduce(function() { { emi
 ';sleep(5000);'
 ';sleep(5000);+'
 ';it=new%20Date();do{pt=new%20Date();}while(pt-it<5000);
-
+*
+.*

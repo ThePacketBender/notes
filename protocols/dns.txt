@@ -103,7 +103,35 @@ Web databases
 https://dnsdumpster.com
 https://securitytrails.com/
 https://www.robtex.com/
+https://www.robtex.com/dns/
+https://securitytrails.com/list/ip/$IP
+https://www.dnsstuff.com/
+https://www.netcraft.com/
+https://data.iana.org/TLD/tlds-alpha-by-domain.txt
 
+
+Block Lists
+https://rbls.org/
+https://multirbl.valli.org/lookup/
+
+
+
+Web Archives
+https://web.archive.org/
+https://archive.is/
+http://www.cachedpages.com/
+http://cachedview.com/
+
+
+DNS Blacklists
+https://www.virustotal.com/#url
+https://zeltser.com/lookup-malicious-websites/
+https://raw.githubusercontent.com/zbetcheckin/DNSBLs/master/active_dnsbls.txt
+https://www.google.com/transparencyreport/safebrowsing/diagnostic/
+https://sitecheck.sucuri.net/scanner/
+https://www.threatlog.com/
+https://threatminer.com/
+https://www.trustedsource.org/
 
 
 DNSSEC:
