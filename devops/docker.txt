@@ -1,7 +1,0 @@
-docker
-
-service docker start
-
-
-docker ps
-docker inspect <id>

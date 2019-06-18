@@ -12,6 +12,8 @@ mkpasswd -m sha-512 -S salty -s <<< password
 echo password | b2sum
 	SHA3(Keccack) Password hashing
 printf "password" | openssl dgst -sha3-512
+	NTLM password hashing
+python -c 'import hashlib,binascii; print binascii.hexlify(hashlib.new("md4", "<password>".encode("utf-16le")).digest())'
 
 File hashes:
 md5sum file

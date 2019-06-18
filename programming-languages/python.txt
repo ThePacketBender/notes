@@ -12,6 +12,7 @@ wget https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi
 wine msiexec /i python-2.7.9.amd64.msi /qb
 python -m pip install pyinstaller
 c:\Python27\Scripts\pyinstaller.exe file.py
+python pyinstaller.py --onefile convert-to-exe.py
 
 
 

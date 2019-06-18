@@ -95,7 +95,10 @@ gps | ?{$_.name -match "<process/service name>"} | ?{$_.id -match "<process/serv
 	-query drives on localhost
 PS C:\> Get-ChildItem "C:\Users\" - recurse -include *passwords*.txt 
 	-search recursively for filenames matching a pattern
-
+	
+CHECK STATUS OF POWERSHELL LOGGING
+reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\Transcription
 	
 ACTIVE DIRECTORY ENUMERATION
 Get-ADGroupMember -Credential $cred -server master.local "Domain Admins"

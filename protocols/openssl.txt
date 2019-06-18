@@ -514,7 +514,9 @@ openssl pkey -pubout -in private.key | openssl dgst -sha256
 openssl x509 -noout -pubkey -in public.crt | openssl dgst -sha256
 ## 3. If the last two commands did return the same hash: the private key was used to generate the certificate
 
-
+## Generate OpenSSL Password (MD5)
+openssl passwd -1 password
+	--passwords correspond type to linux password hash prefixes
 
 	openssl.cnf
 

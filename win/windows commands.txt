@@ -92,6 +92,8 @@ rundll32.exe user32.dll, LockWorkStation
 wscript.exe <script js/vbs>
 cscript.exe <script js/vbs/c#>
 winstat features
+auditpol /get /category:*
+	-audit policies
 
 	
 	
@@ -503,6 +505,11 @@ reg save HKLM\Security security.hive
 reg save HKLM\SAM sam.hive
 reg save HKLM\System system.hive && dir 
 	-save part of the registry to a file (useful for local password decryption)
+reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\Transcription
+	-check powershell logging status
+hivesh /registry/file
+	-browse registry hive
 	
 	
 Active Directory
@@ -533,6 +540,7 @@ nltest /domain_trusts /v
 nltest /DCLIST:DomainName
 nltest /DCNAME:DomainName
 nltest /DSGETDC:DomainName
+nltest /user:"drhackenstein"
 repadmin /showconn *
 	-show connections for a DC 
 dsquery * forestRoot -filter (objectCategory=nTDSConnection) ?attr distinguishedName fromServer whenCreated displayName
@@ -545,6 +553,14 @@ dsquery * domainroot -filter "(&(objectCategory=Computer)(objectClass=Computer)(
 	-Find servers in the domain 
 dsquery user DC=%userdnsdomain:.=,DC=% -name %username% | dsget user -disabled -dn
 	-Find out if a user account is currently enabled or disabled
+set l
+	-return DS for current auth session
+klist
+	-domain name and DC user authenticated to, kerberos tickets for the session
+klist sessions
+	-get all logon sessions, including NTLM authenticated sessions
+klist tgt
+	-cached krbtgt
 winpop stat domainname
 
 
@@ -684,6 +700,18 @@ SELECT * FROM Win32_NetworkAdapter WHERE Name LIKE “%VMware%”
 Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList ‘notepad.exe’
 	-code execution, like psexec but stealthier
 		
+
+.Net (Active Directory)
+[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+	--current domain info
+([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).GetAllTrustRelationships()
+	--domain trusts
+[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+	--current forest info
+([System.DirectoryServices.ActiveDirectory.Forest]::GetForest((New-Object System.DirectoryServices.ActiveDirectory.DirectoryContext('Forest', 'forest-of-interest.local')))).GetAllTrustRelationships()
+	--forest trust relationships
+
+
 SYSINTERNALS
 PSEXEC
 psexec /?

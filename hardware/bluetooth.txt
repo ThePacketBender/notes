@@ -909,9 +909,12 @@ Bluebug Technique:
 
 
 Additional Tools:
-	Bluediving
+Bluediving
 	http://bluediving.sourceforge.net/
 	--Bluebug, BlueSnarf, BlueSnarf++, BlueSmack, Bluetooth address spoofing, AT and a RFCOMM socket shell, carwhisperer, bss, L2CAP packetgenerator, L2CAP connection resetter, RFCOMM scanner and greenplaque scanning mode (using more than one hci device).
+
+Bettercap
+	https://github.com/bettercap/bettercap
 
 Blueprint
 	https://trifinite.org/trifinite_stuff_blueprinting.html
@@ -922,6 +925,9 @@ BT_Audit
 
 BTLEJack
 	https://github.com/virtualabs/btlejack
+	
+BTLEJuice
+	https://github.com/DigitalSecurity/btlejuice
 
 BTProxy-MitM
 	https://github.com/conorpp/btproxy
@@ -939,7 +945,8 @@ Carwhisperer
 	-cw_pin.pl script provides the passkey depending on the Bluetooth address that requests it
 	-pending first three bytes of the address, which references the manufacturer, different passkeys are returned by the cw_pin.sh script
 
-
+Gattacker
+	https://github.com/securing/gattacker
 
 
 

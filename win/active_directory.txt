@@ -28,6 +28,9 @@ and directory services to clients.
 
 *Anything in Active Directory can be controlled through permissions
 
+	--Domain computer account password change policies are more of a guideline since they aren’t forced to change by the Domain Controllers (set to 30 days by default depends on computer to change password)
+		--Active Directory does not prevent a computer account from accessing AD resources even if the computer account password hasn’t changed in years
+
 
 Attack Vectors
 
