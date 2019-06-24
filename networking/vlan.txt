@@ -1,0 +1,12 @@
+VLAN
+
+
+Standard Vlan:
+apt-get install vlan
+systemctl network-manager stop
+vconfig add eth0 <VLAN ID>
+ifconfig eth0.<VLAN ID> 111.11.1.11/20 up
+ifconfigh eth0.<VLAN ID>
+vfconfig rem eth0
+
+StrongSwan:

@@ -1,0 +1,12 @@
+Shodan
+
+city: Search for results in a given city
+country: Search for results in a given country (2-letter code)
+port: Search for a specific port or ports
+hostname: Search for values that match the hostname
+net: Search a given IP or subnet (e.g.: 192.168.1.0/24)
+product: Search for the name of the software identified in the banner
+version: Search for the version of the product
+os: Search for a specific operating system name
+title: Search in the content scraped from the HTML tag
+html: Search in the full HTML contents of the returned page

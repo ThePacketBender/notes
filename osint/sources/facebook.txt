@@ -1,0 +1,117 @@
+Facebook Search
+
+
+	--graph search/graphql api recently limited, existing tools and searches no longer readily available
+	Read the API documentation and figure out how to make queries until new tools become avilable.
+	https://developers.facebook.com/docs/graph-api/
+	https://developers.facebook.com/docs/graph-api/explorer/
+	https://developers.facebook.com/docs/graph-api/using-graph-api/
+	https://developers.facebook.com/tools/
+	https://graph.facebook.com/
+
+Females/Males
+People named....
+People who work at...
+People who worked at...
+People who live in.....
+People who lived in.....
+School attended.....
+People who visited...
+People who live in....
+birth year.....
+
+Detailed Search:
+Posts (Keyword)
+Photos (Keyword)
+Videos (Keyword)
+External Videos (Keyword)
+Event (Keyword)
+People that visited (Page ID Number)....
+People that checked in to (Page ID Number)....
+People that like (Page ID Number)....
+Employees of (Page ID Number)....
+Photos from (Page ID Number)....
+Videos from (Page ID Number)....
+Posts from (Page ID Number)....
+Group Members (GroupID)
+Viewer Locations (Video ID)
+Video Download (Video ID)
+Video API (Video ID)
+Video Data: ALL / Level 0 / Level 1 / Level 2
+
+Search Target Profile:
+(Account by Email)
+(Account by Cell)
+(Places Visited)
+(Recent Places Visited)
+(Places Checked-In)
+(Places Liked)
+(Pages Liked)
+(Photos By User)
+(Photos Liked)
+(Photos Of -Tagged)
+(Photos Comments)
+(Photos Interacted)
+(Photos Interested)
+(Photos Recommended For)
+(Apps Used)
+(Videos)
+(Videos Of User)
+(Videos Tagged)
+(Videos By User)
+(Videos Liked)
+(Video Comments)
+(Future Event Invitations)
+(Events)
+(Events Created)
+(Events Invited)
+(Events Joined)
+(Posts by User)
+(Posts by Year)
+(Posts Tagged)
+(Posts Liked)
+(Employers)
+(Groups)
+(Co-Workers)
+(Friends)
+(Followers)
+(Relatives)
+(Friends' Likes)
+
+https://findmyfbid.com/
+
+Places	/search/UserID/places
+Places visited	/search/UserID/places-visited
+Places recently visited	/search/UserID/recent-places-visited
+Places checked in	/search/UserID/places-checked-in
+Places liked	/search/UserID/places-liked
+Photos	/search/UserID/photos
+Photos of	/search/UserID/photos-of
+Photos by	/search/UserID/photos-by
+Photos liked	/search/UserID/photos-liked
+Photos commented	/search/UserID/photos-commented
+Apps	/search/UserID/apps
+Videos	/search/UserID/videos
+Videos of	/search/UserID/videos-of
+Videos by	/search/UserID/videos-by
+Videos liked	/search/UserID/videos-liked
+Videos commented	/search/UserID/videos-commented
+Events	/search/UserID/events
+Events joined in 2010	/search/str/UserID/events-joined/2010/date/events/intersect/
+Posts	/search/UserID/stories-by
+Posts tagged	/search/UserID/stories-tagged
+Posts liked	/search/UserID/stories-liked
+Posts by year	/search/UserID/stories-by/2010/date/stories/intersect
+Friends	/search/UserID/friends
+Relatives	/search/UserID/relatives
+Followers	/search/UserID/followers
+Groups	/search/UserID/groups
+Employers	/search/UserID/employers
+Co-workers	/search/UserID/employees
+Page likers	/likers
+
+
+Links:
+https://findmyfbid.com/
+https://graph.tips/beta/
+http://researchclinic.net/graph.html

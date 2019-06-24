@@ -1,0 +1,14 @@
+People
+
+	Identifying Information:
+		Name
+			-Last
+			-First
+			-Middle
+		Email Addresses
+		Phone Numbers
+		Pseudonyms/usernames
+		Date of Birth/Age
+		Addresses
+		Relatives
+		IP Addresses

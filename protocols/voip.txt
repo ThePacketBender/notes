@@ -2,14 +2,21 @@ VOIP
 
 enumeration
 SMAP
+	--mapping scan tool for SIP-enabled devices
+smap 192.168.4.111
+smap 192.168.4.1/24
 smap -o 192.168.4.111
+smap -l 192.168.4.111
+smap -d 192.168.4.111
 SIPVICIOUS
 svmap 192.168.4.1-128
+svmap 192.168.4.1-128 -fp
 	--scanner for sip enabled hosts
 svwar -e200-300 192.168.4.111 -m INVITE
+svwar 192.168.4.111
 	--enumerates extensions using range of extensions or a dictionary file
 sipsak -vv -s sip:192.168.1.221
-	--tests SIP enabled applications and devices using the OPTION request method
+	--tests SIP enabled applications and devices using only OPTION request method
 ./sip-scan -i eth0 192.168.1.1-254
 	--scanner for sip enabled hosts
 ./enumiax -v -m3 -M3 192.168.1.104
@@ -94,15 +101,15 @@ port 5061 TLS
 	--address format: user/phone@domain/ip
 
 SIP Requests/Methods
-INVITE		Used to invite and account to participate in a call session.
-ACK			Acknowledge an INVITE request.
-CANCEL		Cancel a pending request.
-REGISTER	Register user with a SIP server.
-OPTIONS		Lists information about the capabilities of a caller.
-BYE			Terminates a session between two users in a call.
-REFER		Indicates that the recipient(identified by the Request URI) should contact a third party using the contact information provided in the request.
-SUBSCRIBE	The SUBSCRIBE method is used to request current state and state updates from a remote node.
-NOTIFY		The NOTIFY method is used to notify a SIP node that an event which has been requested by an earlier SUBSCRIBE method has occurred.
+INVITE		Invite and account to participate in call session.
+ACK			Acknowledge INVITE request.
+CANCEL		Cancel pending request.
+REGISTER	Register user with SIP server.
+OPTIONS		List information about capabilities of caller.
+BYE			Terminates session between two users in call.
+REFER		Indicate that recipient (identified by Request URI) should contact third party using contact information provided in request.
+SUBSCRIBE	request current state and state updates from remote node
+NOTIFY		notify SIP node that an event which has been requested by an earlier SUBSCRIBE method has occurred
 
 SIP Responses
 1xx			Informational responses, Request received and being

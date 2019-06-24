@@ -25,6 +25,7 @@ WADL
 	(web application description language)
 	enumeration:
 	/path/to/name-of-service.wadl
+	--http://www.w3.org/Submission/wadl/
 Swagger
 	-json-formatted
 	/path/to/api/v1/name-of-service/swagger.json
@@ -228,6 +229,7 @@ Standard
 	-tool, gui, html: https://github.com/ticarpi/jwt_tool
 	-tool, burp extension: https://github.com/mvetsch/JWT4B
 	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
+>ACCESS CONTROLS:
 >OAUTH
 	Is redirect_uri validated on the server-side?
 		-only whitelisted URLs should validate
@@ -245,7 +247,10 @@ Standard
 	XML Signature wrapping?
 >SSO
 	--single sign on
-	
+	--token based authentication validated by third-party (similar to Kerberos)
+	Are SSO tokens properly invalidated?
+		on logout?
+		on period of inactivity?
 >API Keys
 	Is the API key required for every request to each protected endpoint?
 	Is HTTP response code 429 "Too Many Requests" ever returned while rapidly making requests?

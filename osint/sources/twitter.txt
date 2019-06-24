@@ -1,0 +1,22 @@
+Twitter
+
+Operator:					Finds Tweets:
+foo bar						Containing both "foo" and "bar".
+"foo bar"					Containing the exact phrase "foo bar"
+foo OR bar					Containing "foo" or "bar" (or both)
+foo -bar					Containing "foo" but not "bar"
+#foo						Containing the hashtag "foo"
+from:foobar					Sent from user "foobar"
+to:foobar					Sent to user "foobar"
+@foobar						Referencing user "foobar"
+"foo bar" near:"foobar"		Containing the exact phrase "foo bar" and sent from "foobar"
+near:foo within:15mi		Sent from 15 miles of "foo"
+foobar since:2018-11-11		Containing "foobar" and sent since date "2018-11-11" (year-month-date)
+foo until:2018-11-11		Containing "foo" and sent up to date "2018-11-11"
+foobar filter:links			Containing "foobar" and linking to URLs
+foo source:"Twitter Lite"	Containing "foo" and entered via Twitter Lite
+geocode:47.37,8.541,10km	Sent from 10km from Zurich
+
+https://twitter.com/search-advanced
+
+https://tinfoleak.com/

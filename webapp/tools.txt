@@ -8,20 +8,21 @@ blindelephant -n 50 http://10.11.1.8/ guess
 plecost -i /usr/share/plecost/wp_plugin_list.txt -t 20 -o results.txt http://127.0.0.1/
 
 VULNERABILITY SCANNERS
+nikto
+	apt-get install nikto
 nikto -h http://127.0.0.1/
-	**change useragent in nikto.conf for stealth
-wpscan --update
-wpscan --url http://127.0.0.1/
-	--scan vulnerabilities
-wpscan -u http://127.0.0.1/ --enumerate u
-	--enumerate users
-wpscan -u http://127.0.0.1/ --enumerate p
-	--enumerate installed plugins
-wpscan -u http://127.0.0.1/ --enumerate t
-	--enumerate installed themes
-wpscan -u http://127.0.0.1/ --enumerate tt
-	--enumerate installed timethumbs
+	--change useragent in nikto.conf for stealth
+nikto -h https://127.0.0.1/ -c all | tee nitko.txt
+	--brute force all
 joomscan -u http://127.0.0.1/
+0d1n
+	https://github.com/CoolerVoid/0d1n
+0d1n --host 'http://target/dom/find?search=*&type=^' --payloads payloads/xss-rsnake.txt -find_string_list response2find/find.txt  --log out_data22 --tamper encode64,randcase,urlencode,double_urlencode,spaces2comment,unmagicquote,apostrophe2nullencode,rand_comment,rand_space,replace_keywords --threads 8
+	--brute path and tamper payloads
+0d1n --host 'https://target.dom/^' --payloads test_list1 --find_string_list find_list_one --log out_data27
+	--brute GET and find string
+0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_name name_token_field --log logtest --save_response --proxy http://127.0.0.1:8080/
+	--search XSS and pass anti-csrf token, proxy through burp
 grabber http://127.0.0.1/index.html
 skipfish -W wordlist -o /output/dir http://127.0.0.1/
 cadaver
@@ -37,12 +38,76 @@ retire
 uniscan-gui
 w3af
 w3af-gui
+WAScan
+	https://github.com/m4ll0k/WAScan
+python wascan.py --url https://target.dom/ --scan 0
+	--fingerprint
+python wascan.py --url https://target.dom/index.php?id=1 --scan 1
+	--attack
+python wascan.py --url https://target.dom/ --scan 2
+	--audit
+python wascan.py --url https://target.dom/ --scan 3
+	--brute force
+python wascan.py --url https://target.dom/ --scan 4
+	--information disclosure
+python wascan.py --url https://target.dom --scan 5
+	--full scan
+python wascan.py --url https://target.dom/seek.php --brute
+	--brute force hidden parameters
+python wascan.py --url https://target.dom/test --scan 5 --data "id=1" --method POST
+python wascan.py --url https://target.dom/test --scan 5 --auth "admin:1234" --proxy 127.0.0.1 --proxy-auth "root:4321" --ragent -v
 wapiti http://127.0.0.1/
 webshag-cli -U
 webshag-cli -m pscan 127.0.0.1
 webshag-cli -m uscan 127.0.0.1
 webshag-cli -m info 127.0.0.1
 whatweb -v http://127.0.0.1/
+
+CMS Scanners:
+	Wordpress:
+		https://wpvulndb.com/
+		https://wpvulndb.com/api
+WPScan
+	https://github.com/wpscanteam/wpscan
+	apt-get install wpscan (Kali Linux)
+	gem install wpscan
+	--DB is located at ~/.wpscan/db
+	--config files:
+		~/.wpscan/cli_options.json
+		~/.wpscan/cli_options.yml
+wpscan --update
+wpscan --url http://127.0.0.1/
+	--scan vulnerabilities
+wpscan -v --proxy https://127.0.0.1:8080 --url https://target.dom/
+	--proxy wpscan via burp
+wpscan -v --proxy socks5://127.0.0.1:9090 --url https://target.dom/
+	--proxy wpscan via tor
+wpscan -u https://target.dom/ --enumerate -a --plugins-detection
+	--enumarate all, plugin detection is default passive
+wpscan -u http://127.0.0.1/ --enumerate u
+	--enumerate users
+wpscan --url https://target.dom/ --enumerate u1-100
+	--enumerate range of usernames
+wpscan -u https://target.dom/ --enumerate p
+	--enumerate installed plugins
+wpscan -u https://target.dom/ --enumerate t
+	--enumerate installed themes
+wpscan -u https://target.dom/ --enumerate tt
+	--enumerate installed timethumbs
+WPScan (via Docker)
+	docker pull wpscanteam/wpscan
+docker run -it --rm wpscanteam/wpscan --url https://target.dom/ --enumerate u
+	--enumerate usernames
+docker run -it --rm wpscanteam/wpscan --url https://target.dom/ --enumerate u1-100
+	--enumerate range of usernames
+WPSeku
+	https://github.com/m4ll0k/WPSeku
+python3 wpseku.py --url https://target.dom --verbose
+	--generic scan
+python3 wpseku.py --url https://target.dom --brute --user target --wordlist word.lst --verbose
+	--brute force
+python3 wpseku.py --scan <dir/file> --verbose
+	--scan plugin, theme and wordpress code
 
 WEB DATABASES
 sqlmap -u "http://127.0.0.1/?id=1&str=val"

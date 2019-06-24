@@ -26,3 +26,6 @@ install wine-mono (current version) with uninstaller.exe
 Powershell setup	
 https://github.com/ThePacketBender/pentest_scripts/blob/master/installers/powershell_nix.sh
 	-powershell install script
+	
+net rpc shutdown -I 192.168.4.111 -U user%pass
+	--shutdown remote windows how from *nix host

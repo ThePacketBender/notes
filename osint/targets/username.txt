@@ -1,0 +1,93 @@
+Username
+
+	--goal will usually be to dervice a valid email or social media account by enumerating information linked with the target username 
+
+Search Engines:
+	google
+	yandex
+	bing
+	duckduckgo
+	
+Potential Email Addresses:
+	@gmail.com
+	@yahoo.com
+	@outlook.com
+	@hotmail.com
+	@live.com
+	@icloud.com
+	@hushmail.com
+	@me.com
+	@mail.com
+	@facebook.com
+	@yandex.com
+
+Username Search Tools:
+	Knowem
+	CheckUsers
+	NameVine
+	UserSherlock - https://www.usersherlock.com/
+	UserSearch
+	PeekYou
+	Pipl
+	Spokeo
+	gaddr
+	name chk
+	name checkr
+	https://checkusername.com/
+
+Assessment (online):
+	haveibeenpwned
+		git clone https://github.com/thewhiteh4t/pwnedOrNot.git
+		npm install -g pwned
+			https://github.com/wKovacs64/pwned
+	Hacked-Emails
+
+Assessment (Local files)
+	grep -r username /path/to/(local .csv, .sql, .txt, &c files containing breach data)
+		--if results excessive pipe grep against any other known associated terms 
+	--repeat with regular expressions for common name variations
+		substitute vowels for 31337 number
+		allow 1-6 numerical characters preceding or following username
+
+API Querying:
+	Pipl
+	haveibeenpwned
+	Hacked-Emails
+	FullContact
+
+Additional Search Locations:
+		(common live databases identified by usersnames, many abandoned by users) 
+	Steam
+	imgur
+	deviantart
+	foursquare
+	Meetup
+	Voat
+	gaia online
+	goodreads.com
+	MySpace
+	Quora
+	StumbleUpon
+	Tagged
+	Digg
+	couchsurfing
+	Hacker News(YCombinator)
+	
+	
+	
+Social Media
+	Facebook
+	Instagram
+	Twitter
+	LinkedIn
+	Youtube
+	Google+ (depricated)
+	Reddit
+	Github
+	Pinterest
+	Tumblr
+	Snapchat
+	Ask.fm
+	Flickr
+	Meetup
+	WeChat

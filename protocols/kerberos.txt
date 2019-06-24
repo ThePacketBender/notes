@@ -110,7 +110,23 @@ Kerberos Realms:
 		--intermediate realms may be bypassed to achieve cross-realm authentication through alternate authentication paths
 			--a field in each ticket contains the names of the realms that were involved in authenticating the client
 	
-	
+Kerberos Tickets
+	PAC (Privilaged Attribute Certificate)
+		structure contained in a Kerberos ticket that contains a list of privileges that the ticket is representing
+	PAC Validation:
+		--service receiving ticket validates information contained in PAC before either issuing service tickets (TGT) or running some command/request/&c (service ticket used)
+	"Kerberos V5 does not provide account revocation checking for TGS requests, which allows TGT renewals and service tickets to be issued as long as the TGT is valid even if the account has been revoked...KILE KDCs in the account domain are required to check accounts when the TGT is older than 20 minutes." -MS-KILE specification, 5.1.3
+		--if TGT age>20min, PAC contents validated to ensure that account is still valid
+			x--20 minute interval when PAC contents ARE NOT validated
+			--allows tampering, e.g. forged account/SID information, non-existent user being a member of domain admins group
+				--when TGTs can be forged 20 minute rule does not impact exploitation
+	Service Tickets:
+		--service tickets SHOULD be issued by a TGS after getting a TGT and should be between 2 Kerberos principals
+		--portion of TGT sent to TGS needs to be signed by the KRBTGT account
+			--for service tickets, the target account is on the computer itself
+		--service tickets identical in format to TGT, but with different service name
+
+
 Kerberos Active Directory implementation
 	--default authentication method in Windows 2000 and later
 			--AES encrpytion supported since Windows Vista
@@ -564,6 +580,7 @@ Authentication path - sequence of intermediate realms transited in the authentic
 KADM - Kerberos Administration Server
 KDC - Key Distribution Center
 	--network service that supplies tickets and temporary session keys
+PAC - Privilaged Attribute Certificate
 Prinicipal - A uniquely named client or server
 Principal identifier - name used to uniquely identify each unique principal
 Secret Key - encryption key shared by a principal and the KDC
@@ -577,6 +594,7 @@ Ticket - record that helps a client authenticate itself to a server, sealed by s
 	session key
 	timestamp
 	other information
+UPN - User Principal Name
 
 
 	RFC Reference:

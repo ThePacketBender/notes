@@ -110,6 +110,8 @@ htop
 
 Display
 xrandr
+xrandr --current
+xrandr --screen 0
 xrandr --verbose
 	--return information about he current display configuration and display options
 xrandr -s 1920x1080 -r 60hz
@@ -121,7 +123,10 @@ xrandr --newmode "1024x768_60.00"  64.11  1024 1080 1184 1344  768 769 772 795  
 xrandr --addmode HDMI1 "1024x768_60.00"
 	--attach redering mode configured in xrandr to a display device
 xrandr --output HDMI1 --mode "1024x768_60.00"
-	--pipe output display to file handle linked for shortname of display device for which the rendering mode specified has been previously configured 
+	--pipe output display to file handle linked for shortname of display device for which the rendering mode specified has been previously configured
+xrandr --list-monitors
+xrandr --list-active-monitors
+xrandr --list-providers
 
 
 filesystem management

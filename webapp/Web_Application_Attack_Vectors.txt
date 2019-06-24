@@ -1,0 +1,26 @@
+(Web Application) Attack Vectors
+
+OWASP Top 10
+1 Injection
+	Command Injection
+	SQL Injection
+	Code Injection
+	NoSQL Injection
+	Server-Side Template Injection
+	LDAP Injection
+	EL (Expression Language) Injection
+	Hibernate Injection
+	ORM (Object Relational Mapping) Injection
+	OGNL (Object Graph Navigation Library)Injection
+2 Broken Authentication
+	Credential Stuffing
+	Brute Force
+	Weak Password Policy
+	Default Passwords
+	Broken Password Recovery
+	Ineffective 2FA
+	Session ID Exposed in URI
+	Sessionable identifiers not rotated per successful auth
+	Improper Session ID invalidation
+		--sessions or authentication tokens (particularly single sign-on (SSO) tokens) aren't properly invalidated during logout or a period of inactivity.
+	Session Fixation

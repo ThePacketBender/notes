@@ -1,0 +1,48 @@
+Email
+
+Email Search:
+emailsherlock.com
+
+Information Dump Search:
+https://snusbase.com/search
+	--paid
+https://leakedsource.ru/
+https://weleakinfo.com/
+https://leak-lookup.com/
+https://haveibeenpwned.com/
+https://dehashed.com/
+https://github.com/Ekultek/WhatBreach
+https://github.com/woj-ciech/LeakLooker
+
+Tools:
+infoga
+	https://github.com/m4ll0k/infoga
+python infoga.py --domain nsa.gov --source all --breach -v 2 --report ../nsa.gov.txt
+python infoga.py --info user@protonmail.com --breach -v 3 --report ../user.protonmail.txt
+theHarvester
+	https://github.com/laramies/theHarvester
+theharvester -d microsoft.com -l 500 -b google -f myresults.html
+theharvester -d microsoft.com -b pgp, virustotal
+       -d: Domain to search or company name                                             
+       -b: data source: baidu, bing, bingapi, censys, crtsh, dogpile,                  
+                        google, google-certificates, googleCSE, googleplus, google-profiles,
+                        hunter, linkedin, netcraft, pgp, threatcrowd,   
+                        twitter, vhost, virustotal, yahoo, all
+       -g: use Google dorking instead of normal Google search           
+       -s: start in result number X (default: 0)
+       -v: verify host name via DNS resolution and search for virtual hosts                                                                                                                                       
+       -f: save the results into an HTML and XML file (both)
+       -n: perform a DNS reverse query on all ranges discovered
+       -c: perform a DNS brute force for the domain name           
+       -t: perform a DNS TLD expansion discovery                   
+       -e: use this DNS server                                     
+       -p: port scan the detected hosts and check for Takeovers (80,443,22,21,8080)
+       -l: limit the number of results to work with(Bing goes from 50 to 50 results,
+            Google 100 to 100, and PGP doesn't use this option)    
+       -h: use SHODAN database to query discovered hosts
+h8mail
+	https://github.com/khast3x/h8mail
+h8mail -t target@target.dom
+	-query for a single target
+h8mail -t targets.txt -bc ../BreachCompilation/ -sk
+	-search breachcollection locally

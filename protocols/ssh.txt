@@ -83,17 +83,16 @@ hydra 192.168.1.1 ssh -L userlist -P wordlist -s 22 -vV
 
 SCP
 remote->local
-scp your_username@remotehost.edu:foobar.txt /some/local/directory
+scp username@remotehost.dom:foobar.ext /some/local/directory
 local->remote
-scp foobar.txt your_username@remotehost.edu:/some/remote/directory
+scp foobar.txt username@remotehost.dom:/some/remote/directory
 directoires remote->local
-scp foobar.txt your_username@remotehost.edu:/some/remote/directory
+scp foobar.txt username@remotehost.dom:/some/remote/directory
 directories local->remote
-scp -r foo your_username@remotehost.edu:/some/remote/directory/bar
-scp your_username@rh1.edu:/some/remote/directory/foobar.txt \
-your_username@rh2.edu:/some/remote/directory/
+scp -r foo your_username@remotehost.dom:/some/remote/directory/bar
+scp username@some.dom:/some/remote/directory/foobar.txt  username@some1.dom:/some/remote/directory/
 cryptography
-scp -c blowfish -C local_file your_username@remotehost.edu:~
+scp -c blowfish -C local_file your_username@remotehost.edu:~/
 	-using cipher blowfish instead of default Triple-DES encrpytion and throwing the -C compression flag may increase speed, the later may also reduce network footprint for large files
 
 	

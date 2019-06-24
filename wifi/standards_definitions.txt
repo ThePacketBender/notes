@@ -1,0 +1,17 @@
+Standards & Definitions:
+
+WEP - Wired Equivalent Privacy
+	RC4 stream cipher w/ CRC32 for integrity check
+	Attack:
+		sniff traffic, replay ARP packet to collect different IVs (initialization vector) of weak encrypted messages sufficient for offline brute force attack
+WPA - Wifi Protected Access
+	Temporal Key Integrity Protocol (TKIP) Message Integrity Check
+	Attack:
+		four way handshake, capture handshake, brute force captured handshake for Pairwise Master Key (PMK) shared by Access Point (AP) and client
+WPA2 - Wifi Protected Access 2
+	Advanced Encryption Standard (AES)
+	Attack:
+		four way handshake, capture handshake, brute force captured handshake for Pairwise Master Key (PMK) shared by Access Point (AP) and client
+WPA Enterprise
+
+WPA3

@@ -23,8 +23,12 @@ TOOLS
 frogger
 https://github.com/nccgroup/vlan-hopping---frogger
 
+modprobe
+modprobe 8021q
+
 voiphopper
 voiphopper -c 0 -i eth0
+voiphopper -i eth0 -v 20
 
 yersinia
 

@@ -40,6 +40,13 @@ git diff [first-branch]...[second-branch]
 git show [commit]
 	-outputs metadata and content changes of the specified commit
 
+
+.git/ Directory
+cat .git/FETCH_HEAD
+	--check branch git pulls from
+cat .git/config
+	--check branch and remote url git is configured to fetch from and merge with
+
 	
 Exploitation Tools:
 GitLeaks
