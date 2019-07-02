@@ -229,7 +229,14 @@ Standard
 	-tool, gui, html: https://github.com/ticarpi/jwt_tool
 	-tool, burp extension: https://github.com/mvetsch/JWT4B
 	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
->ACCESS CONTROLS:
+>ACCESS CONTROLS
+	Are there any sensitive functions that do not require re-authentication?
+>AUTHENTICATION (cont..)
+	Are User IDs/Usernames can sensitive?
+		--should be case-insensitive
+		Are there any vectors during or after authentication where registered usernames with different cases are treated as case-insensitive?
+	Are UUIDs visible?
+	Is there a length beyond which passwords seem to be truncated?
 >OAUTH
 	Is redirect_uri validated on the server-side?
 		-only whitelisted URLs should validate
@@ -245,6 +252,8 @@ Standard
 	Replay attacks?
 	Session fixation?
 	XML Signature wrapping?
+	Is Oauth 1.0 (not 1.0a) implemented in any fashion?
+		-vulnerable to session fixation attacks
 >SSO
 	--single sign on
 	--token based authentication validated by third-party (similar to Kerberos)

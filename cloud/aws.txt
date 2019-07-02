@@ -162,6 +162,7 @@ aws ec2 delete-key-pair --key-name MyKeyPair
 	
 S3
 wget https://my_bucket.s3.amazonaws.com/path-to-file
+	--Simple Storage Service (S3) 
 
 Commands
 aws s3 ls s3://my_bucket --no-sign-request --region us-east-2
@@ -181,7 +182,191 @@ aws s3api put-bucket-acl --bucket MyBucket --grant-read-acp 'URI="http://acs.ama
 aws s3api put-bucket-logging --bucket MyBucket --bucket-logging-status file://logging.json
 	-AWS user granted full control over a log file, all users have read access
 	-- --put-bucket-acl command is also required to grant the Amazon S3 log delivery system (specified by a URI) the permissions needed to read and write the logs to the bucket
-
+	
+s3 Enumeration:
+	--requests made directly to s3, Cloudfront (or other CDN), s3 "static website", &c
+	HTTP response header for Server: AmazonS3
+	arbitrary uri returns S3-404
+		S3-404 Respones:
+			"Static Website enabled"
+			Access Denied OR NoSuchKey
+	Response headers of bucket objects may contain metadata reavling bucket name
+	domain DNS entry pointing directory to s3 reveals bucket name
+		--for domains pointing to a bucket but not returning bucket name, request FQDN as bucket name
+		--very common configuration
+			--bucket named as domain pointing to it
+		--google dork site:domain.ext may expose bucket name
+	access root directory of s3 bucket domain url
+		--in index-listing enabled (public Read bucket ACL) bucket name defined in <Name> element
+	file object contents or naming conventions may reveal bucket name
+		--e.g. assets tagged with bucket name
+		--may further reveal deployment date
+	Brute Force:
+		--cloudflare may temporarily blacklist IPs requesting too many arbitrary bucket names
+		--imitate domain-specific naming conventions where possible
+		--request domain FQDNs as bucket names, e.g.
+			supersecret.target.dom => supersecret-target-dom.s3.amazonaws.com Or supersecret-target.s3.amazonaws.com
+		--NoSuchBucket responses for buckets that do not exist
+		--ListBucketResult or AccessDenied reveal an existing bucket
+		--AllAccessDisabled are removed buckets, which no longer exist
+Permissions (ACL):
+	Permission/predefined groups:
+		--give access to a single user inside AWS
+		ID - AWS userID
+		emailAddress - email address
+		AuthenticatedUsers
+			--Anyone with a valid set of AWS credentials
+			--All AWS accounts that can sign a request properly are group members
+			--requester doesn’t need to have any relation at all with the AWS account owning the bucket or the object
+			--commonly misconfigured
+				--miconstrues authenticated with authorized
+		AllUsers
+			--requester doesn’t even need to make an authenticated request to read or write any data
+			--depending on configured polict anyone can make PUT or GET requests to upload or access data
+	Policy permissions/ACP (Access Control Policies):
+		--https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#permissions
+		READ
+			--permission to read file content of bucket objects
+			--if set on bucket requester can list files contained in target s3 bucket
+			--if set on object, content content retrievable via request
+			aws s3api get-object --bucket target-bucket --key read.txt read.txt
+		READ_ACP
+			--permission to read the access control list of the bucket or object
+			--if enabled identify vulnerable assets without trying to modify the content or ACP
+			aws s3api get-object-acl --bucket target-bucket --key read-acp.txt
+		WRITE
+			--permission to write content to file contained as bucket object
+			--WRITE will not work on specific objects in bucket if Object Access WRITE is not set on bucket root
+			--if WRITE is set on bucket all objects are modifiable, any file may be uploaded and may be created as a new file/object
+			--WRITE can be verified on bucket in 2 ways:
+				upload arbitrary file
+				modify known file
+			aws s3api put-object --bucket target-bucket --key write.txt --body write.txt
+		WRITE_ACP
+			--permission to modify the permission ACL of a bucket or object
+			aws s3api get-bucket-acl --bucket target-bucket
+			aws s3api put-object --bucket target-bucket --key write-acp.txt --body write-acp.txt
+			aws s3api put-bucket-acl --bucket target-bucket --grant-full-control emailaddress=att@cker.pwn && echo "pwn"
+			aws s3api put-object-acl --bucket target-bucket --key write-acp.txt --grant-write-acp uri=http://acs.amazonaws.com/groups/global/AuthenticatedUsers && echo "success"
+		FULL_CONTROL
+			--policy combining all of the above permissions
+Bucket Policies (ACP):
+	--specific IAM policies for a bucket
+	--files(s3 objects) served privately (via signed URLs) or publicly via configured ACL (Access Control List) or ACP (Access Control Policy)
+	x-sites may manage s3 buckets through a third party API, if so credentials may be passed to the client during an upload request
+		x--may allow arbitrary file upload, file overwrite, &c directly to s3 bucket
+		x--if uploaded file name is returned in response body, may be useful for enumerating additional (sensitive files) uploaded by other users
+	policy defines access permissions and is signed with a secret key before before sending both the policy and the signature to the client
+	client then uploads files directly to specified bucket; bucket service validates if the uploaded content matches policy
+	Upload Policies:
+		https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-HTTPPOSTConstructPolicy.html
+		-only allow uploading content using a POST-request to the bucket
+		Enumeration:
+			Content-Disposition: form-data; name="policy"
+			--data will be base64-encoded json with expiration and conditions fields
+	Pre-Signed URLs
+		https://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html
+		--allow more than modifying target object
+		Pending HTTP-method defined by pre-sign logic, may PUT, DELETE and/or GET objects which are private per default
+		--pre-Signed URLs more lax compared to the POST Policy version when it comes to defining content-type, access control
+		Enumeration:
+			https://bucket-name.s3.amazonaws.com/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKAI
+	STS AssumeRoleWithWebIdentity:
+		https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html
+		--similar to the POST Policy, difference being temporary security credentials back (ASIA*) created by a pre-defined IAM Role
+	Exploits:
+		(Post Upload Policy)
+		Properties:
+			Access=Yes
+				Exploitable if:
+					--access file after upload
+					--ACL is defined as public-read in the policy or able to receive a pre-signed URL for the uploaded file
+						--Objects uploaded without a defined ACL in the policy are private per default
+			Inline=Yes
+				Exploitable if:
+					--able to modify the content-disposition of the file
+						--can serve it inline in the bucket
+						--if not defined in policy, files are served inline
+		starts-with $key is empty
+		["starts-with", "$key", ""]
+			-able to upload to any location in the bucket and able to overwrite any object
+				--can set the key-property into anything and the policy will be accepted
+		starts-with $key does not contain a path separator or uses same path for all users
+		["starts-with", "$key", "acc_1322342m3423"]
+			-if $key part of policy contains a defined part, but without a path separator, can place content directly in the root-directory of the bucket
+				--if Access=Yes and Inline=Yes and depending on the content-type, install an AppCache-manifest to steal URLs uploaded by other users
+		starts-with $Content-Type is empty
+		["starts-with", "$Content-Type", ""]
+			-if Access=Yes and Inline=Yes, upload text/html and serve this on the bucket domain
+				--either run javascript or install an AppCache-manifest on this path
+					--all files accessed under this path will be leaked to attacker
+		Content-type defined using starts-with $Content-Type
+		["starts-with", "$Content-Type", "image/png"]
+			--append to make first content-type an unknown mime-type, append text/html after and file will be served as text/html
+				--if the S3-bucket is hosted on subdomain of company, by abusing policies can also run javascript on the domain by uploading an HTML file
+		(Signed URLs)
+		signed GET-URL to the root of the bucket
+			--display file-listing of the bucket
+			--signed URLs can be requested for enumerated files
+				--exactly like exposing a publicly listable bucket, except likely to contain sensitive file contents for other users
+			-goal is to get to root dir or known file in target bucket
+			Path Traversal
+				e.g.
+				Request:
+					https://public.target.dom/api/image?key=abc&document=xyz
+				Response:
+					https://prodenv.s3.amazonaws.com/documents/111111/imag/abc?X-Amz-Algorithm=AWS4-HMAC-SHA256
+				-endpoint normalized URL before signing it
+				Request:
+				https://public.target.dom/api/image?key=../../../&document=xyz
+				Response
+				https://prodenv.s3.amazonaws.com/?X-Amz-Algorithm=AWS4-HMAC-SHA256
+		regex parsting of signed url request leads to full read access
+			Request:
+				POST /api/file_service/file_upload_policies/s3_url_signature.json
+				{"url":"https://bucket.s3.amazonaws.com/sub/dir/file.png"}
+					-request to an API endpoint for target signed signed url
+			Response:
+				{"signedUrl": "https://s3.amazonaws.com/example-bucket/dir/file.png?X-Amz-Algorithm=AWS4-HMAC"}
+					--S3-bucket can be accessed using both a subdomain and a path on s3.amazonaws.com
+					--server-side logic was changing the URL to a path-based bucket url
+			Request:
+				POST /api/file_service/file_upload_policies/s3_url_signature.json
+				{"url":"https://.x./example-bucket"}
+			Response:
+				{"signedURL":"https://s3.amazonaws.com//example-beta?X-Amz-Algorithm=AWS4-HMAC"}
+				--resulting url in response returns complete file listing of the bucket
+		temporary signed url links
+			Request:
+				POST /api/s3/
+				{"id":null,"random_key":"asd-123-fgh-456-jkl-789","s3_key":"/file.jpg","uploader_id":51559,"uid":null}
+			Response:
+				{"uid":null, "s3_key": "/file.jpg", "uploader_id": 71957, "random_key":"asd-123-fgh-456-jkl-789", "id": null}
+			On-Page Request:
+				https://target.dom/files/asd-123-fgh-456-jkl-789
+			Redirect:
+				Location: https://targetsfiles.s3.amazonaws.com/file.jpg?Signature=i0YZ
+			Request:
+				POST /api/s3/
+				{"id":null,"random_key":"arb-867-itr-530-ary-999","s3_key":"/","uploader_id":51559,"uid":null}
+			Response:
+				{"uid":null, "s3_key": "/", "uploader_id": 51559, "random_key":"arb-867-itr-530-ary-999", "id": null}
+			On-Page Request:
+				https://target.dom/files/arb-867-itr-530-ary-999
+			Redirect:
+				Location: https://targetsfiles.s3.amazonaws.com/?Signature=i0YZ
+			--return file listing of bucket root
+	Remediation/Best Practices:
+		(upload policy)
+		upload policy should be generated per file-upload request
+			--or at least per user to guaruntee accout asset isolation
+		$key should be defined completely
+			--use unique, random generated name inside randomly generated path
+		prefer to define content-disposition as attachment
+		prefer to set content-type explicitly (never using starts-with) or do not set
+		prefer acl set to private or not defined
+		(signed urls)
+		never take parameters from users (client-side controls) for creating signed URLs
 	
 Glacier
 *note: all S3 Glacier commands require an --account-id parameter

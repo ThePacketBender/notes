@@ -6,6 +6,7 @@ TAR
 	7z x file.zip
 .gz, .gzip
 	gunzip file.gz
+	gzip file
 .tar
 	tar xvf file.tar
 .tar.gz
@@ -43,9 +44,22 @@ cat <somefile> | 7z a -si -p<password> <someprotectedfile>.7z
 	BCRYPT
 bcrypt -r plaintext
 bcrypt -r plaintext.bfe
-	
 
-cracking
+
+Grepping Archives
+.gz, .tar.gz
+zgrep foor file.gz
+.tar.gz
+tar xf file.tar.gz --to-command "awk '/foor/ { print ENVIRON[\"TAR_FILENAME"]; exit}'"
+	--prints names of archived files containing pattern
+tar zxf file.tar.gz --to-command 'grep --label=$TAR_FILENAME" -H PATTERN ; true"
+function grep-archive() {
+	for i in $(tar -tzf "$1"); do results=$(tar -Oxzf "$1" "$i" | grep --label="$i" -H "$2") && echo "$results"; done
+}
+grep-archive file.tgz "pattern"
+zcat file.tar.gz | grep -ai pattern
+
+Cracking
 .zip
 	fcrackzip –u –c 1 –p aaaaaaaa ‘/root/Desktop/Test.zip’
 	fcrackzip –u –D –p ‘/root/Desktop/dic’ ‘/root/Desktop/Test.zip

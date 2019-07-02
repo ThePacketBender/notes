@@ -1,16 +1,30 @@
 VIM CHEAT SHEET
 
 quick commands
+i/I			insert mode
+esc			escape insert mode
 u			undo
 ^R			redo
-+y			copy higlighted
+ctrl+r		redo
+.			.repeat last command
++y			yank (copy) higlighted
 "*y			(Copy to OS clipboard) - without entering a registry("), to the OS clipboard(*), yank the hilighted text(y)
+yy			yank current line
+2yy			yank 2 lines (,3 lines, &c)
+p			put (paste) contents of buffer (clipboard) following cursor location
 :w			write file(save)
 :w file		write file as file
+:saveas f	write file as f
 :q			quit
+:q!			force quit without saving changed
+:wq			write file and quit vim
+:x			write file and quit vim
+ZZ			write file and quit vim
+:wqa		write file and quit vim on all tabs
+zz			center cursor on screen
 :ls			show current buffers
-:help		command
-	-get help given a command or shortcut
+:help cmd	open for command or shortcut
+K			open man page for word under cursor
 mk			mark current position k
 'k			move to mark k
 d'k			delete from current position to mark k
@@ -24,14 +38,19 @@ ctrl-w_		maximize current window
 :make		for makefiles run make
 :copen		on makefiles open mini-window to debug output errors
 :reg		show named registers and what's in them
+"1y			yank contents of register 1
 "1p			paste content of register "1
 "1d			replace register 1 with what cursor is on
 qk			record edits to register k
 @k			execute recorded edits in register k (again)
 @@			repeat last @ execution
 2@@			repeat last @ execution 2 times
-dd			delete current line
-p			paste contents of clipboard to here
+dd			cut (delete) current line
+2dd			cut n lines
+D			cut to end of line
+d$			cut to end of line
+x			cut character
+:close		close current pane
 
 Buffers
 :buffers	list buffers
@@ -43,35 +62,62 @@ b <name>	switch buffers by name
 Movement
 0			beginning of line
 $			end of line
+^			first non-whitespace character of line
 w			beginning of next word
 W			beginning of next word, defined by white space
 e			end of the next word
 E			end of the next word, defined by white space
 b			beginning of previous word
 B			end of previous word
+H			top of screen
 f<char>		next arbitrary character, e.g. f,
+f<char>		next arbitrary character, e.g. %,
 gg			start of file
 G			end of file
+h			left
+j			down
+k			up
+l			right
+2G			jump cursor to line G
 
 PATTERN SEARCHING
-/		search for following pattern
-*		search for word currently under cursor
-g*		search for substring pattern currently under cursor
-n		repeat forward search
-repeat 	backward search
+/pattern	search for following pattern
+?			search backward for pattern
+*			search for word currently under cursor
+g*			search for substring pattern currently under cursor
+n			repeat forward search
+N			repeat search in opposite direction
+repeat 		backward search
 
 PATTERN REPLACEMENT
 :%s/pattern/newpattern
 	-replace each instance of a pattern with new pattern
+:%s/old/new/g
 :%s/,\(\S\)/, \1/g
 	-add a space following each comma
+:%s/old/new/gc
+	--with confirmations
 r<char>		replace character under cursor with arbitrary character, e.g. rX
+:vimgrep /pattern/ {file}
+	-search for pattern in (multiple) file(s)
 	
 AUTOCOMPLETION
 ctrl+n		next word completion
 ctrl+p		previous word completion
 ctrl+l		line completion
 ctrl+x		line completion
+
+Marking
+:marks		list of marks
+ma			set current position for mark A
+`a			jump cursor to position of mark A
+y`a			yank text to position of mark A
+
+Macros
+qa			record macro A
+q			stop recording macro
+@a			run macro A
+@@			run previous macro
 
 VARIABLE SETTINGS
 :set				display variables with non-default values
@@ -85,6 +131,45 @@ VARIABLE SETTINGS
 :set smartindent	toggle smart indentation
 :set cindent		toggle strict c-style indentation
 :map <f#> :arg		map a function key to run a vim command
+
+
+Multiple Files (Windowed)
+:e file			edit file in new buffer
+:bn				jump to next buffer
+:bp				jump to previous buffer
+:bd				delete current buffer (close file)
+:ls				list all open buffers
+:sp file		open file in new buffer and split window
+:vsp file		open file in new buffer and vertically split window
+ctrl+ws			split window
+ctrl+wv			split window vertically
+ctrl+ww			switch windows
+ctrl+wq			quit windows
+ctrl+wh			jump cursor to window left
+ctrl+wl			jump cursor to window right
+ctrl+wj			jump cursor to window down
+ctrl+wk			jump cursor to window up
+
+Multiple Files (Tabbed)
+:tabnew			open new tab
+:tabnew file	open file in new tab
+gt				jump cursor to next tab
+:tabnext		jump cursor to next tab
+:tabn			jump cursor to next tab
+gT				jump cursor to previous tab
+:tabprev		jump cursor to previous tab
+:tabp			jump cursor to previous tab
+#gt				jump cursor to tab #
+:tabmove #		jump cursor to tab #
+:tabclose		close current tab and all nested windows
+:tabc			close current tab and all nested windows
+:tabonly		close all tabs and nested windows except current tab
+:tabo			close all tabs and nested windows except current tab
+:tabdo cmd		run command on all tabs
+tabdo q			close all open tabs
+Tips:
+	registers stored to ~/.viminfo and will be loaded again on vim restart
+	register 0 always contains value of last yank command
 
 
 VIM over bash

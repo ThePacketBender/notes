@@ -11,6 +11,7 @@ https://weleakinfo.com/
 https://leak-lookup.com/
 https://haveibeenpwned.com/
 https://dehashed.com/
+https://gotcha.pw/
 https://github.com/Ekultek/WhatBreach
 https://github.com/woj-ciech/LeakLooker
 
