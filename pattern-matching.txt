@@ -2,7 +2,12 @@ Pattern Matching
 
 
 GREP
-
+grep -r pattern dir
+	--grep recursively for pattern in any file nested in dir
+egrep '(this|that)' file
+OR
+grep -e '(this|that)' file
+	-grep against target file basic regex accepting patterns using basic regex
 
 SED
 sed 's/[[:space:]]//g'
@@ -17,3 +22,12 @@ awk NF -
 
 xclip -selection clipboard -o | sed 's/[[:space:]]//g' | awk NF - >http_response_codes.txt
 	--remove all whitespace and newlines from a copied selection of text (from clipboard)
+	
+	
+Bash variables
+${var% *}
+	--match all characters preceding whitespace
+${var##/*}
+	--match all characters following "/"
+if [[ "${var}" != "${var% *}" ]]; then
+	--conditional operation testing if string variable contains whitespace

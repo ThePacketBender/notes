@@ -1,0 +1,17 @@
+JSON
+	JavaScript Object Notation
+	
+
+cli tools
+jq
+	apt-get install jq
+	wget http://stedolan.github.io/jq/download/linux32/jq
+	wget http://stedolan.github.io/jq/download/linux64/jq
+	jq -r '.data' file.json
+	jq -r '.data.sub' file.json
+	jq -r '.data | to entries[] | .key[]
+		--create an array to iterate over json object items
+	jq -r --arg i "$i" '.data | to_entries[] | select(.key == ($i|tonumber)) | .value.id' "$f"
+		--return a specific value while iterating over a json object
+	sed -e 's/\"//g'
+		--remove quotations from a JSONic value returned by jq

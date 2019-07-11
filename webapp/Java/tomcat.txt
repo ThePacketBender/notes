@@ -50,7 +50,10 @@ Enumeration:
 Target files:
 ?? $CATALINA_HOME == usr/local/tomcat
 $CATALINA_HOME/conf/tomcat-users.xml
+$CATALINA_HOME/conf/web.xml
 $CATALINA_HOME/conf/server.xml
+$CATALINA_HOME/conf/user-conf.xml
+	--password storage, default storage type is plaintext
 
 
 

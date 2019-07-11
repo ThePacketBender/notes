@@ -1,0 +1,30 @@
+BOURNE AGAIN SHELL (BASH)
+
+
+Environment:
+env
+	-list environment variables
+export
+	-list all environment variables
+export -p
+	-print all variables export to environment to stdout
+export x="x"
+	-set variable in bash environment
+echo "$x"
+	-print environment variable
+let xx=x+1
+	-set variable whose value is the evaluation of (an) operation(s) following following the equivelancy operator
+x="string"
+	-set value x to string "string"
+x=$(echo "x")
+OR
+x=`echo "x"`
+	--set x as stdout of operation
+
+STDOUT (Printing)
+echo "x"
+	-print "x"
+printf "%s" "$x"
+	-print the value of var x as a string
+
+
