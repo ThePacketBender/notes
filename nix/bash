@@ -21,6 +21,12 @@ OR
 x=`echo "x"`
 	--set x as stdout of operation
 
+
+Configuration Files:
+~/.bashrc
+	-
+
+
 STDOUT (Printing)
 echo "x"
 	-print "x"
