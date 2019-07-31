@@ -52,6 +52,12 @@ COMMANDS
 :set-window-option mode-keys vi
 
 
+Run tmux by default when launching bash shell tty instance:
+[[ $TERM != "screen" ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && exec tmux
+	--add to .bashrc prior to aliases line
+	--checks that bash is not being executed within an existing terminal multiplexer(tmux|screen) context, does not check for tty
+
+
 ~/.tmux.conf
 
 #set default shell for tmux to load with to bash

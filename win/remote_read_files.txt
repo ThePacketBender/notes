@@ -12,6 +12,7 @@ tier 1
 %SYSTEMROOT%\repair\system
 %SYSTEMROOT%\System32\config\SYSTEM
 %SYSTEMROOT%\System32\config\RegBack\system
+%SYSTEMROOT%\System32\config\RegBack\SAM
 	key to read SAM hashes in plaintext without cracking
 %WINDIR%\repair\security
 %SYSTEMDRIVE%\autoexec.bat
@@ -42,11 +43,18 @@ tier 2
 %USERPROFILE%\ntuser.dat
 %USERPROFILE%\LocalS~1\Tempor~1\Content.IE5\index.dat
 %WINDIR%\System32\drivers\etc\hosts
+%WINDIR%\System32\drivers\etc\networks
 %WINDIR%\system32\logfiles\httperr\httperr1.log
 %WINDIR%\system32\logfiles\w3svc1\exYYMMDD.log
+\inetpub\wwwroot\Web.config
+%WINDIR%\debug\NetSetup.log
+%WINDIR%\iis7.log
+C:\inetpub\wwwroot\Web.config
 
 tier 3 (dir traversal confirmation only)
 %SYSTEMDRIVE%\pagefile.sys
+%SYSTEMDRIVE%\autoexec.bat
 %SYSTEMDRIVE%\hiberfil.sys
 %SYSTEMDRIVE%\swapfile.sys
 %SYSTEMDRIVE%\AVScanner.ini
+%USERPROFILE%\ntuser.dat

@@ -190,3 +190,12 @@ GLOBAL SECURITY DECLARATIONS
 SET PERMISSIONS DEFAULTS
 create mask = 0644
 directory mask = 0755
+
+
+
+Mount a virtual disk from a remote cifs file share
+apt-get install cifs-utils libguestfs-tools
+mount -t cifs //target.dom/sharename /mnt/cifs -o username=guest,password=
+mount.cifs //target.dom/sharename /mnt/cifs -o guest
+guestmount --add /mnt/cifs/path/to/file.vhd --inspector --ro
+guestmount -a '/mnt/cifs/path/to/file.vhd' -m virt-filesystems -r /mnt/vhd -v

@@ -53,7 +53,16 @@ Update-Module -Name "DscModule"
 Import-Module ./SharpHound.ps1
 Invoke-BloodHound -CollectionMethod All -DomainController sizzle.htb.local -Domain HTB.LOCAL
 
-	
+
+Package Management:
+Get-AppxPackage
+	-enumerate all installed Windows Store packages (AppX Deployment Service [AppXSVC])
+Get-AppxPackage -Name "Microsoft.*office*" | Remove-AppxPackage
+	-remove an installed application installed via Windows Store, e.g. common limited pre-installed version of MS Office
+
+Runtime Environment:
+Get-ChildItem env:
+	-return environment variables
 
 Shells via powershell:
 WEBDL execute

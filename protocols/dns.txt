@@ -255,6 +255,8 @@ https://securitytrails.com/list/ip/$IP
 https://www.dnsstuff.com/
 https://www.netcraft.com/
 https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+http://ipv4info.com/
+https://findsubdomains.com/
 
 
 Block Lists

