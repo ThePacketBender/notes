@@ -1,0 +1,159 @@
+AWS IAM Privesc
+
+
+CREATE NEW POLICY VERSION
+	permissions: iam:CreatePolicyVersion
+iam:CreatePolicyVersion permission can create a new version of an IAM policy attacker has access to
+	--define custom permissions
+	--when creating new policy version use flag --set-as-default to bypass iam:SetDefaultPolicyVersion permission requirement
+		--flag does not require the iam:SetDefaultPolicyVersion permission to use
+
+
+SET DEFAULT POLICY VERSION TO EXISTING VERSION
+	permissions: iam:SetDefaultPolicyVersion
+iam:SetDefaultPolicyVersion permission may be able to escalate privileges through existing policy versions that are not currently in use
+
+
+CREATE EC2 INSTANCE WITH EXISTING INSTANCE PROFILE
+	permissions: iam:PassRole	ec2:RunInstances
+create new EC2 instance with user having operating system access to, pass existing EC2 instance profile/role to it
+	-then login to the instance and request the associated AWS keys from the EC2 instance meta data
+	--grants access to all permissions associated instance profile/role is granted
+
+
+CREATE NEW USER ACCESS KEY
+	permissions: iam:CreateAccessKey
+iam:CreateAccessKey permission on other users can create an access key ID and secret access key belonging to another user in the AWS environment
+
+
+CREATING NEW LOGIN PROFILE
+	permissions: iam:CreateLoginProfile
+iam:CreateLoginProfile permission on other users can create a password to use to login to the AWS console on any user not previously configured with login profile
+
+
+UPDATE EXISTING LOGIN PROFILE
+	permissions: iam:UpdateLoginProfile
+iam:UpdateLoginProfile permission on other users can change the password used to login to the AWS console on any user previously configured with login profile
+
+
+ATTACH POLICY TO USER
+	permissions: iam:AttachUserPolicy
+attach policy to acessible user
+	--adds permissions granted by target policy
+		--AdministratorAccess AWS managed policy
+
+
+ATTACH POLICY TO GROUP
+	permissions: iam:AttachGroupPolicy
+attach policy to user-accessible group
+	--adds permissions granted by target policy to group members including target user
+aws iam attach-group-policy --group-name Admins --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+
+
+ATTACH POLICY TO ROLE
+	permissions: iam:AttachRolePolicy
+attach a policy to a role
+	--adds permissions granted by target policy to role granted to user
+
+
+CREATE OR UPDATE INLINE POLICY FOR USER
+	permissions: iam:PutUserPolicy
+create or update inline policy for user
+	--specify an arbitrary policy document with this method, specify a policy that grants permission to perform action on target resource(s)
+
+
+CREATE OR UPDATE INLINE POLICY FOR GROUP
+	permissions: iam:PutGroupPolicy
+create or update inline policy for group
+
+
+CREATE OR UPDATE INLINE POLICY FOR ROLE
+	permissions: iam:PutRolePolicy
+create or update inline policy for role
+
+
+ADD USER TO GROUP
+	permissions: iam:AddUserToGroup
+add user to existing IAM Group in AWS account context
+
+
+UPDATE ASSUMEROLEPOLICYDOCUMENT OF A ROLE
+	permissions: iam:UpdateAssumeRolePolicy	sts:AssumeRole
+change assume role policy document of existing role to assume role
+
+
+PASS ROLE TO NEW LAMBDA FUNCTION, INVOKE
+	permissions: iam:PassRole	lambda:CreateFunction	lambda:InvokeFunction
+pass existing IAM role to new Lambda function which includes script code to import relevant AWS library, use to perform some action
+	--scripted lambda then executable invoking function via AWS API
+
+
+PASS ROLE TO NEW LAMBDA FUNCTION, INVOKE CROSS-ACCOUNT
+	permissions: permissions: iam:PassRole	lambda:CreateFunction	lambda:AddPermission
+pass existing IAM role to new Lambda function which includes script code to import relevant AWS library, use lambda:AddPermission for cross-account invocation, then invoking cross-account via assumed account
+
+
+PASS ROLE TO NEW LAMBDA FUNCTION, INVOKE VIA DYNAMODB
+	permissions required: iam:PassRole	lambda:CreateFunction	lambda:CreateEventSourceMapping
+		additional useful permission: dynamodb:PutItem	dynamodb:CreateTable
+lacking lambda:InvokeFunction permission, scalate privileges by passing existing IAM role to new Lambda function which includes script code to import relevant AWS library to perform some function, then either create a DynamoDB table or use an existing one to create an event source mapping for the Lambda function pointing to that DynamoDB table. To complete execution either put an item into the table or wait for another method to do so that the Lambda function will be invoked.
+	--method of invoking attack depends on availability of dynamodb:PutItem and dynamodb:CreateTable permissions
+
+
+UPDATING CODE OF EXISTING LAMBDA FUNCTION
+	permissions: lambda:UpdateFunctionCode
+update code in existing Lambda function with IAM role attached such that importing relevant AWS library, Lambda function would perform actions on behalf of that role
+	--may require waiting for invocation if not directly callable
+
+
+PASSING ROLE TO GLUE DEVELOPMENT ENDPOINT
+	permissions: iam:PassRole	glue:CreateDevEndpoint
+create new AWS Glue development endpoint and pass an existing service role to it, ssh into tty on instance to use AWS CLI have access of permissions role is granted access to
+
+
+UPDATE EXISTING GLUE DEV ENDPOINT
+	permissions: glue:UpdateDevEndpoint
+update associated SSH public key of existing Glue development endpoint, ssh into tty on instance to access permissions granted to attached role
+
+
+PASS ROLE TO CLOUDFORMATION
+	permissions: iam:PassRole	cloudformation:CreateStack
+create CloudFormation template to perform actions and create resources using permissions of role passed when creating CloudFormation stack
+
+
+PASS ROLE TO DATA PIPELINE
+	permissions: iam:PassRole	datapipeline:CreatePipeline	datapipeline:PutPipelineDefinition
+create pipeline and update it to run arbitrary AWS CLI command or create other resources
+	--executable either immediately or at inteval with permissions of role passed in
+
+
+CREATE CODESTAR PROJECT FROM TEMPLATE
+	permissions: codestar:CreateProjectFromTemplate
+leverage undocumented CodeStar API to create new CodeStar project from template
+	--allows arbitrary CloudFormation resource creation under a different set of privileges
+
+
+PASS ROLE TO NEW CODESTAR PROJECT
+	permissions: codestar:CreateProject	iam:PassRole
+create new CodeStar project and pass role to it, role then used to deploy resources specified in CodeStar project
+
+
+CREATE NEW CODESTAR PROJECT AND ASSOCIATE TEAM MEMBER
+	permissions: codestar:CreateProject	codestar:AssociateTeamMember
+create new CodeStar project, then associate self as owner or project
+	--attaches iam policy to project owner user
+
+
+ADD MALICIOUS LAMBDA LAYER TO EXISTING LAMBDA FUNCTION
+	permissions: lambda:UpdateFunctionConfiguration
+attaching Lambda layer to existing function overriding library used by function, utilize function IAM role for AWS API calls
+
+
+PASS ROLE TO NEW SAGEMAKER JUPYTER NOTEBOOK
+	permissions: iam:PassRole	sagemaker:CreateNotebookInstance	sagemaker:CreatePresignedNotebookInstanceUrl
+pass role to new SageMaker Jupyter notebook, using Jupyter UI access credentials belonging to notebook
+
+
+GAIN ACCESS TO EXISTING SAGEMAKER JUPYTER NOTEBOOK
+	permissions: sagemaker:CreatePresignedNotebookInstanceUrl
+create signed URL for existing SageMaker Jupyter notebook, using Jupyter UI access credentials belonging to target notebook

@@ -226,6 +226,7 @@ Standard
 		jwt-cracker-client --host=3.124.41.213 --port=4444 --pubPort=5555
 			--start a new client
 	-tool: https://github.com/mike-engel/jwt-cli
+	-tool: https://github.com/andresriancho/jwt-fuzzer
 	-tool, gui, html: https://github.com/ticarpi/jwt_tool
 	-tool, burp extension: https://github.com/mvetsch/JWT4B
 	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension

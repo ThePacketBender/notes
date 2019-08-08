@@ -6,6 +6,7 @@ filename:id_rsa or filename:id_dsa
 extension:sql mysql dump
 extension:sql mysql dump password
 filename:credentials aws_access_key_id
+filename:credentials aws_secret_key_id
 filename:.s3cfg
 filename:wp-config.php
 filename:.htpasswd
@@ -25,6 +26,8 @@ SF_USERNAME salesforce
 filename:.tugboat NOT _tugboat
 HEROKU_API_KEY language:shell
 HEROKU_API_KEY language:json
+HEROKU_API_KEY filename:.env
+HEROKU_API_KEY .yaml
 filename:.netrc password
 filename:_netrc password
 filename:hub oauth_token
@@ -66,7 +69,7 @@ filename:sftp-config.json
 filename:.esmtprc password
 extension:json googleusercontent client_secret
 HOMEBREW_GITHUB_API_TOKEN language:shell
-xoxp OR xoxb
+xoxp OR xoxb OR xoxa or xoxr or xoxs
 .mlab.com password
 filename:logins.json
 filename:CCCam.cfg
@@ -78,3 +81,68 @@ filename:.ftpconfig
 filename:.remote-sync.json
 filename:sftp.json path:.vscode
 filename:WebServers.xml
+filename:asset.log Secret
+filename:asset.log Key
+filename:.env Heroku
+filename:secrets.yml
+extension:.crt
+extension:.key
+extension:.pem
+filename:heroku.yml
+filename:facebook.yml
+filename:twitter.yml
+GOOGLE_API_KEY
+filename:secret_token.rb
+"-----BEGIN PRIVATE KEY-----"
+"-----BEGIN RSA PRIVATE KEY-----"
+"-----BEGIN OPENSSH PRIVATE KEY-----"
+"-----BEGIN PGP PRIVATE KEY BLOCK-----"
+"-----BEGIN EC PRIVATE KEY-----"
+"-----BEGIN DSA PRIVATE KEY-----"
+"-----BEGIN CERTIFICATE-----"
+github_clientsecret
+API_HEROKU_PASSWORD OR API_HEROKU_EMAIL
+API_TWITTER_KEY AND API_TWITTER_SECRET
+API_FACEBOOK_KEY AND API_FACEBOOK_SECRET
+Heroku_username AND Heroku_password
+DB_USER_HEROKU AND DB_PASS_HEROKU
+SENDGRID_USERNAME AND SENDGRID_PASSWORD
+NEW_RELIC_LICENSE_KEY OR NEWRELIC_LICENSE_KEY OR NEW_RELIC_LICENSEKEY OR NEWRELIC_LICENSEKEY OR NEWRELICLICENSEKEY
+EXCEPTIONAL_API_KEY
+filname:ouath.yml
+filename:s3.yml
+access_key_id AND secret_access_key
+ACCESS_KEY_ID AND ACCESS_SECRET_KEY
+filename:.env MYSQL_USER AND MYSQL_PASS
+filename:config.yml
+TOKEN_SECRET
+CLOUDINARY_API_KEY AND CLOUDINARY_API_SECRET
+DB_USER AND DB_PASSWORD
+HEROKU_PG_PASSWORD AND HEROKU_PG_USER
+HEROKU_GIT OR HEROKU_GIR
+TWILIO_ACCOUNT_ID AND TWILIO_AUTH_TOKEN
+MONGODB_URI OR MONGO_URI
+STRIPE_API_KEY and sk_ NOT test
+STRIP_PUBLISHABLE_KEY and pk_ NOT test
+PAGE_ACCESS_TOKEN AND VERIFY_TOKEN
+filename:token.txt
+REDIS_HOST AND REDIS_PASS
+COINBASE_API_KEY
+OPENWEATHER_KEY
+S3_SECRET_ACCESS_KEY
+filename:.pgpass
+filename.swp
+filename:.env CLEARDB_DATABASE_URL
+EDGECAST_USER AND EDGECAST_PASSWORD
+filename:credentials
+filename:passwords
+filename:password
+filename:userpass
+filename:userpass
+aws_access_key_id AND aws_secret_access_key
+azure_access_key_id AND azure_access_secret_key
+mail_username AND mail_password
+S3_KEY and S3_SECRET NOT null NOT none
+FB_APP_ID AND FB_APP_SECRET
+MIXPANEL_API_KEY AND MIXPANEL_API_SECRET
+ZEROPUSH_PROD_TOKEN

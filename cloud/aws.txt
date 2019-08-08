@@ -552,10 +552,29 @@ disrupt_monitoring – Targets GuardDuty, CloudTrail, Config, CloudWatch, and VP
 backdoor_users_[keys/passwords] – Establish backdoor account access by adding credentials to other IAM user accounts
 sysman_ec2_rce – Abuses the AWS Simple Systems Manager to try and gain root (Linux) or SYSTEM (Windows) level remote code execution on various EC2 instances
 backdoor_ec2_sec_groups – Adds backdoor rules to EC2 security groups to give you access to private services
-	
+https://github.com/cloudsploit/scans
+enumerateiam - enumerate permissions associated with AWS credential set
+	https://github.com/andresriancho/enumerate-iam
+nimbostratus -
+	https://github.com/andresriancho/nimbostratus
+PoC tools for fingerprinting and exploiting Amazon cloud infrastructures
+aws-audit-automation - automate AWS Cloud security assessments
+	https://github.com/andresriancho/aws-audit-automation
+cloudmapper - 
+	https://github.com/duo-labs/cloudmapper
+
 	
 Refererence
 https://docs.aws.amazon.com/index.html
 https://docs.aws.amazon.com/cli/latest/reference/
 https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 https://docs.aws.amazon.com/general/latest/gr/aws-security-audit-guide.html
+http://media.amazonwebservices.com/pdf/AWS_Security_Whitepaper.pdf
+
+Resources
+https://blogs.aws.amazon.com/security/
+https://aws.amazon.com/security/security-bulletins/
+https://media.amazonwebservices.com/AWS_Security_Best_Practices.pdf
+https://aws.amazon.com/security/
+https://awspolicygen.s3.amazonaws.com/policygen.html
+https://blogs.aws.amazon.com/security/post/Tx2KPWZJJ4S26H6/Demystifying-EC2-Resource-Level-Permissions

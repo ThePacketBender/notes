@@ -52,6 +52,12 @@ COMMANDS
 :set-window-option mode-keys vi
 
 
+Send-Keys
+tmux send-keys -t $pane 'C-c'
+	-send SIGINT to whichever process is running in fg of $pane
+
+
+
 Run tmux by default when launching bash shell tty instance:
 [[ $TERM != "screen" ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && exec tmux
 	--add to .bashrc prior to aliases line

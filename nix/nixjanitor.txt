@@ -55,12 +55,24 @@ journalctl -k
 system resources
 	DISK/STORAGE (SCSI devices)
 df
+df -h
+	-human-readable
 df /dev/sda1
 du
 cat /etc/fstab
 btrfs fi df /dev/sdb1
+blkid
+	--list SCSI block devices including LABEL UUID TYPE and PARTUUID for both primary storage volumes and swap partitions
+blkid -i /dev/sda1
+	--return information about I/O limits, disk geometry
+blkid -p /dev/sdb1
+	--return low-level superblock probe information
 mount /dev/sdb1 /user
+	--mount a disk
 mount
+	--list mounted disks
+umount /dev/sdb1
+	--unmount target disk
 fdisk -l
 	-list storage disk devices
 fdisk /dev/sdb
@@ -90,6 +102,59 @@ echo '/dev/sdb1	/mnt/x	ext4	defaults	0	0' >> /etc/fstab
 	-add drive to mount at boot time
 fdisk -l /dev/sdb
 	--check for an '*' in 'boot column at /dev/sdb1 row entry to verify that addition to fstab was successful
+	SCSI DEVICE LABELING
+e2label /dev/sdb1 label
+OR
+tune2fs -L boot /dev/sda1
+	-set the device label for an SCSI disk
+		--preferred for /etc/fstab entries
+			--UUID alternative preference
+e2label /dev/sda1
+	-return the label for a given linked block device special node name (as created by mknod)
+	/ETC/FSTAB entries
+format:
+fs_spec		fs_file		fs_vfstype		fs_mntops		fs_freq		fs_passno
+UUID=fc21e46a-6c7c-4caa-b7ff-8bd1cbee12a9	/	ext4	errors=remount-ro	0	1
+LABEL=label	/mnt/two	ext4	errors=remount-ro	0	2
+/dev/sr0	/media/cdrom0	udf,iso9660		user,noauto		0	0
+LABEL=swap1	none	swap	sw	0	0
+fs_spec
+	--block special device or remote filesystem to be mounted
+fs_file
+	--mount point (target) for the filesystem
+		--should be specified as `none' for swap partitions
+fs_vfstype
+	--describes the type of the filesystem
+		--common linux-supported filesystem types:
+			ext4, xfs, btrfs, f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs
+fs_mntops
+	--mount options associated with the filesystem
+	--formatted as comma-delimited lost of options
+		--minimally contains type of mount, e.g. rw (read/write) or ro (read-only), plus any other options
+	Basic filesystem-independent options:
+		defaults
+			use default options: rw, suid, dev, exec, auto, nouser, and async
+		noauto	do not mount when "mount -a" is given (e.g., at boot time)
+		user	allow a user to mount
+		owner	allow device owner to mount
+		comment
+			or x-<name> for use by fstab-maintaining programs
+		nofail	do not report errors for this device if it does not exist
+fs_freq
+	--used by dump to determine which filesystems need to be dumped
+fs_passno
+	--used by fsck to determine the order in which filesystem checks are done at boot time
+		--root filesystem should be specified with a fs_passno of 1, ther filesystems should have a fs_passno of 2.
+			--filesystems within a drive will be checked sequentially, but filesystems on different drives will be checked at the same time to utilize parallelism available in the hardware
+	LUKS ENCRYPTED PARTITIONS
+mount /dev/mapper/enc-ext-hdd
+blkid
+	--find UUID of crypto_LUKS partition
+		--mapper name, e.g. luks-f0b8535f-7c53-465a-ac06-0a666f0e537b, generated automatically by concatenating string "luks-" before the UUID; taking the UUID from /dev/mapper/luks-<UUID> should be usuable as UUID
+/etc/crypttab
+	--file managing LUKS-encerypted device automount, e.g.
+/dev/mapper/dec-ext-hdd		/mnt/ext-hdd	ext4	defaults	1	2
+
 	PHYSICAL MEMORY
 vmstat
 vmstat -s
