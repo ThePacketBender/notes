@@ -1,0 +1,61 @@
+Google Operators
+
+“search term”
+OR
+AND
+-exclude
+wild * card
+(this OR that) thing
+price $111
+price €111
+filetype:
+ext:
+define:
+cache:
+site:
+related:
+intitle:
+allintitle:
+inurl:
+allinurl:
+intext:
+this AROUND(2) that
+2012..2019
+inanchor:
+allinanchor:
+blogurl:
+loc:"alameda" target
+exact +word
+~synonyms
+inpostauthor:"some one"
+allinpostauthor:some one
+inposttitle:
+allinposttitle:
+link:target.dom
+info:target.dom
+
+
+universal dorks
+
+site:target.dom -inurl:https
+site:domain.com -www
+
+
+08/2019 CAPTCHA bypass 
+	--requires facebook session cookie
+	--facebook debugger feature bypasses google request rate-limiting
+goop
+	https://github.com/s0md3v/goop
+	pip install goop
+python cli.py 'query' #pages
+	example custom progam:
+from goop import goop
+from sys import argv
+
+# usage: python3 prog.py 'query' #pages facebook_cookie
+
+page = []
+
+for i in range(argv[2]):
+	page[i] = goop.search(str(argv[1]), argv[3], page=i, full=True)
+	# full=True returns search including omitted results

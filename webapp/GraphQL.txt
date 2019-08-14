@@ -108,6 +108,16 @@ GraphQL
 					--e.g. if assuming data passed through JSON field value is a string, run type check verifying that it is a string that will be treated as a string by the NoSQL Database engine
 					--always prefer primitive types
 		--vulnerable segmnet of code most likely reside in the application layer developed to fetch variables from GraphQL queries in order to query mapped database
+	x-XSS Reflected
+		--GraphQL responses that reflect payloads may be vulnerable to XSS in reflected parameters depending on GraphQL client and escaping/sanitizing behavior
+			--especially common for validation errors
+			--response will usually be of content-type: application/json and will have to be processed as code by the client in order to execute
+				--may require additional escapes
+				--increases liklihood of DOM-Based xss
+	x-XSS Stored
+		--potential to store XSS data vi Mutation requests
+	x-IDOR (Insecure Direct Object Reference)
+		--If GrapQL API expose Query/Mutation/Subscription for which data identifier is guessable/predictable then Query/Mutation/Subscription exposed to IDOR attack on which attack uses custom list of identifiers in order to try to access or act on data having an identifier that is part of that list and that action will succeed if authorization issues are also present on the target Query/Mutation/Subscription handling the target data
 	x-DoS(/second-order ReDOS)
 		-occurs in GraphQL where overly complex nested queries may be evaluated, consuming entirety of server resources
 		--mitigation: set timeout, maximum depth or query complexity threshold value

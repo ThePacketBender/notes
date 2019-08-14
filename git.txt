@@ -6,6 +6,7 @@ git update
 
 
 
+Repositoiry Enumeration:
 
 SEARCH
 git log -S'search string' --oneline --name-status
@@ -47,6 +48,10 @@ cat .git/FETCH_HEAD
 cat .git/config
 	--check branch and remote url git is configured to fetch from and merge with
 
+Configuration Information:
+.git/config
+git config --edit
+
 	
 Exploitation Tools:
 GitLeaks
@@ -56,3 +61,26 @@ gitleaks --repo=https://github.com/gitleakstest/gronit --report=gronit_results.c
 gitleaks --github-org=gitleakstestorg
 gitleaks --github-user=gitleakstest
 gitleaks -l /path/to/repo --report=/home/usr/repo_results.csv
+
+
+
+Post-Exploitation git enumeration
+git config -l
+git config --list
+	interesting git configuration fields:
+		user.name
+		user.email
+		remote.origin.url
+		remote.origin.fetch
+/*/etc/gitconfig
+cat ~/.gitconfig
+	information:
+		name
+		email
+cat ~/.git.stor
+	--contains stored git service login information including username and >>>password<<< for various accounts over various protocols
+	format:
+		protocol://UserName:tH3r3!15!No!$ec0ND!PaSswrd@gitlab.com
+git config --edit
+git config --edit --system
+git config --edit --gobal

@@ -43,4 +43,36 @@ Router(config-subif)#: subinterface mode = Commands that affect subinterfaces
 Router(config-line)#: line mode = Commands that affect in lines modes (console, vty, aux…)
 Router(config-router)#: router configuration mode
 	
+
+Configuration
+
+
+
+Cracking recovered passwords
+	Type 0 Format
+		--plaintext
+	Type 4 Format
+		--SHA256
+		--depricated since IOS 15.3(3)
+	Type 5 Format
+		--md5crypt
+		Create New(Replacement) Password
+openssl passwd -1 -salt VkQd Password123
+python3	-c 'from passlib.hash import md5_crypt; md5_crypt.encrypt("password", salt="h4cK")'
+		Crack Password
+hashcat64 -
+	Type 7 Format
+		--encrypted using Vigenere cipher
+		--trivially reversible
+python3 cisco_pwdecrypt.py -t 0242114B0E143F015F5D1E161713 -d /usr/share/wordlists/rockyou.txt
+	Type 8 Format
+		--PBKDF2-SHA-256 encryption
+			--Password-Based Key Derivation Function 2 (PBKDF2) with Secure Hash Algorithm, 26-bits (SHA-256) 
+		--depricated since IOS 15.3(3)
+	Type 9 Format
+		--scrypt algorithm hash
+		--depricated since IOS 15.3(3)
 	
+	
+References:
+https://github.com/axcheron/cisco_pwdecrypt

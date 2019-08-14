@@ -129,6 +129,20 @@ Standard
 		-test for parameter modification if direct access is forbidden
 	Is BASIC AUTH in use?
 		APIs should support standard AUTH (JWT, OAUTH, &c)
+			e.g.
+				GET / HTTP/1.1
+				Host: target.dom
+				Authorization: Basic Zm9vOmJhcg==
+			curl -H "Authorization: Basic Zm9vOmJhcg==" https://target.dom/
+		HTTP STANDARD AUTH
+			hmac
+				echo -n "VERB+/path/to/endpoint/" | openssl dgst -sha256 -hmac "secret" | base64 -w 0
+					--hash hmac for a URL given the secret passkey/password for a given user
+				e.g.
+					GET /path/to/endpoint
+					HOST: target.dom
+					Authorization: hmac user:KHN0ZGluKT0gZjI1MjNlOTI1MDUwZjAwMWJjNDQ1MmY2NDM3ZTY4MzlmNjZiODA5NzYwY2Q0ZWUxMjIyNjkzMmRiOWQ2NTYyZgo=
+				curl -H "Authorization: hmac user:KHN0ZGluKT0gZjI1MjNlOTI1MDUwZjAwMWJjNDQ1MmY2NDM3ZTY4MzlmNjZiODA5NzYwY2Q0ZWUxMjIyNjkzMmRiOWQ2NTYyZgo=" https://target.dom/path/to/endpoint
 	Deriving session identification from cookies or headers (or local/sessionStorage)
 		What parts of the Session ID are static?
 			What portions of the Session ID are static for replicated authentication conditions?

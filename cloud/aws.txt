@@ -173,6 +173,7 @@ aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext
 	-copy an object from your instance back into Amazon S3
 aws s3 sync s3://remote_S3_bucket local_directory
 	-download an entire Amazon S3 bucket to a local directory
+ass s3 presign s3://s3_bucket/file.ext  | wget -
 	s3api commands (High-level)
 aws s3api put-bucket-acl --bucket MyBucket --grant-full-control 'emailaddress="user1@example.com",emailaddress="user2@example.com"' --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
 	-grant full control to two AWS users and read permission to everyone

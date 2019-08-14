@@ -55,7 +55,11 @@ Certificate Transparency
 		https://github.com/Edu4rdSHL/findomain
 		https://github.com/Edu4rdSHL/findomain/tree/master/bin/windows
 		https://github.com/Edu4rdSHL/findomain/tree/master/bin/osx
+		git clone https://github.com/Edu4rdSHL/findomain.git
+		wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux
 		findomain -i -f infile.ext -o csv -t domain.name
+		findomain -a -i -f infile.ext -o json -t domain.name
+		findomain -i -o txt -t domain.name
 
 Dorks
 	Google
