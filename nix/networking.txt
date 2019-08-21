@@ -4,6 +4,8 @@ LOCALHOST
 netstat -plnt
 netstat -tulpn
 	-check local ports
+netstat -nptwu
+	-check outgoing connections
 watch ss -stlpu
 	-watch tcp/udp port in real time
 lsof -i

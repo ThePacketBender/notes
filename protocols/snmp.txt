@@ -58,3 +58,103 @@ wget https://raw.githubusercontent.com/raesene/TestingScripts/master/snmpv3enum.
 	
 /usr/share/metasploit-framework/data/wordlists/snmp\_default\_pass.tx
 	-default credentials wordlist
+
+
+*********************************************************************************
+
+
+2 primary classes of SNMP URI usage: configuration and gateways between SNMP and other protocols that use SNMP URIs.
+
+Configuration:
+indicates the location of management information as part of the configuration of an application containing an SNMP manager.
+    --URI may be found in SNMP config file or provided by managed device
+    --management information is exchanged between the SNMP manager and agent, but it does not flow beyond the
+
+                               ***********  SNMP-Request   *********
+                               *         *================>*       *
+                URI ---------->* Manager *                 * Agent *
+                               *         *<================*       *
+                               ***********  SNMP-Response  *********
+                                    ^
+                                    |
+      Other Config Info ------------+
+
+    --additional config info may be provided via an interface other than that used for the URI
+
+SNMP URI to SNMP gateway
+clients employ SNMP URIs to request management information
+SNMP manager within the SNMP gateway accesses the management information and returns it to the requesting client
+
+                                SNMP gateway
+           **********     URI    ***********  SNMP-Request   *********
+           *        *===========>*         *================>*       *
+           * Client *            * Manager *                 * Agent *
+           *        *<===========*         *<================*       *
+           **********    Info    ***********  SNMP-Response  *********
+                                    ^
+                                    |
+      Other Config Info ------------+
+
+    --management information may be provided via an interface other than that disseminating the URI
+
+
+Uniform Resource Identifier (URI) Scheme for the Simple Network Management Protocol (SNMP)
+
+Syntax of an SNMP URI:
+
+snmp-uri        = "snmp://" snmp-authority [ context [ oids ]]
+      snmp-authority  = [ securityName "@" ] host [ ":" port ]
+      securityName    = userinfo    ; SNMP securityName
+      context         = "/" contextName [ ";" contextEngineID ]
+      contextName     = segment     ; SNMP contextName
+      contextEngineID = 1*(HEXDIG HEXDIG)    ; SNMP contextEngineID
+      oids            = "/" ( oid / oid-group ) [ suffix ]
+      oid-group       = "(" oid *( "," oid ) ")"
+      oid             = < as specified by [RFC 3061] >
+      suffix          = "+" / ".*"
+
+    --relative references may be contextually considered, e.g.:
+snmp://<host>//<oid>
+   --may result in second occurrence of “//“ path delimiter
+
+
+Example URIs:
+
+snmp://target.dom/
+   --snmp context at agent at default port
+
+snmp://securityName@jenny.gotyour.number:8675
+   --designate default snmp context at non-standard portno 8675 or target host by domain naming convention, indicates snmp securityName to use for accessing that agent
+
+snmp://target.dom/USSenterprise
+   --designate “USSenterprise” as context of target.dom
+       --because contextEngineID component of the URI is omitted, nor more than one SNMP context engine at target.dom ought to support the “USSenterprise” context
+
+snmp://target.dom/NCC-1701;800002b804616263
+   --designate “NCC-1701” context at target.dom via SNMP context engine 800002b804616263
+   --800002b804616263 is an ascii string representation of a hex value
+   --avoids ambiguity if any other context engine supports a "NCC-1701" context
+
+snmp://example.com//1.3.6.1.2.1.1.3.0
+snmp://example.com//1.3.6.1.2.1.1.3+
+snmp://example.com//1.3.6.1.2.1.1.3.*
+   --all designate the sysUpTime.0 object instance in the SNMPv2-MIB or RFC1213-MIB (https://tools.ietf.org/html/rfc1213) for the default SNMP context ("") at target.dom
+   --asysUpTime.0 object instance is simultaneously designated directly by OID 1.3.6.1.2.1.1.3.0, lexically next MIB object instance after OID 1.3.6.1.2.1.1.3 and only MIB object instance whose OID has 1.3.6.1.2.1.1.3 as a lexical prefix
+
+
+
+Specific Security Considerations:
+intended use of URI scheme is designation of the location of management access to communication devices information may be considered sensitive in some environments
+   --important to control access to this information, possibly even necessary precaution to encrypt SNMP URIs when sent over the wire
+
+SNMP URI syntax is incapable of encoding SNMPsecurityModels, SNMP securityLevels and credential or keying information for SNMP securityNames.  Other means are necessary to provide such information.
+   --SNMP manager Out-Of-Band preconfiguration
+
+SNMP versions prior to SNMPv3 did not include adequate security. Even on an otherwise secure network there is no control over who on the secure network is allowed to access and GET/SET (read/change/create/delete) the objects in MIB modules.
+   --SNMPv3 supports cryptographic mechanisms (for authentication and privacy) (RFC 3410, section 8, Introduction and Applicability Statements for Internet Standard Management Framework, https://tools.ietf.org/html/rfc3410#section-8)
+
+SNMP gateways should impose authorization or access-control checks on all clients.  If an SNMP gateway does not impose authorization or access controls, the gateway must not automatically obtain or use SNMP authentication material for arbitrary securityNames, as doing so would defeat SNMP's access controls.  Instead, all SNMP gateways should authenticate each client and check the client's authorization to use a securityName in an SNMP URI before using the securityName on behalf of that client.
+
+There are management objects defined in SNMP MIBs whose MAX-ACCESS is read-write and/or read-create.  Such objects may be considered sensitive or vulnerable in some network environments.  SNMP gateway support for SNMP SET operations in a non-secure environment without proper protection can have a negative effect on network operations.
+
+Some readable objects in some MIB modules (objects with a MAX-ACCESS other than not-accessible) may be considered sensitive or vulnerable in some network environments.  It is thus important to control even GET access to these objects via an SNMP gateway and possibly to even encrypt the values of these objects when they are sent over the network.

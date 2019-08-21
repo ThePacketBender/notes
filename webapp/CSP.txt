@@ -1,0 +1,4 @@
+Content Security Policy
+
+
+curl -s -I -L “https://target.dom/" | grep -Ei ‘^Content-Security-Policy:’ | sed “s/;/;\\n/g”

@@ -134,6 +134,11 @@ Standard
 				Host: target.dom
 				Authorization: Basic Zm9vOmJhcg==
 			curl -H "Authorization: Basic Zm9vOmJhcg==" https://target.dom/
+			-basic auth schema:
+				base64(user:pass)
+			basic auth brute forcing
+				for i in $(cat words.lst); do echo "user:"${i} | base64 ; done > bf.lst
+				patator http_fuzz auth_type=basic url=http://target.dom/ user_pass=FILE0 0=bf.lst -x ignore:code=401
 		HTTP STANDARD AUTH
 			hmac
 				echo -n "VERB+/path/to/endpoint/" | openssl dgst -sha256 -hmac "secret" | base64 -w 0
@@ -167,18 +172,38 @@ Standard
 		Are there any other unique header fields, uri segments, or request body values the service application validates the api key, e.g. a user/organization/&c identifier, against on every endpoint?
 		-prefer testing against "ping"/"status"/"online" key against endpoints for less intrusive and to recieve most immediate possible response
 >JWT (JSON WEB TOKENS)
-	-string composed by 3 parts separated by a "."
+	-string composed of 3 "."-delimited components
+		Base64(Header).Base64(Payload).Signature
+				OR:
+		JWS-defined compact representation for a signed JWT:
+				--concatenation of the JOSE header, the JWT and the details of the signature
+			BASE64URL(UTF8(JWS Protected Header)) + '.' +
+			BASE64URL(JWS Payload) + '.' +
+			BASE64URL(JWS Signature)
+				OR:
+		compact representation for encrypted JWT:
+			BASE64URL(UTF8(JWE Protected Header)) + '.' +
+			BASE64URL(JWE Encrypted Key) + '.' +
+			BASE64URL(JWE Initialization Vector) + '.' +
+			BASE64URL(JWE Ciphertext) + '.' +
+			BASE64URL(JWE Authentication Tag)
+				--ciphertext would normally contain a JWT
 		header
 			-JOSE header (JSON Object Signing and Encryption header)
 			-metadata that describes which algorithm is used for signature and/or encryption
 		payload
 			-contains data that can be serialized to a JSON string
+			--constituted of JSON string-formatted key-balue claims
 		signature
 			-used to by server to ensure confidentiality and verify integrity of payload
+				--validates against modifications, not necesarilly secure against eavesdropping or arbitrary token creation
 	--each part can be encoded using base-64
 		echo $jwtstring | base64 -d
 	--can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA
 		echo -n "value" | openssl dgst -sha256 -hmac "key"
+	JWT Usage (cURL)
+		TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":"plague","password":"god","rememberMe":false}' https://target.dom/api/v3/auth | jq -r '.id_token')
+		curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" https://target.dom/api/v3/endpoint -d '{"key":"value"}
 	Unsecure JWT
 		--not protected by a signature or MAC
 			{"alg":"none"}
@@ -204,6 +229,9 @@ Standard
 		'aud' or audience - is the relying party in the target audience for this JWT?
 		'exp' or expiration time - is the current time before the end of the validity period of this token?
 		'nbf' or not before time - is the current time after the start of the validity period of this token?
+		'sub' or subject - 
+		'iat' or issued at -is the current time after the start of the validity period of this token?
+		'jti' or JWT ID - 
 	Does a decoded JWT contain any information that should not be or is redundantly stored on the client system?
 		Is this sensitive information?
 		-only the server should know the "secret" that is used to generate the JWT
@@ -217,7 +245,28 @@ Standard
 		-an MitM and/or MitB attack forcing HTTP downgrade can trivially intercept token if sent over plaintext
 		--unlike cookies, JWT cannot be flagged as 'http-only' or 'secure'
 			--only limited to defined origin and attacks impeded by potential SOP violation
-	Cracking 'secure' JWT tokens
+	JWS vs. JWE security
+		JWS (JSON Web Signing) - https://tools.ietf.org/html/rfc7515
+			--proviated validation signature at end of JWT
+			Common JWT Signing Algorithms:
+					https://tools.ietf.org/html/rfc7518#section-3
+				HMAC + SHA256
+		JWE (JSON Web Encryption) - https://tools.ietf.org/html/rfc7516
+			--encryption ensures that JWT content is only readable between parties between whom the cryptographic key exchange was negotiated
+			+signature can't be stripped
+			+signature is private(eavesdropping would require intercepting the cryptographic key)
+			Common JWT signed encryption algorithms:
+				RSASSA-PKCS1-v1_5 + SHA256
+				ECDSA + P-256 + SHA256
+	JOSE (JSON Object Signing and Encryption) Header
+		--carried in JWT header by bearers of signed and encrypted JWTs
+		--describes what algorithm (signing or encryption) is used to process the data contained in the JWT
+			--typically defines 2 attributesL
+				alg: algorithm used to sign or encrypt the JWT
+				typ: content (type) that is being signed or encrypted (usually 'JWT')
+		-signed and encrypted JWTs are usually nested
+			--signed JWT first produced, then ciphertext of signed result is created
+	Cracking 'secure' signed JWT tokens
 		--what's needed to brute force?
 		Token
 			-HS256 JWT Token
@@ -226,6 +275,14 @@ Standard
 			--character array of all values to iterate over
 			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 		--expect 20-60mins to crack using high-end desktop (i9-9800X (Skylake-X architecture, 10core/20thread [3.5GHz])) complex high entropy token; 40-100mins using high-end laptop (i7-9850H (Coffee Lake-H architecture, 6core/12thread [2.6GHz])) CPU-based brute force
+		JohnTheRipper
+			method(old)
+				--still necessary using non-Jumbo versions of John
+				signature=$(echo ${JWT} | cut -d'.' -f3 | xxd -p | tr -d \\n) && data=$(echo ${JWT}| cut -d'.' -f1,2) && echo "$data"'#'"$signature"
+			method(new)
+		Hashcat
+			hashcat64 -a0 -m 16500 -w3 jwt.json.b64 word.lst
+			hashcat64 -a3 -m 1450 jwt.raw.HMAC-SHA256.has
 	-tool: https://github.com/lmammino/jwt-cracker
 		--HS256 brute force cracking tool
 		npm install --global jwt-cracker
@@ -241,9 +298,14 @@ Standard
 			--start a new client
 	-tool: https://github.com/mike-engel/jwt-cli
 	-tool: https://github.com/andresriancho/jwt-fuzzer
+	-tool: https://github.com/ticarpi/jwt_tool
 	-tool, gui, html: https://github.com/ticarpi/jwt_tool
 	-tool, burp extension: https://github.com/mvetsch/JWT4B
 	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
+	-tool, https://jwt.io/
+	Use in other major REST AUTH methods:
+		--integral part of the OpenID Connect standard, an identity layer that sits on top of the OAuth2 framework
+			--e.g. Auth0 is OpenID Connect certified identity platform using JWT
 >ACCESS CONTROLS
 	Are there any sensitive functions that do not require re-authentication?
 >AUTHENTICATION (cont..)
@@ -253,6 +315,7 @@ Standard
 	Are UUIDs visible?
 	Is there a length beyond which passwords seem to be truncated?
 >OAUTH
+		--OAuth2 specification doesn't mandate a format for access tokens
 	Is redirect_uri validated on the server-side?
 		-only whitelisted URLs should validate
 		Can the IP be spoofed using an arbitrary X-Forwarded-For: Header value?
@@ -333,6 +396,15 @@ Standard
 					email
 					uuid
 					account number (incremented)
+>JSON (JavaScript Object Notation)
+	--most common format for API request and response data body
+	JSON-Tampering
+		Send differing JSON request bodies, each invalid in a uniquely different way, to each given endpoint for each valid HTTP verb (POST,PUT,&c), e.g.:
+			{"key":"value"}=-
+			{key:value}
+			{"key":string}
+			{"key":"int"}
+		Error messages of varying verbosity may be found and are a common source of information disclosure vulnerabilities information from which may facilitate exploitation of more severe vulnerabilities
 >SSL
 	Is the application also hosted as plaintext?
 	Is the HSTS header sent in HTTP responses?
@@ -483,3 +555,9 @@ RESTful Methods and Response Codes
 |404|	Not Found |	Resource doesn't exist or incorrect based on the request
 |405|	Method Not Allowed |	Invalid method or unknown method used
 |500|	Internal Server Error |	Server failed to process request due to an internal error
+
+
+Appendix 3:
+References
+	HTTP Authentication schemas:
+	https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml

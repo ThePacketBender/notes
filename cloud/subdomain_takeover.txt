@@ -1,0 +1,72 @@
+Subdomain Takeover
+
+
+A subdomain domain becomes vulnerable to takeover attacks when a subdomain DNS record entry, which maps to a service's hostname, remains pointing to a service after the service pointed to by that entry has been deleted or otherwise removed.
+Exploit by creating up a new page on the service that was previously removed such that the DNS record entry for target subdomin points the newly-created attacker-controlled page on the  page to that service's CNAME record entry corresponding to remnant Nameserver entries for that subdomain.
+	--exloited subdomain may also also inherit Domain Owner's SSL/TLS certificate signing validating traffic to client services, e.g. web browsers, if Domain Owner's Certificate validates a wildcard domain, e.g. *.target.dom.
+not a PoC:
+		Scenerio 1 (common):
+	a subdomain pointing to sub.target.dom points to an AWS S3 bucket that has been removed from the target's AWS account, but persists on at least one Nameserver's CNAME entry, the name entry resource for AWS S3 is now freely available and the target may be exploited in any of various ways creating a new S3 bucket, including an S3 bucket with the same name as the previous service, but a subdomain take over attack would require submitting a CNAME file containing sub.target.dom to be added to records for (a) nameserver's entr(y|ies) of the targeted subdomain.
+		Scenerio 2 (extreme) :
+	Domain Owner points wildcard(*) DNS entry to service, e.g. heroku.com , but fail to add wildcard entry within heroku app. As a result exploitation may now result in an attack claiming any available subdomain from the Domain Owner without necesarilly alerting the target.
+
+--very easy to execute attack, as simple as creating the new service account
+--attack leaves no trace for Domain Owner; can't be picked up by an IDS
+--service provider unlikely to be able to resolve for target
+
+
+************************************************************************
+Vulnerable Services Listing:
+	https://github.com/EdOverflow/can-i-take-over-xyz/
+************************************************************************
+
+
+Discovering vulnerable targets:
+for i in $(host -a sub.target.dom | egrep -o '[0-9](1-3)\.[0-9](1-3)\.[0-9](1-3)\.[0-9](1-3)'); do whois ${i} | grep "OrgName" ; done
+	--cross reference orgnames with can-i-take-over-xyz (url above)
+		--for orgs on vulnerable hosting services, test that the result matches the vuln-identifying fingerprint or otherwise returns a 401/404 error
+			--check both http & https responses on all ports to verify
+	--*note if host sub.target.dom returns an error, verify against dig sub.target.dom that the record is not dead
+
+Tools:
+	https://github.com/misterch0c/twitterBFTD
+
+
+Second-Order Subdomain Hijacking:
+	--"Broken Link Hijacking"
+		--exploits expired or mistyped HTML hyperlinks
+vulnerable subdomains which not belonging to target domain, or even necisarilly org, but which serve content on the target's resources, e.g. web page
+	--e.g.
+		linked host serving imported javascript to target may lead to stored cross-site scripting
+
+	Exploitation Vectors:
+
+	Cookie Hijacking/SOP abuse
+		--e.g. a cookie scoped to .target.dom can be modified by a subdomain vuln.target.dom if the domain is taken over and a service hosting a payload has been hosted there
+		--*note: if base name of target domain vuln to session fixation and uses HTTPOnly cookies, setting a cookie target client browser will execute exploit payload on first resumption of session after target restarts their browser
+
+	CORS trust exploitation
+		--check CORS headers on target for subdomain to hijack when attempting to exploit service clients
+	Trust extends SOP-defined attack surface
+
+	Oauth whitelisting
+		-developers can specify which callback URIs should be accepted via OAUTH whitelisting mechanism
+		redirect users during Oauth flow to hijacked subdomain, attack potentiall leaks target Oauth token
+		
+	CSP (Content-Security Policies)
+	curl -sI https://target.dom | grep -i "content-security-policy"
+		--subdomain in whitelist for a service can used to stage attacks bypassing CSP rules set for client browser
+
+	UI Redress/Clickjacking
+		-check X-Frame-Options: ALLOW-FROM header
+		
+	Password Managers/Browser autofill
+		browser-embedded autofill functions when enabled or browser-integrated password managers may autofill or even automatically submit fields for all subdomains of a target if enabled
+		--like a free non-httponly overscoped cookie
+		--includes popular password managers like lastpass and chrome/firefox browser autofill
+
+	Email Intercept:
+		--claim subdomain belonging to target on sendgrid or similar
+	
+	Tools:
+		https://github.com/stevenvachon/broken-link-checker

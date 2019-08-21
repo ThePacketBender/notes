@@ -13,7 +13,9 @@ Florida
 http://flvoters.com/downloads.html
 Georgia
 https://elections.sos.ga.gov/Elections/voterhistory.do
-Michicagan
+https://sos.ga.gov/index.php/elections/order_voter_registration_lists_and_files
+$250
+Michigan
 http://michiganvoters.info/download.html
 Ohio
 https://www6.sos.state.oh.us/ords/f?p=VOTERFTP:STWD:::#stwdVtrFiles
@@ -29,3 +31,7 @@ https://www.sos.wa.gov/_assets/elections/vrdbdatabasefields.pdf
 Washington D.C.
 https://github.com/ajschumacher/dc_voter_reg
 git clone https://github.com/ajschumacher/dc_voter_reg.git
+
+California:
+https://www.sos.ca.gov/elections/contact/email-elections-division/
+    —contact form

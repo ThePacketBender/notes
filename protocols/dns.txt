@@ -56,7 +56,7 @@ Certificate Transparency
 		https://github.com/Edu4rdSHL/findomain/tree/master/bin/windows
 		https://github.com/Edu4rdSHL/findomain/tree/master/bin/osx
 		git clone https://github.com/Edu4rdSHL/findomain.git
-		wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux
+		wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux	
 		findomain -i -f infile.ext -o csv -t domain.name
 		findomain -a -i -f infile.ext -o json -t domain.name
 		findomain -i -o txt -t domain.name
@@ -127,7 +127,7 @@ ASN Discovery
 		http://bgp.he.net/
 	find all the IP ranges that belong to an ASN
 		whois -h target.dom  -- '-i origin AS36459' | grep -Eo "([0-9.]+){4}/[0-9]+" | uniq
-		nmap --script targets-asn --script-args targets-asn.asn=17012 > paypal_netblocks.txt
+		nmap --script targets-asn --script-args targets-asn.asn=17012 > paypal.netblocks.txt
 		
 SAN (Subject Alternative Name) Discovery
 	extension to X.509 specification that allows to specify additional host names for a single SSL certificate
@@ -172,6 +172,7 @@ nsec3walker
 	make
 ./collect dnsux.dom > dnsux.com.collect
 ./unhash < dnsux.dom.collect > dnsux.dom.unhash
+cat dnsux.dom.unhash | grep "dnsux" | awk '{print $2;}'
 nsec3map
 	https://github.com/anonion0/nsec3map
 
@@ -314,7 +315,7 @@ DNSSEC:
 DNS Attacks:
 	DNS spoofing/cache poisoning
 	DNS tunnelling
-	DNS hijacking
+	DNS hijacking/Subdomain Takeover
 	NXDOMAIN attack
 		--DoS attack against DNS Zone
 		-DNS flood attack where an attacker inundates a DNS server with requests, asking for records that don’t exist
@@ -397,3 +398,8 @@ Regional Authorities and in-addr.arpa
 	
 Reference/Further reading:
 https://www.certificate-transparency.org/
+https://public-dns.info/nameservers.txt
+https://public-dns.info/nameservers.csv
+https://public-dns.info/nameservers-all.csv
+https://public-dns.info/nameservers-all.txt
+https://github.com/pentest-io/commonspeak/archive/master.zip
