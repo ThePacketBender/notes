@@ -166,6 +166,7 @@ wget https://my_bucket.s3.amazonaws.com/path-to-file
 
 Commands
 aws s3 ls s3://my_bucket --no-sign-request --region us-east-2
+aws s3 ls s3://my_bucket --recursive  --human-readable --summarize
 	Download s3-stored files
 aws s3 cp s3://my_bucket/my_folder/my_file.ext my_copied_file.ext
 	-copy an object from Amazon S3 to your instance
@@ -174,6 +175,8 @@ aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext
 aws s3 sync s3://remote_S3_bucket local_directory
 	-download an entire Amazon S3 bucket to a local directory
 ass s3 presign s3://s3_bucket/file.ext  | wget -
+aws s3 website s3://my_bucket/ --index-document index.html --error-document error.html
+	--configure s3 bucket as static website
 	s3api commands (High-level)
 aws s3api put-bucket-acl --bucket MyBucket --grant-full-control 'emailaddress="user1@example.com",emailaddress="user2@example.com"' --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
 	-grant full control to two AWS users and read permission to everyone
@@ -197,6 +200,17 @@ s3 Enumeration:
 		--very common configuration
 			--bucket named as domain pointing to it
 		--google dork site:domain.ext may expose bucket name
+	Amazon AWS S3 supports both virtual-hosted–style and path-style URLs to access a bucket
+		virtual-hosted–style URL
+			--bucket name is part of the domain name in the URL, e.g.
+				http://bucket.s3-aws-region.amazonaws.com
+				http://bucket.s3.amazonaws.com
+			--buckets created in regions launched after March 20, 2019 are not reachable via the https://bucket.s3.amazonaws.com naming scheme'
+		path-style URL
+			--bucket name is not part of the domain, e.g.
+				http://s3-aws-region.amazonaws.com/bucket
+				http://s3.amazonaws.com/bucket
+			--specified endpoint must match the region in which the bucket resides
 	access root directory of s3 bucket domain url
 		--in index-listing enabled (public Read bucket ACL) bucket name defined in <Name> element
 	file object contents or naming conventions may reveal bucket name
