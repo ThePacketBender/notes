@@ -1,0 +1,13 @@
+Debian Unofficial repositories
+
+
+deb http://oss.oracle.com/debian unstable main non-free
+deb http://dl.google.com/linux/mod-pagespeed/deb/ stable main
+deb http://dl.google.com/linux/talkplugin/deb/ stable main
+deb http://dl.google.com/linux/earth/deb/ stable main
+deb http://dl.google.com/linux/chrome/deb/ stable main
+deb http://ftp.ports.debian.org/debian-ports/ unstable main
+deb http://ftp.ports.debian.org/debian-ports/ experimental main
+deb http://ftp.ports.debian.org/debian-ports/ unreleased main
+deb https://deb.opera.com/opera-stable/ stable non-free
+#wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -

@@ -21,11 +21,9 @@ OR
 x=`echo "x"`
 	--set x as stdout of operation
 
-
 Configuration Files:
 ~/.bashrc
 	-
-
 
 STDOUT (Printing)
 echo "x"
@@ -33,4 +31,21 @@ echo "x"
 printf "%s" "$x"
 	-print the value of var x as a string
 
+Handling parameters
+$@
+	--@ preserves the breaks between (though some arguments themselves contain spaces)
+$*
+	--using * runs all of the arguments together as a single argument with spaces
+$1
+"${@:2}"
+"${*:2}"
+"${2:-1}"
+"${@:-2}"
+$(shift)
 
+
+Test existence
+if [[ ! -d "$this" ]]; then mkdir ${this} ; fi
+	--test for directory  (does not) exist
+if [[ ! -f "$this"'/'"$that"'.ext' ]]; then touch "$this"${that}'.ext' ; fi
+	--test for filename [in directory] (does not) exist

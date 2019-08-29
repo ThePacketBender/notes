@@ -1,0 +1,19 @@
+PGP/GPG
+
+(OLD DONT UST FOR REPL)
+gpg --gen-key
+>5
+gpg --ful-generate-key
+	(1) RSA and RSA (default)
+>1
+	What keysize do you want? (3072)
+>4096
+	...
+>...
+
+
+	Add subkey for encryption
+
+locations
+~/.gpg/.gnupg/openpgp-revocs.d/
+	--revocation cert dir

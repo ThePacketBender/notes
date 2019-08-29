@@ -428,3 +428,75 @@ $_COOKIE
 
 $_SESSION
 
+
+
+
+
+Static analysis
+
+PHPSTAN
+https://github.com/phpstan/phpstan
+composer require --dev phpstan/phpstan
+	--should create a nested set of directories /vendor/bin (created by composer) in containing symlink phpstan to ../phpstan/phpstan/bin/phpstan or $PWD/vendor/phpstan/phpstan/bin/phpstan
+Extension installer
+https://github.com/phpstan/extension-installer
+Phar compiler
+https://github.com/phpstan/phpstan-compiler
+vim plugin
+https://github.com/phpstan/vim-phpstan
+Extensions
+https://github.com/phpstan/phpstan-deprecation-rules
+https://github.com/thecodingmachine/phpstan-strict-rules
+https://github.com/pepakriz/phpstan-exception-rules
+https://github.com/localheinz/phpstan-rules
+https://github.com/ekino/phpstan-banned-code
+https://github.com/Slamdunk/phpstan-extensions
+Framwork-specific Extensions
+	CMS
+Wordpress - https://github.com/szepeviktor/phpstan-wordpress
+Drupal - https://github.com/mglaman/phpstan-drupal
+Typo3 - https://github.com/sascha-egerer/phpstan-typo3
+	App Framework
+Zend - https://github.com/Slamdunk/phpstan-zend-framework
+Laravel - https://github.com/nunomaduro/larastan
+Symfony - https://github.com/phpstan/phpstan-symfony
+Consistence - https://github.com/phpstan/phpstan-sentry
+Nette - https://github.com/phpstan/phpstan-nette
+php-parser - https://github.com/phpstan/phpstan-php-parser
+phpdoc-parser - https://github.com/phpstan/phpdoc-parser
+yii2 - https://github.com/proget-hq/phpstan-yii2
+	Libraries/Unit Testing
+Moneyphp Money - https://github.com/JohnstonCode/phpstan-moneyphp
+phpunit - https://github.com/phpstan/phpstan-doctrine
+mockery - https://github.com/phpstan/phpstan-mockery
+beberlei-assert - https://github.com/phpstan/phpstan-beberlei-assert
+webmozart-assert - https://github.com/phpstan/phpstan-webmozart-assert
+dbi - https://github.com/phpstan/phpstan-dibi
+guzzle - https://github.com/phpstan/phpstan-guzzle
+phony - https://github.com/eloquent/phpstan-phony
+prophecy - https://github.com/Jan0707/phpstan-prophecy
+enum - https://github.com/timeweb/phpstan-enum
+phpspec - https://github.com/proget-hq/phpstan-phpspec
+
+
+
+
+Composer
+composer update
+	--update composer packages
+php /usr/bin/composer list
+php /usr/bin/composer list --raw
+	--list possible composer commands for cwd composer project
+php /usr/bin/composer list test
+
+composer init
+
+composer install
+	--installs dependencies defined in composer.lock if present, falls back on composer.json
+composer depends
+composer suggests
+composer require package
+
+composer.lock
+composer.json
+	--list project dependencies

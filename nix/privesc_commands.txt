@@ -546,6 +546,8 @@ cat /etc/inetd.conf	List services managed by inetd
 cat /etc/xinetd.conf	As above for xinetd
 cat /etc/xinetd.conf 2>/dev/null | awk '{print $7}' |xargs -r ls -la 2>/dev/null	A very ‘rough’ command to extract associated binaries from xinetd.conf and show permissions of each
 ls -la /etc/exports 2>/dev/null; cat /etc/exports 2>/dev/null	Permissions and contents of /etc/exports (NFS)
+getcap -r 2/dev/null
+export -p
 
 
 sudo -l
@@ -581,3 +583,14 @@ history -c
 rm -rf ~/.bash_history && ln -s ~/.bash_history /dev/null
 touch ~/.bash_history
 bash$ set +o history
+
+
+Miscillenia
+https://github.com/DominicBreuker/pspy/releases/
+
+
+Don't Panic!
+You may have forgotten to
+check path variables
+privesc via RDBMS
+read-only file can be 

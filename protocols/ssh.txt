@@ -10,6 +10,10 @@ ssh-keygen -f mykey
 ssh-add ~/dir/mykey
 
 
+check fingerprint against ssh known keys for domain
+ssh-keygen -r sub.target.dom
+
+
 generate private key for public key in deb/ubu 2006-2008
 	ssh-keygen -l -f publickey.pub
 	ssh -i /path/to/privkey
@@ -43,6 +47,21 @@ ssh user@host # will authenticate you if server trusts key in agent
 	-SSH agents listen on a unix socket, must figure where this is for each agent (e.g. /tmp/ssh-tqiEl28473/agent.28473)
 OR
 ps auxeww | grep ssh-agent | grep SSH_AUTH_SOCK | sed 's/.*SSH_AUTH_SOCK=//' | cut -f 1 -d ' '
+
+
+Executing ssh-agent process manually
+	--when manually executed or restarted variables will be (re-)set for use when ssh requires them when connecting to an agent
+	--operations that require a private key will be performed by the agent
+		--prevents private keys from being exposed to clients using the agent
+ssh-agent xterm &
+	--standard method of executing ssh-agent for x11 as background process/daemon
+eval `ssh-agent -s`
+	--agent prints the needed shell commands which can be evaluated in the calling shell for Bourne-type shell (sh, bash, ksh)
+eval `ssh-agent -c`
+	--agent prints the needed shell commands which can be evaluated in the calling shell for C-type shell (csh)
+--Unix domain socket location for agent used for containing connections to auth agent
+
+
 
 nmap -p 22 -v -sV --script=ssh-hostkey 10.11.1.71
 ssh root@127.0.0.1

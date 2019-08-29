@@ -11,19 +11,30 @@ tier 1
 	stores users' passwords in a hashed format (in LM hash and NTLM hash). The SAM file in \repair is locked, but can be retired using forensic or Volume Shadow copy methods
 %SYSTEMROOT%\repair\system
 %SYSTEMROOT%\System32\config\SYSTEM
+%SYSTEMROOT%\System32\config\SECURITY
+%SYSTEMROOT%\System32\config\SOFTWARE
+%SYSTEMROOT%\System32\config\default
 %SYSTEMROOT%\System32\config\RegBack\system
-%SYSTEMROOT%\System32\config\RegBack\SAM
+%SYSTEMROOT%\System32\config\RegBack\security
+%SYSTEMROOT%\System32\config\RegBack\software
+%SYSTEMROOT%\System32\config\RegBack\default
 	key to read SAM hashes in plaintext without cracking
 %WINDIR%\repair\security
 %SYSTEMDRIVE%\autoexec.bat
+\Users\Administrator\NTUser.dat
+\Documents and Settings\Administrator\NTUser.dat
 
 TIER 1, LOCATION NOT SET BY DEFAULT
 unattend.txt
+\Windows\Panther\Unattend\unattend.txt
+\Windows\Panther\unattend.txt
 unattend.xml
+\Windows\Panther\Unattend\Unattended.xml
+\Windows\Panther\Unattended.xml
 sysprep.inf
 	--(ALL)Used in the automated deployment of windows images and can contain user accounts. No known default location.
 
-tier 2
+tier 2 (system files)
 %WINDIR%\debug\NetSetup.log
 %WINDIR%\repair\software
 %WINDIR%\iis6.log
@@ -49,7 +60,46 @@ tier 2
 \inetpub\wwwroot\Web.config
 %WINDIR%\debug\NetSetup.log
 %WINDIR%\iis7.log
-C:\inetpub\wwwroot\Web.config
+%WINDIR%\System32\inetsrv\config\schema\ASPNET_schema.xml
+%WINDIR%\System32\inetsrv\config\applicationHost.config
+\inetpub\wwwroot\global.asa
+\inetpub\logs\LogFiles\W3SVC1\u_ex[YYMMDD].log
+
+trier 2 (program data)
+\apache\logs\access.log
+\apache\logs\error.log
+\apache\php\php.ini
+\Program Files\Apache Group\Apache2\conf\httpd.conf
+\Program Files\Apache Group\Apache\conf\httpd.conf
+\Program Files\Apache Group\Apache2\logs\access.log
+\Program Files\Apache Group\Apache\logs\access.log
+\Program Files\Apache Group\Apache2\logs\error.log
+\Program Files\Apache Group\Apache\logs\error.log
+\Program Files (x86)\Apache Group\Apache2\conf\httpd.conf
+\Program Files (x86)\Apache Group\Apache\conf\httpd.conf
+\Program Files (x86)\Apache Group\Apache2\logs\access.log
+\Program Files (x86)\Apache Group\Apache\logs\access.log
+\Program Files (x86)\Apache Group\Apache2\logs\error.log
+\Program Files (x86)\Apache Group\Apache\logs\error.log
+\Program Files (x86)\xampp\apache\conf\httpd.conf
+\Program Files (x86)\Apache Group\Apache\php\php.ini
+\Program Files (x86)\Apache Group\Apache2\php\php.ini
+\php\php.ini
+\php5\php.ini
+\php6\php.ini
+\php7\php.ini
+\MySQL\data\hostname.err
+\MySQL\data\mysql.err
+\MySQL\data\mysql.log
+\MySQL\my.cnf
+\MySQL\my.ini
+\Program Files\MySQL\data\hostname.err
+\Program Files\MySQL\data\mysql.err
+\Program Files\MySQL\data\mysql.log
+\Program Files\MySQL\my.cnf
+\Program Files\MySQL\my.ini
+\Program Files\FileZilla Server\FileZilla Server.xml
+\Program Files(x86)\FileZilla Server\FileZilla Server.xml
 
 tier 3 (dir traversal confirmation only)
 %SYSTEMDRIVE%\pagefile.sys
@@ -58,3 +108,4 @@ tier 3 (dir traversal confirmation only)
 %SYSTEMDRIVE%\swapfile.sys
 %SYSTEMDRIVE%\AVScanner.ini
 %USERPROFILE%\ntuser.dat
+\boot.ini

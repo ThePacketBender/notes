@@ -1,6 +1,10 @@
 Google Cloud Platform (GCP)
 
 
+#!#!#!#TO INSTALL CLI FROM REPOSITORIES#!#!#!#
+https://github.com/ThePacketBender/pentest_scripts/installers/add-gcloud-sources.sh
+
+
 requires header Metadata-Flavor: Google OR X-Google-Metadata-Request: True
 http://169.254.169.254/computeMetadata/v1/
 http://metadata.google.internal/computeMetadata/v1/
@@ -100,5 +104,22 @@ gsutil iam get gs://BUCKET_NAME
 —read the bucket policy, receive a valid response when pulling the bucket policy if “allUsers” or “allAuthenticatedUsers” are allowed to read the bucket policy, else returns access denied
 
 
+CLI
+	https://cloud.google.com/sdk/gcloud/
+	ACCOUNTS/AUTH
+gcloud auth login --no-launch-browser
+gcloud auth list
+gcloud config set account `ACCOUNT_NAME`
+gcloud auth print-identity-token
+gcloud auth print-access-token
+gcloud auth configure-docker
+gcloud auth activate-service-account
+gcloud auth revoke
+
+
+
+
 gsutil
 -cli GCP
+
+

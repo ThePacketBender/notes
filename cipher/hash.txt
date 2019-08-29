@@ -1,0 +1,20 @@
+Hashing
+
+
+Hash Anatomy (Linux/BSD)
+$1$VkQd$Vma3sR7B1LL.v5lgy1NYc/
+|-|----|---------------------|
+ ^   ^    ^
+ |   |    |
+ |   |    `-> Hash (salt + password)
+ |   |
+ |   `-> base64 salt (4 chars.)
+ |
+ `-> Hash type (md5)
+
+Hash Creation
+$ openssl passwd -1 Password123
+$1$endVjKEy$x32lAjGU2Ovd7f/ZrqawV/
+
+$ openssl passwd -1 -salt VkQd Password123
+$1$VkQd$Vma3sR7B1LL.v5lgy1NYc/
