@@ -27,3 +27,16 @@ $s.Close()
 $socket = new-object System.Net.Sockets.TcpClient(192.168.2.222, 445); If(socket.Connected) { "socket connected" }; $socket.Close()
 	test egress filtering
 1..1024 | % {echo ((new-object Net.Sockets.TcpClient).Connect("allports.exposed",$_)) "Port $_ is open!" } 2>$null
+
+
+unicornscan -mU -Ir 1000 111.11.1.11:a -v
+	--fast udp scan
+	
+	
+masscan -p80,8000-8100 111.11.0.0/16
+masscan -p0-65535 --rate 150000 -oL output.txt
+masscan -p0-65535 111.11.1.0/24 --rate 150000 -oL output.txt
+masscan -p0-65535 111.11.1.0/24 --rate 150000 -oL output.txt --echo > scan.conf
+masscan -c scan.conf
+	--playback conf
+masscan --ports 80,443,22,445,135,139,5900,5800,5901,5801,8080 --rate 150000 -oL 172_masscan_common.txt  172.16.0.0/12

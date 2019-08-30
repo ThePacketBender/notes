@@ -54,6 +54,12 @@ nmap -sU --script default,discovery,exploit,safe,version,vuln -T5 --top-ports 60
 nmap -sS -T2 --top-ports 58 -Pn -f -S 198.20.69.73 -sL sublist3r.out
 
 
+NMAP PASSING-The-Hash
+nmap -p U:137,T:139 -script-args -smbuser=robertpulson,smbhash=<hash> -script=smb-enum-groups -script=smb-enum-users 111.11.1.1
+
+NMAP ALL - UNSAFE, Completeable
+nmap -sV -oA nse --script-args=unsafe=1 --script-args=unsafe  --script "auth,brute,discovery,exploit,external,fuzzer,intrusive,malware,safe,version,vuln and not(http-slowloris or http-brute or http-enum or http-form-fuzzer)"
+
 
 Extensions
 nseinfo

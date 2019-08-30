@@ -257,3 +257,10 @@ fdisk
 mount
 MEMORY
 free -m
+
+
+
+CLEAR DISC SPACE
+sudo apt autclean && sudo apt autoremove && sudo apt clean
+rm -rf /var/cache/apt/archives
+apt-get purge -y hostapd && sudo apt-get purge -y network-manager && sudo apt-get install network-manager

@@ -1,0 +1,25 @@
+Container Breackouts
+
+
+Docker
+Kernel Vulns
+	--what more can I say?
+		--Docker containers for some organizations or FOSS projects are more likely to run on kernals with known vulns, always be sure to check
+Configuration Errors
+	--containers running with flag --privileged are likely to allow access to the underlying operating system, whether that be a VM or root host
+Mounted Filesytems
+	--containers often mount host filesystems or in very rare cases even mount a shared filesystem from a host OS while running within an unprivileged VM
+Mounted Docker socket
+	x--most common devops config vuln in practice
+	-Docker container which mounts a socket inside the container
+		--intended to allow container to understand state of docker daemon
+			--useful for devops engineers to set vars within container without writing to file in a container or exporting them to container environment for any user
+		--trivial breakout
+		execute as -v switch flag paramter mapping host to container guest by location
+			/var/run/docker.sock:/var/run/docker.sock
+			/var/run/docker.sock:/run/docker.sock
+		--if container mount is set to ro (read-only) permissions don't be thwarted by the devengineer's sense of security
+			--deploy a container within the container arbitary execution permissions are already accessed on and do something like mount /etc/ into it from the host, essentially giving them root access to the host
+				--symlinks will take you as far as you can write destinations to
+					//thanks past seld that was a clever one <redacted?> (the world may never know)
+	--moral to the subsection of note: don't trust the security of docker.sock just as Serj said, "Attack Attack Attack!"

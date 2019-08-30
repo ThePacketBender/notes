@@ -72,6 +72,13 @@ python3 cisco_pwdecrypt.py -t 0242114B0E143F015F5D1E161713 -d /usr/share/wordlis
 	Type 9 Format
 		--scrypt algorithm hash
 		--depricated since IOS 15.3(3)
+		
+
+	get ip from cisco
+cat index.html | grep "href=" | cut -d "/" -f 3 | grep "cisco.com" | cut -d '"' -f 1 | sort -u > domain.txt
+	--get ip domain from cisco
+host community.cisco.com | grep "has address" | cut -d " " -f 4 
+	--can show only ip address
 	
 	
 References:

