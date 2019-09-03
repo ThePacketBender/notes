@@ -5,6 +5,45 @@ git clone https://github.com/owner/repot.git
 git update
 
 
+Versioning With Git:
+This is a about commitment!
+git add list ./of/new file*s
+git add *
+	--add files to repo prior to commit
+git commit -m "description of changes"
+	--commit changes to repisory version history
+git commit --amend
+	--make changes to most recent commit
+
+Revision History
+git log
+	-lists version history for the current branch
+git log --follow [file]
+	-lists version history for a file, including renames
+git diff [first-branch]...[second-branch]
+	-shows content differences between two branches
+git show [commit]
+	-outputs metadata and content changes of the specified commit
+
+Checkout & Merge Techniques
+git log
+	-list commits with comments
+git checkout master
+	-checkout a git branch
+git checkout 77b1f718d19e5cf46e2fab8405a9a0859c9c2889
+git checkout -b build_0051
+	-checkout a commit from reflog
+git checkout master
+git cherry-pick af32d6
+	-merge a commit from one branch to another
+	--useful when unable to merge two branches
+		--fix a security issue present in both branches
+
+Git Configuration:
+.git/config
+git config --edit
+
+
 
 Repositoiry Enumeration:
 
@@ -31,17 +70,6 @@ git show :/message
 
 
 
-REVISION HISTORY
-git log
-	-lists version history for the current branch
-git log --follow [file]
-	-lists version history for a file, including renames
-git diff [first-branch]...[second-branch]
-	-shows content differences between two branches
-git show [commit]
-	-outputs metadata and content changes of the specified commit
-
-
 .git/ Directory
 cat .git/FETCH_HEAD
 	--check branch git pulls from
@@ -51,6 +79,7 @@ cat .git/config
 Configuration Information:
 .git/config
 git config --edit
+
 
 	
 Exploitation Tools:

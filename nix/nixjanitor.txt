@@ -52,7 +52,7 @@ journalctl -f
 journalctl -k
 	-display kernel-level messages
 
-system resources
+System Resources
 	DISK/STORAGE (SCSI devices)
 df
 df -h
@@ -258,7 +258,10 @@ mount
 MEMORY
 free -m
 
-
+COMPATABILITY
+dos2unix winfile.txt unixfile.txt
+unix2dos unixfile.txt winfile.txt
+	--convert between Unix and Windows text files (line ending CRLF <--> Line Feed(\n))
 
 CLEAR DISC SPACE
 sudo apt autclean && sudo apt autoremove && sudo apt clean

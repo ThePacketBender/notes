@@ -27,6 +27,12 @@ set
 export -p
 PRINTERS
 lpstat -a
+HOST INFORMATION
+hostnamectl status
+cat /etc/hostname
+cat /etc/hosts
+cat /etc/resolv.conf
+ls -Rashl /etc/host* 2>/dev/null
 FILESYSTEM INFORMATION
 df -k
 mount
@@ -151,6 +157,8 @@ python3 --version
 ruby -v
 java -version
 cat /etc/alternatives
+FIREWALL STATUS/RULES (ingress/egress)
+sudo iptables -L -n -v
 PACKET SNIFFING?
 tcpdump tcp dst [ip] [port] and tcp dst [ip] [port]
 IS IT A SHELL?

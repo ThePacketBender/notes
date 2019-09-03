@@ -1,0 +1,937 @@
+FTP SITE subcommand
+
+
+Usage: SIte subcommand to send information that is used by the remote host to provide services specific to that host system.
+
+
+>>-SIte--| options |-------------------------------------------><
+options
+   .--------------------------------------.   
+   V                                      |   
+|----+-ASAtrans-------------------------+-+---------------------|
+     +-AUTOMount------------------------+     
+     +-AUTORecall-----------------------+     
+     +-BLKsize--+-----------+-----------+     
+     |          '- = --size-'           |     
+     +-BLocks---------------------------+     
+     +-BLOCKSIze--+-----------+---------+     
+     |            '- = --size-'         |     
+     |             .-5------.           |     
+     +-BUfno-- = --+--------+-----------+     
+     |             '-number-'           |     
+     |                .-0------.        |     
+     +-CHKptint-- = --+--------+--------+     
+     |                '-number-'        |     
+     +-CHMod--+-ooo filename------+-----+     
+     |        '-symbolic filename-'     |     
+     +-CONDdisp-- = --+-Catlg--+--------+     
+     |                '-Delete-'        |     
+     +-CTRLConn--+-7BIT---------------+-+     
+     |           +-iconv_ascii--------+ |     
+     |           +-FTP_STANDARD_TABLE-+ |     
+     |           '- * ----------------' |     
+     +-CYlinders------------------------+     
+     +-DATAClass--+-----------------+---+     
+     |            '- = --data_class-'   |     
+     +-DATAKEEPALIVE = -+-seconds-+-----+     
+     |                  '-0-------'     |     
+     '-DATASetmode----------------------'     
+
+   .---------------------------------------.   
+   V                                       |   
+|----+-DB2-- = --db2_name----------------+-+--------------------|
+     +-DBSUB-----------------------------+     
+     +-DCbdsn--+--------------------+----+     
+     |         '- = --data_set_name-'    |     
+     |             .---------------.     |     
+     |             V               |     |     
+     +-DEBug-- = ----+-----------+-+-----+     
+     |               +- ?--------+       |     
+     |               +- ACC------+       |     
+     |               +- ALL------+       |     
+     |               +- BAS------+       |     
+     |               +- CMD------+       |     
+     |               +- FLO------+       |     
+     |               +- FSC--(n)-+       |     
+     |               +- INT------+       |     
+     |               +- JES------+       |     
+     |               +- NONE-----+       |     
+     |               +- PAR------+       |     
+     |               +- SEC------+       |     
+     |               +- SOC--(n)-+       |     
+     |               +- SQL------+       |     
+     |               +- UTL------+       |     
+     |               '- X--yyy---'       |     
+     +-DESt--+------------------+--------+     
+     |       '- = --destination-'        |     
+     +-Directory--+-----------+----------+     
+     |            '- = --size-'          |     
+     +-DIRECTORYMode---------------------+     
+     +-DSNTYPE-- = --+-SYSTEM-+----------+     
+     |               +-BASIC--+          |     
+     |               '-LARGE--'          |     
+     +-DSWAITTIME-- = --+-minutes-+------+     
+     |                  '-0-------'      |     
+     +-DSWAITTIMEREPLY-- = --+-60------+-+     
+     |                       '-seconds-' |     
+     |            .-------------.        |     
+     |            V             |        |     
+     +-DUmp-- = ----+---------+-+--------+     
+     |              +- ?------+          |     
+     |              +- n------+          |     
+     |              +- ALL----+          |     
+     |              +- FSC----+          |     
+     |              +- JES----+          |     
+     |              +- NONE---+          |     
+     |              +- SOC----+          |     
+     |              +- SQL----+          |     
+     |              '- X--yyy-'          |     
+     +-EATTR-- = --+-SYSTEM-+------------+     
+     |             +-NO-----+            |     
+     |             '-OPT----'            |     
+     +-ENCODING-- = --+-SBCS-+-----------+     
+     |                '-MBCS-'           |     
+     +-FIFOIOTIME-- = --seconds----------+     
+     '-FIFOOPENTIME-- = --seconds--------'     
+
+   .---------------------------------------------------------------------.   
+   V                                                                     |   
+|----+-FILEtype-- = --type---------------------------------------------+-+--|
+     +-ISPFSTATS-------------------------------------------------------+     
+     |                     .-200----.                                  |     
+     +-JESENTRYLimit-- = --+--------+----------------------------------+     
+     |                     '-number-'                                  |     
+     +-JESGETBYDSN-----------------------------------------------------+     
+     |                  .-loginuserid*-.                               |     
+     +-JESJOBName-- = --+--------------+-------------------------------+     
+     |                  '-jobname------'                               |     
+     +-JESLrecl-- = --+-length-+---------------------------------------+     
+     |                '- * ----'                                       |     
+     |                .-loginuserid-.                                  |     
+     +-JESOwner-- = --+-------------+----------------------------------+     
+     |                '-userid------'                                  |     
+     +-JESRecfm-- = --+-F---+------------------------------------------+     
+     |                +-V---+                                          |     
+     |                '- * -'                                          |     
+     |                 .-ALL----.                                      |     
+     +-JESSTatus-- = --+--------+--------------------------------------+     
+     |                 +-INPUT--+                                      |     
+     |                 +-ACTIVE-+                                      |     
+     |                 '-OUTPUT-'                                      |     
+     +-LISTLEVel--=--+-0-+---------------------------------------------+     
+     |               +-1-+                                             |     
+     |               '-2-'                                             |     
+     +-LISTSUBdir------------------------------------------------------+     
+     +-LRecl--+-------------+------------------------------------------+     
+     |        '- = --length-'                                          |     
+     +-MBDATACONN--=--(file_system_codepage,network_transfer_codepage)-+     
+     +-MBREQUIRELASTEOL------------------------------------------------+     
+     +-MBSENDEOL-- = --+-CRLF-+----------------------------------------+     
+     |                 +-CR---+                                        |     
+     |                 +-LF---+                                        |     
+     |                 '-NONE-'                                        |     
+     +-MGmtclass--+----------------+-----------------------------------+     
+     |            '- = --mgmtclass-'                                   |     
+     +-MIGratevol--+----------------+----------------------------------+     
+     |             '- = --volume_ID-'                                  |     
+     +-NOASAtrans------------------------------------------------------+     
+     +-NOAUTOMount-----------------------------------------------------+     
+     +-NOAUTORecall----------------------------------------------------+     
+     +-NODBSUB---------------------------------------------------------+     
+     +-NOISPFSTATS-----------------------------------------------------+     
+     +-NOJESGETBYDSN---------------------------------------------------+     
+     +-NOLISTSUBdir----------------------------------------------------+     
+     +-NOMBREQUIRELASTEOL----------------------------------------------+     
+     +-NOQUOtesoverride------------------------------------------------+     
+     +-NORDW-----------------------------------------------------------+     
+     +-NOREMOVEINBEOF--------------------------------------------------+     
+     +-NORESTPUT-------------------------------------------------------+     
+     +-NOSBSUB---------------------------------------------------------+     
+     +-NOSPRead--------------------------------------------------------+     
+     +-NOTAPEREADSTREAM------------------------------------------------+     
+     +-NOTRAILingblanks------------------------------------------------+     
+     +-NOTRUNcate------------------------------------------------------+     
+     +-NOUCSSUB--------------------------------------------------------+     
+     +-NOUCSTRUNC------------------------------------------------------+     
+     +-NOWRAPrecord----------------------------------------------------+     
+     +-NOWRTAPEFastio--------------------------------------------------+     
+     '-PDSTYPE--=--+------+--------------------------------------------'     
+                   +-PDS--+                                                  
+                   '-PDSE-'                                                  
+
+   .-----------------------------------------------------------------.   
+   V                                                                 |   
+|----+-PRImary-----------------------------------------------------+-+--|
+     +-=--amount---------------------------------------------------+     
+     +-Qdisk--+------------------+---------------------------------+     
+     |        '-=--volume_serial-'                                 |     
+     +-QUOtesoverride----------------------------------------------+     
+     +-RDW---------------------------------------------------------+     
+     +-READTAPEFormat--+----------------+--------------------------+     
+     |                 '-=--tape_format-'                          |     
+     +-RECfm--+-----------+----------------------------------------+     
+     |        '-=--format-'                                        |     
+     +-REMOVEINBEOF------------------------------------------------+     
+     +-RESTPUT-----------------------------------------------------+     
+     +-RETpd--+---------+------------------------------------------+     
+     |        '-=--days-'                                          |     
+     +-SBDataconn--+---------------------------------------------+-+     
+     |             '-=--+--------------------------------------+-' |     
+     |                  +-dsname-------------------------------+   |     
+     |                  +-(file_system_cp,network_transfer_cp)-+   |     
+     |                  +-FTP_STANDARD_TABLE-------------------+   |     
+     |                  '-*------------------------------------'   |     
+     +-SBSENDEOL--=--+-CRLF-+--------------------------------------+     
+     |               +-CR---+                                      |     
+     |               +-LF---+                                      |     
+     |               '-NONE-'                                      |     
+     +-SBSUB-------------------------------------------------------+     
+     +-SBSUBCHAR  --=--+-nn----+-----------------------------------+     
+     |                 '-Space-'                                   |     
+     +-SECondary--+-----------+------------------------------------+     
+     |            '-=--amount-'                                    |     
+     +-SPRead------------------------------------------------------+     
+     +-SQLCol--=--+-any----+---------------------------------------+     
+     |            +-labels-+                                       |     
+     |            '-names--'                                       |     
+     +-STOrclass--+------------------+-----------------------------+     
+     |            '-=--storage_class-'                             |     
+     +-SUBSYS--+-------------------+-------------------------------+     
+     |         '-=--subsystem_name-'                               |     
+     +-TAPEREADSTREAM----------------------------------------------+     
+     +-TRacks------------------------------------------------------+     
+     +-TRAILingblanks----------------------------------------------+     
+     +-TRUNcate----------------------------------------------------+     
+     +-UCOUNT--+-------------------+-------------------------------+     
+     |         '-=--unit_count | P-'                               |     
+     +-UCSHOSTCS--+-------------+----------------------------------+     
+     |            '-=--code_set-'                                  |     
+     +-UCSSUB------------------------------------------------------+     
+     +-UCSTRUNC----------------------------------------------------+     
+     +-UMask --ooo-------------------------------------------------+     
+     +-UNICODEFILESYSTEMBOM--=--+-ASIS---+-------------------------+     
+     |                          +-ALWAYS-+                         |     
+     |                          '-NEVER--'                         |     
+     +-Unit--+--------------+--------------------------------------+     
+     |       '-=--unit_type-'                                      |     
+     '-UNIXFILETYPE--=--+-FILE-+-----------------------------------'     
+                        '-FIFO-'                                         
+
+|--+-VCOUNT--+-----------------+---------+----------------------|
+   |         '-=--volume_count-'         |   
+   +-VOLume--=--+----------------------+-+   
+   |            +-volume_serial--------+ |   
+   |            '-(volume_serial_list)-' |   
+   +-WRAPrecord--------------------------+   
+   +-WRTAPEFastio------------------------+   
+   '-XLate--=--name----------------------'
+   
+   
+
+Parameters
+ASAtrans
+	-Permits the FTP server to interpret the characters in the first column of ASA files being transferred as print control characters.
+AUTOMount
+	-Permits automatic mounting of volumes for data sets on volumes that are not mounted. If AUTOMount is specified and an unmounted volume is needed, a message is automatically issued to the MVS™ operator console requesting that the volume be mounted. The MVS operator must then mount the volume and reply to the message before FTP can proceed.
+AUTORecall
+	-Permits automatic recall of migrated data sets.
+BLKsize
+	-Specifies the block size of a newly allocated data set. BLKsize is functionally equivalent to BLOCKSIze. The BLOCKSIze parameter is obsolete, but it is accepted to provide compatibility with previous releases of z/OS TCP⁄IP.
+	-When specified without a size, no block size is used when allocating the new data set. When specified without a size, the equal sign (=) is optional.
+	-Specify BLKsize with no value if you are also specifying DATAClass=data_class and you want the SMS data class to provide the BLKsize value, or if you are specifying DCbdsn=data_set_name and you want to use the block size from the DCBDSN data set. If BLKsize=size is specified with either the DATAClass or DCbdsn parameters, the value specified by the SIte BLKsize parameter overrides the DATAClass or DCbdsn block size.
+	Notes:
+		If you specify BLKsize without a size or with a size of 0, FTP does not specify the block size when allocating new data sets.
+		Be especially careful specifying both BLKsize= and BLocks. While there are conditions where this is tolerated, if a valid BLKsize cannot be determined, the data set will not be created when the allocation is attempted.
+		-size
+			Specifies the block size of a newly allocated data set. The valid range is 0–32 760.
+			BLKsize=0 is a special case. When BLKsize=0 is specified, the operating system attempts to determine a block size for the new data set. FTP does not create the new data set unless the system is able to establish a nonzero block size.
+BLocks
+	-Specifies that primary and secondary space allocations are in blocks.
+	-If both PRImary and SECondary are unspecified, and an SMS data class has been specified, the space allocation is determined by the SMS data class and the BLocks parameter is ignored.
+BLOCKSIze
+	-Specifies the block size of a newly allocated data set. BLOCKSIze is functionally equivalent to BLKsize. BLOCKSIze is obsolete but it is accepted to provide compatibility with previous releases of z/OS TCP⁄IP. See the BLKsize parameter for more information.
+BUfno
+	-Specifies the number of access method buffers that is used when data is read from or written to a data set. The default value is 5.
+	number
+		-The number of buffers used. The valid range is 1–35.
+CHKptint
+	-Specifies the checkpoint interval for the FTP server. The checkpoint interval applies when the server processes the RETR command.
+	-The checkpoint interval is the number of records that are sent between restart markers when you transfer files in EBCDIC block mode or EBCDIC compress mode. If the checkpoint interval is 0, no checkpointing occurs and no restart markers are transmitted. The default value is 0.
+	Results: A CHKptint value that is greater than 0 enables checkpointing for outbound file transfers from the server that meet the following conditions:
+		--Type must be EBCDIC
+		-Mode must be block or compressed
+		-Filetype must be SEQ
+		-Checkpointing never occurs when the server file is a z/OS® UNIX named pipe.
+	number
+		-The checkpoint interval for the sending site in a file transfer request. This value is used to determine when checkpoint marker blocks are to be transmitted so that transmission can be restarted based on the information in the last marker.
+		-A large checkpoint interval means that a large amount of data is sent in between markers and few markers are sent. A smaller checkpoint interval means that less data is sent between markers and more markers are sent.
+		-The cost involved with using a nonzero checkpoint interval is the markers themselves are transmitted, which means that more bytes are being sent across the network (approximately 44 bytes per marker).
+		-To estimate the appropriate checkpoint interval, use the following formula. You need to know the record length of the file you are transferring and how much data you think can be transmitted reliably.
+								   amount of data in interval
+			CHKPTINT = --------------------------
+								   record length of the file
+
+		-Do not use a CHKptint more often than once every 200 KB of data transferred. The following is an example of a file that you are transferring with 80-byte records in which the checkpoint interval is 2560:
+			CHKPTINT = 200KB / 80 bytes
+								= 200 * 1024 bytes / 80 bytes
+								= 2560
+CHMod
+	-Changes the permission bits for a file.
+		ooo filename
+		ooo is an octal mask representing the permissions you want to assign to filename. Form the octal mask by OR'ing the constants corresponding to the permission bits you want set:
+		400
+		User read
+		200
+		User write
+		100
+		User execute (or list directory)
+		040
+		Group read
+		020
+		Group write
+		010
+		Group execute
+		004
+		Other read
+		002
+		Other write
+		001
+		Other execute
+	You cannot use the SITE subcommand CHMod parameter to set the following permission bits:
+		Set-user-ID bit
+		Set-group-ID bit
+		Sticky bit
+	symbolic filename
+		-symbolic represents the permissions you want to apply to filename.
+		Note: symbolic is specified as follows:
+			{u|g|o|a}{=|+|-}{r|w|x|rw|rx|wx|rwx}
+			where u, g, o, a, =, +, -, r, w, and x are as defined for the z/OS UNIX chmod command.
+		-If filename does not begin with a slash character (/), it is appended to the current working directory. If filename does begin with a slash character (/), it is interpreted as a complete directory name.
+		--The file name specified must be a z/OS UNIX file name for a single file and cannot contain a wildcard (*) for multiple files. The setting of QUOtesoverride is ignored and all quotation marks are treated as part of the file name.
+	-The CHMOD keyword must be the only keyword or last keyword on a SITE subcommand.
+CONDdisp
+	-Specifies the disposition of the data set if a store operation for a new data set ends before all of the data is written.
+Catlg
+	-Specifies that a data set is kept and cataloged when an FTP file transfer ends prematurely.
+Delete
+	-Specifies that a data set is deleted when an FTP file transfer ends prematurely.
+	--Delete is ignored if the file transfer failed as a result of the FTP server being terminated or if the server has received checkpoint information during data transfer.
+CTRLConn
+	Specifies the ASCII code page to be used for control connections. The valid subcommands are:
+		SITE CTRLConn=7BIT
+		SITE CTRLConn=iconv_ascii
+		SITE CTRLConn=FTP_STANDARD_TABLE 
+		SITE CTRLConn=*
+		--See Support for SBCS languages for more information.
+7BIT
+	-Indicates 7-bit ASCII is to be used.
+	iconv_ascii
+		A name recognized by iconv to indicate an ASCII code page. For a list of code pages supported by iconv, see code set converters information in the z/OS XL C/C++ Programming Guide.
+FTP_STANDARD_TABLE
+	-Specifies that the FTP internal tables, which are the same as the tables that are shipped in TCPXLBIN(STANDARD), are to be used on the control connection.
+		*
+		Specifies that the ASCII used at initialization is to be used.
+			--Note: Setting the control connection code page with SIte CTRLCONN disables UTF-8 encoding. You must start a new session to restore UTF-8 encoding.
+CYlinders
+	-Specifies that primary and secondary space allocations are in cylinders.
+	--If both PRImary and SECondary are unspecified, and an SMS data class has been specified, the space allocation is determined by the SMS data class and the CYlinders parameter is ignored.
+DATAClass
+	-Used to specify the SMS data class, as defined by your organization, for the target host. Specifying DATAClass with no parameter value cancels the data class specification. The equal sign (=) is optional in this case.
+	-See Specifying values for new data sets for more information about specifying attributes when allocating new data sets.
+	data_class
+		-Specifies the SMS data class, as defined by your organization, for the target host. If values are specified for any of the following SIte parameters, the values specified by the SIte parameter override the value specified in the SMS data class:
+			BLKsize
+			Directory
+			LRecl
+			PRImary
+			RECfm
+			RETpd
+			SECondary
+		--If the DCbdsn SIte parameter is specified, the LRecl, RECfm, BLOCKSIze, and RETpd (if specified) of the DCBDSN data set overrides the values specified in the data class.
+		--If the MGmtclass site parameter is specified, and the requested management class specifies a retention period, the retention period value of the management class can override the retention period value of the data class.
+		--A SIte DATACLASS command pointing to an SMS data class must be used to create a PDSE. A load module loading from a temporary data set will always be a REPLACE operation, in that existing members will be overwritten in case of name conflicts. LMTR will not be performed in STOU mode (when SUnique is turned on).
+DATAKEEPALIVE
+	-Specifies the data connection keepalive timer value for the FTP server.
+	seconds
+		-The number of seconds that elapse before a keepalive packet is sent on the FTP data connection. Valid values are in the range 60 - 86400 or 0. If you specify the value 0, the DATAKEEPALIVE timer is disabled. For active mode data connections, the keepalive timer that is configured in the PROFILE.TCPIP controls how often keepalive packets flow on the data connection. For passive mode data connections, FTP suppresses the PROFILE.TCPIP keepalive timer.
+	--Result: Specifying a DATAKEEPALIVE value prevents a network device from closing the data connection during periods of inactivity on the data connection.
+DATASetmode
+	-Specifies that all the data set qualifiers below the current directory are treated as entries in the directory (disables DIRECTORYMode).
+DB2
+	-Specifies the name of the DB2 subsystem.
+	db2_name
+		The name of the DB2 subsystem.
+DBSUB
+	-Specifies that substitution is allowed for data bytes that cannot be translated in a double-byte character translation. The substitution character is selected by the C/C++ iconv() function; see the information about Locales and Character Sets in z/OS XL C/C++ Programming Guide for more details.
+DCbdsn
+	-Specifies the name of the MVS data set to be used as a model for allocation of new data sets. Specifying DCbdsn with no parameter value cancels the DCbdsn specification.
+	data_set_name
+		Specifies the name of the data set. The file name must be an MVS data set name. z/OS UNIX file names are not allowed on the DCbdsn parameter. The setting of QUOtesoverride is ignored. If the file name is enclosed in single quotation marks, it overrides the current working directory; otherwise it is appended to the current working directory.
+		Notes:
+		--Specify SIte RECfm, LRecl, and BLKsize parameters with no values to allow characteristics from the model DCB to be used.
+		--To override the model characteristics of RECfm, LRecL, BLKsize, or RETpd, specify a value on the SIte command.
+		--Ensure that SENDSite subcommand is toggled off. Otherwise, the SIte information that is sent automatically by the client overrides the values provided by the model DCB.
+		--If MGmtclass is specified, the RETpd value of the MGmtclass can override the RETpd value.
+		-Specifying a GDG data set with a relative index produces an error message. The following examples are unsupported specifications:
+			SITE DCBDSN=MYGDG(0)
+			SITE DCBDSN=MYGDG(–nnn)or
+			SITE DCBDSN=MYGDG(+nnn)
+DEBug
+	-Activates or disables general tracing at the FTP server. One or more traces can be activated with a single debug parameter with the following options:
+	?
+		Displays the status of the traces.
+	ACC
+		The ACC trace shows the details of the login process.
+	ALL
+		This parameter is used to set all of the trace points.
+		--Note: Both the FSC and the SOC traces will be set to level 1 when the ALL parameter is processed.
+	BAS
+		This parameter is used to set a select group of traces that offer the best overall details without the intense tracing of some of the traces. Specifying this parameter is the same as SITE DEBUG=(CMD,INT,FSC, SOC).
+	CMD
+		The CMD trace shows each command and the parsing of the parameters for the command.
+	FLO
+		The FLO trace shows the flow of control within FTP. It is useful to show which services of FTP are used for an FTP request.
+	FSC(n)
+		The FSC trace shows details of the processing of the file services subcommands APPE, STOR, STOU, RETR, DELE, RNFR, and RNTO.
+		--This trace can generate very detailed information and therefore allows you to specify levels of detail for the trace points. The level (n) can be a number from 1 to 5.
+	INT
+		The INT trace shows the details of the initialization and termination of the FTP session with the server.
+	JES
+		The JES trace shows details of the processing for JES requests (that is, requests when SIte FILETYPE=JES is in effect).
+	NONE
+		This parameter is used to turn off all of the traces.
+	PAR
+		The PAR trace shows details of the FTP command parser. It is useful in debugging problems in the handling of the command parameters.
+	SEC
+		The SEC trace shows the processing of security functions such as TLS and GSSAPI negotiations.
+	SOC(n)
+		The SOC trace shows details of the processing during the setup of the interface between the FTP application and the network as well as details of the actual amounts of data that is processed. This trace can generate very detailed information and therefore allows you to specify levels of detail for the trace points.
+		--The level 1 tracing that is specified by entering SOC or SOC(1) is the level normally used unless more data is requested by the TCP/IP service group. The level (n) can be a number from 1 to 8.
+	SQL
+		The SQL trace shows details of the processing for SQL requests, such as requests when SITE FILETYPE=SQL is in effect.
+	UTL
+		The UTL trace shows the processing of utility functions such as CD and SIte.
+	Xyyy
+		This syntax is used to turn off (reset) a trace that is named by yyy. For example, SITE DEBUG=(XPAR, XACC) will turn off the PAR and the ACC traces.
+	--Usage notes for the DEBug parameter:
+			The client is allowed to change general tracing at the server if the FTP.DATA file for the server specified DEBUGONSITE TRUE.
+			The state of the debug traces points is displayed as a response to the SIte subcommand. To see the state without making a change, enter SITE DEBUG=(?).
+			The setting of the traces is additive. This is demonstrated by the following example:
+	  SITE DEBUG=(BAS)
+	  200-Active traces: CMD INT FSC(1) SOC(1)
+	  200 Site command was accepted
+	  SITE DEBUG=(ACC)
+	  200-Active traces: CMD INT ACC FSC(1) SOC(1)
+	  200 Site command was accepted
+	To ensure that only the needed traces are active, use the NONE value to clear all traces before setting the requested ones.
+	  SITE DEBUG=(?)
+	  EZA1701I >>> SITE DEBUG=(?)            				
+	  200-Active traces: CMD INT FSC(1) SOC(1) 				
+	  200 Site command was accepted           				
+	  SITE DEBUG=(NONE,FSC(2))                				
+	  EZA1701I >>> SITE DEBUG=(NONE,FSC(2))   				
+	  200-Active traces: FSC(2)               				
+	  200 Site command was accepted
+	For the FSC and SOC trace options, only one level of tracing can be defined at any time. However, when level 2 is defined, levels 1 and 2 are active. When level 3 is defined, levels 1, 2, and 3 are active. This progression also applies to levels 4 and 5.
+	site debug=(fsc(2),soc(1))            
+	>>> SITE debug=(fsc(2),soc(1))        
+	200-Active traces: FSC(2) SOC(1)      
+	200 Site command was accepted       
+	site debug=(fsc(1),soc(2))            
+	>>> SITE debug=(fsc(1),soc(2))        
+	200-Active traces: FSC(1) SOC(2)      
+	200 Site command was accepted
+	--Note: The FSC command accepts level values 6–8, but provides only level 5 trace data. Likewise, the SOC trace option accepts level values 4–8, but provides only level 3 trace data.
+	See the Diagnosing FTP server problems with traces section in z/OS Communications Server: IP Diagnosis Guide for more information about FTP server tracing.
+DESt
+	-Specifies the Network Job Entry (NJE) destination to which the files are routed when you enter a PUt command. If specified without a destination parameter, the destination resets and files are stored at the host system rather than sent to a remote network.
+	--The SIte DESt subcommand enables you to send data sets (rather than storing them at the server) to other users on machines that are connected on an NJE network.
+	destination
+		-Specifies the NJE destination to which the files are routed when you enter a PUt command. The value specified for destination can be:
+		userID@nodeID
+		nodeID.userID
+		nodeID
+DestID
+	-The file is sent over the NJE network to the specified destination.
+	--This parameter is ignored if FILEtype=JES is set.
+Directory
+	-Specifies the number of directory blocks to be allocated for the directory of a PDS. When specified without the size, no directory value is used when allocating the data set. The equal sign (=) is optional in this case.
+	-Specify Directory without a size when you are also specifying DATAClass=dataclass and you want the SMS data class to provide the Directory size. If Directory=size is specified with DATAClass, the value specified by the SIte Directory parameter overrides the DATAClass directory specification.
+	size
+		Specifies the number of directory blocks to be allocated for the directory of a PDS. The valid range is 1—16 777 215.
+DIRECTORYMode
+	-Specifies that only the data set qualifier immediately below the current directory is treated as an entry in the directory. In directory mode, this data set qualifier is the only one used by the MGet, LS, and DIr subcommands.
+	--DIRECTORYMode has no effect on files residing in a z/OS UNIX file system.
+DSNTYPE
+	-Specifies the data set name type for new physical sequential data sets.
+	SYSTEM
+		Physical sequential data sets are allocated with the SMS data class value. If no data class is defined, or if the DSNTYPE attribute is not defined, new physical sequential data sets will be allocated with the system default value.
+	BASIC
+		Allocates physical sequential data sets as physical sequential basic format data sets.
+	LARGE
+		Allocates physical sequential data sets as physical sequential large format data sets.
+DSWAITTIME
+	-Specifies the number of minutes FTP waits when trying to access an MVS data set on the FTP server.
+	minutes
+		The number of minutes to wait for a local MVS data set to become available. Valid values are in the range 0 - 14400. If you specify the value 0, the FTP server does not wait to obtain a data set when the data set is being held by another job or process.
+	--Restriction: The FTP server ignores the DSWAITTIME value when processing RENAME FROM (RNFR), RENAME TO (RNTO), DELETE (DELE), and APPEND (for things that are not supported) commands.
+DSWAITTIMEREPLY
+	-Specifies the interval for sending a line of the reply 125-Data set access will be retried in 1 minute intervals -- <number> attempts remaining to the client when the FTP server is waiting for access to a data set.
+	seconds
+		The number of seconds between reply lines 125-Data set access will be retried in 1 minute intervals -- <number> attempts remaining that the server sends to the client when the FTP server is waiting for access to an MVS data set. The valid range is 15 to 60. The default is 60 seconds.
+DUMP
+	-Activates or disables extended tracing at the FTP server.
+	--Note: Extended tracing has the potential to generate a large amount of trace data and should not be set unless requested to debug a specific problem in the code.
+	One or more traces can be activated with a single dump parameter with the following options:
+	?
+		Displays the status of the traces.
+	n
+		Specifies the ID number of a specific extended trace point that is to be activated in the FTP code. The number has a range of 1–99.
+	ALL
+		This parameter is used to set all of the trace points.
+	FSC
+		Activates all of the extended trace points in the file services code. The ID numbers for FSC are 20 to 49.
+	JES
+		Activates all of the extended trace points in the JES services code. The ID numbers for JES are 60 to 69.
+	NONE
+		This parameter is used to turn off all of the traces.
+	SOC
+		Activates all of the extended trace points in the network services code. The ID numbers for SOC are 50 to 59.
+	SQL
+		Activates all of the extended trace points in the SQL services code. The ID numbers for SQL are 70 to 79.
+	Xyyy
+		This syntax is used to turn off (reset) a trace that is named by yyy. For example, SITE DUMP=(X21,X22,XSQL) will reset the extended trace points 21 and 22 and all of the SQL trace points.
+	Usage notes for the DUMP parameter:
+		-The client is allowed to change extended tracing at the server if the FTP.DATA file for the server specified DUMPONSITE TRUE.
+		-The setting of the traces is additive. This is demonstrated by the following example:
+	  SITE DUMP=(NONE,21)
+	  EZA1701I >>> SITE DUMP=(NONE,21)
+	  200-Active dumpIDs: 21
+	  200 Site command was accepted
+	  SITE DUMP=(22)
+	  EZA1701I >>> SITE DUMP=(22)
+	  200-Active dumpIDs: 21 22
+	  200 Site command was accepted
+	--The range of 99 extended trace points is defined to allow easy extension of the trace points by the TCP/IP service team. Additional trace points can be added to the code without any changes to the external mechanism to control the traces.
+EATTR
+	-Specifies whether newly allocated data sets can have extended attributes and whether new data sets can reside in the EAS of an EAV.
+	SYSTEM
+		The data set uses the SMS data class EATTR value. If no SMS data class is defined, or if the data class contains no EATTR specification, the data set is allocated with the system default.
+	NO
+		The data set cannot reside in the EAS, and its VTOC entry cannot contain extended attributes.
+	OPT
+		The data set can reside in the EAS, and its VTOC entry can have extended attributes if the volume supports them.
+	ENCODING
+		Specifies the kind of encoding that is used for conversions between codepages for data transfers.
+SBCS
+	-Single Byte encoding. Code pages are specified using the SBDATACONN statement. This is the default value.
+MBCS
+	-Multibyte encoding. Code pages are specified using the MBDATACONN statement.
+FIFOIOTIME
+	-Specifies the maximum length of time that the FTP server waits for an I/O operation to a z/OS UNIX named pipe in its z/OS UNIX file system to complete.
+	Rules:
+		-When the server sends the contents of a z/OS UNIX named pipe to the client, the FTP server reads from the named pipe one or more times. Each read from the named pipe must complete within the length of time that is specified by the FIFOIOTIME value.
+		-When you store a file that is received from the client as a z/OS UNIX named pipe, the server writes to the named pipe one or more times. Each write to the named pipe must complete within the length of time that is specified by the FIFOIOTIME value.
+	seconds
+		The number of seconds that the FTP server waits for an I/O operation to a z/OS UNIX named pipe to complete. Valid values are in the range 1 - 86400. The default value is 20.
+FIFOOPENTIME
+	-Specifies the length of time that the FTP server waits for an open of a z/OS UNIX named pipe in its z/OS UNIX file system to complete.
+	seconds
+	--The number of seconds that the FTP server waits for an open of a z/OS UNIX named pipe to complete. Valid values are in the range 1 - 86400. The default value is 60.
+FILEtype
+	-Specifies the file type of the data set.
+	type
+		The file type of the data set can be:
+	Type
+		Description
+	SEQ
+		Sequential or partitioned data sets
+	SQL
+		SQL query function
+	JES
+		Remote job submission
+ISPFSTATS
+	-Allows FTP to create or update ISPF Member statistics when PUt, MPut or APpend subcommands are issued.
+JESENTRYLimit
+	-JESENTRYLimit specifies how many entries can be displayed at once using a LIST or NLSTcommand. JESENTRYLIMIT is only valid if JESINTERFACELVEL=2.
+	number
+	-Fixed number of entries to display. The default for JESENTRYLimit is 200, if not specified in the server FTP.DATA file.
+JESGETBYDSN
+	-Specifies that the foreign file that is specified when retrieving a file with FILETYPE JES and JESINTERFACELEVEL 2 is a JES spool data set name to be retrieved for the client.
+JESJOBName
+	-Specifies that any command (Get, LIST, DIr, or MGet) should be limited to those jobs, started tasks, APPC/MVS, or TSO output that match the specified value. JESJOBName is only accepted if JESINTERFACELevel is set to 2.
+	jobname
+		Specified job name. Can be or can contain a wildcard (* or ?).
+	loginuserid*
+		The logged in user ID appended with an asterisk (*). Default value.
+	--Note: JESJOBName matches the first job name that a job is assigned. Jobs that change job names during execution time are matched only by their initial job name.
+JESLrecl
+	-Specifies the logical record length (LRecl) for the Job Entry System (JES) internal reader at the foreign host.
+	length
+	--The logical record length for the JES internal reader at the foreign host. The valid range is 1–254.
+	*
+		Indicates that the logical record length should be taken from the site LRecl parameter setting.
+JESOwner
+	-Specifies that any command (Get, LIST, DIr or MGet) should be limited to those jobs, started tasks, APPC/MVS, or TSO output which are owned by the user ID specified. JESOWNER cannot be modified unless JESINTERFACELEVEL is set to 2.
+	userid
+		Specified user ID. The userid can be or contain a wild card (* or ?).
+	loginuserid
+		The logged in user ID. Default value.
+JESRecfm
+	-Specifies the record format for the JES internal reader at the foreign host.
+	F
+		Fixed record format
+	V
+		Variable record format
+	*
+		Indicates that the record format should be taken from the SIte RECfm parameter setting.
+JESSTatus
+	-Specifies what type of information should be returned on LIST and NLST commands. Acceptable values are INPUT, ACTIVE, OUTPUT or ALL. The default value for JESSTATUS is ALL. JESSTATUS can be modified only if JESINTERFACELEVEL=2.
+LISTLEVEL
+	-Specifies the format of the LIST reply.
+	0
+		Specifies that PDS, PDSE, and HFS data sets are displayed with a DSORG value of PO.
+	1
+		Specifies that PDS data sets are displayed with a DSORG value of PO, PDSE data sets are displayed with a DSORG value of PO-E, and HFS data sets are displayed with a DSORG value of HFS.
+	2
+		Specifies the LISTLEVEL 1 options, and also that fewer but wider columns of output are displayed to accommodate larger physical sequential data sets.
+LISTSUBdir
+	-Use the LISTSUBdir option to indicate that wildcard searches should apply to the current working directory and should also span one level of its subdirectories. This setting affects processing of the NLST command. The z/OS FTP client sends an NLST command to the server as part of LS*, MDelete *, and MGet * subcommand processing.
+	Restrictions:
+		The LISTSUBdir option applies to z/OS UNIX file operations only; MVS data set operations are not affected.
+		The FTP client must be communicating with a z/OS V1R7 or later FTP server or an unrecognized parameter response will be received.
+	Result: If the LISTSUBdir option is not specified on the SITE subcommand and the LISTSUBDIR statement is not specified in the client FTP.DATA file, the default is as if the LISTSUBdir option was specified on the SITE subcommand.
+LRecl
+	-Specifies the logical record length (LRecl) of a newly allocated data set. When specified without a length, no LRecl is used when allocating the data set. The equal sign (=) is optional in this case.
+	--Specify LRecl with no value when you are also specifying DATAC&=data_class and you want the SMS data class to provide the LRecl value, or when you are specifying DCbdsn=data_set_name and you want to use the LRecl from the DCBDSN data set. If LRecl=length is specified with either DATAClass or DCbdsn, the length specified by the SIte LRecl parameter overrides the DATAClass or DCbdsn LRecl.
+	length
+		Specifies the logical record length of a newly allocated data set. The valid range is 0—32760. A special value of x (LRecl=x) is also supported to indicate that a logical record length can exceed 32760 for variable-length spanned records.
+		Specifying LRecl=0 has the same effect as specifying LRecl with no parameters.
+		MBDATACONN=(file_system_codepage,network_transfer_codepage)
+			-Specifies the codepages for the file system and for the network transfer used when the server does data conversion during a data transfer. This parameter affects the conversion of multibyte character set (MBCS) data (including support for DBCS code pages) and is used when the ENCODING=MBCS is also specified.
+	file_system_codepage
+		-Specifies the name of the file system codepage.
+	network_transfer_codepage
+		-Specifies the name of the network transfer codepage.
+MBREQUIRELASTEOL
+	-Specifies that the FTP server will report an error when a multibyte file or data set is received from the network with no EOL sequence in the last record received. FTP will abort the file transfer.
+MBSENDEOL
+	-Specifies which end-of-line sequence to use when ENCODING is MBCS and data is being sent to the client and translated to ASCII.
+	CRLF
+		Append both carriage return (X'0D') and line feed (X'0A') end-of-line sequences to each line of translated text. This is the default and the standard sequence defined by RFC 959.
+	CR
+		Append only a carriage return (X'0D') end-of-line sequence to each line of translated text.
+	LF
+		Append only a line feed (X'0A') end-of-line sequence to each line of translated text.
+	NONE
+		Do not append an end-of-line sequence to the line of translated text.
+	Requirements:
+		Most FTP clients support only the CRLF value for incoming ASCII data. Do not specify another value for MBSENDEOL unless you have verified that the client is expecting the end-of-line sequence that you specify.
+		Do not use an end-of-line sequence other than CRLF if the client is a z/OS FTP client. The z/OS FTP client supports only the CRLF value for incoming type ASCII data.
+		Do not attempt to stream mode restart a multibyte file retrieve that originated while the FTP server MBSENDEOL value was not CRLF.
+MGmtclass
+	-Specifies the SMS management class as defined by your organization for the target host. Specifying MGmtclass with no mgmtclass cancels the management class specification. The equal sign (=) is optional in this case.
+	mgmtclass
+		Specifies the SMS management class as defined by your organization for the target host. If the mgmtclass specified has a setting for RETpd, the value specified by the mgmtclass can override the setting of the RETpd site parameter, the RETpd value of a model data set if the DCbdsn parameter is specified, and the RETpd value defined in an SMS data class if DATAClass is specified. See Specifying values for new data sets for more information about specifying attributes when allocating new data sets.
+MIGratevol
+	-Specifies the volume ID for migrated data sets if they do not use IBM® storage management subsystems. If you do not specify MIGratevol, the default volume_serial is MIGRAT.
+	volume_ID
+		The volume ID for migrated data.
+NOASAtrans
+	-Treats ASA file transfers as regular file transfers; that is, the ASA characters are treated as part of the data and are not converted to print control characters.
+NOAUTOMount
+	-Prevents automatic mounting of volumes for data sets on volumes that are not mounted.
+NOAUTORecall
+	-Prevents automatic recall of migrated data sets.
+	--Note: A migrated data set can be deleted even though NOAUTORecall is specified, because migrated data sets are not recalled for deletion.
+NODBSUB
+	-Specifies that substitution is not allowed for data bytes that cannot be translated in a double-byte character translation. This causes a data transfer failure if a character cannot be translated during the transfer. This is the default.
+NOISPFSTATS
+	--Does not allow FTP to create or update ISPF member statistics when PUt, MPut, or APpend subcommands are issued.
+NOJESGETBYDSN
+	-Specifies that the foreign file that is specified when retrieving a file with FILETYPE=JES is a file on the MVS system that is to be submitted to JES as a batch job.
+NOLISTSUBdir
+	--Use the NOLISTSUBdir option to indicate that wildcard searches should apply only to the current working directory. This setting affects processing of the NLST command. The z/OS FTP client sends an NLST command to the server as part of LS*, MDelete *, and MGet * subcommand processing.
+	Restrictions:
+		The NOLISTSUBdir option applies to z/OS UNIX file operations only; MVS data set operations are not affected.
+		The FTP client must be communicating with a z/OS V1R7 or later FTP server or an unrecognized parameter response will be received.
+	Result: If the NOLISTSUBdir option is not specified on the SITE subcommand and the LISTSUBDIR statement is not specified in the client FTP.DATA file, the default is as if the LISTSUBdir option was specified on the SITE subcommand.
+NOMBREQUIRELASTEOL
+	-Specifies that the FTP server will not report an error when a multibyte file or data set is received from the network with no EOL sequence in the last record received. FTP will report the file transfer as completed.
+NOQUOtesoverride
+	--Treats a single quotation mark appearing at the beginning of the file name, as well as all other single quotation marks contained in the file name, as part of the actual file name. The entire file name, including the leading single quotation mark, is appended to the current working directory.
+NORDW
+	-Specifies that Record Descriptor Words (RDWs) are not treated as if they were part of the record and are discarded during FTP transmission of variable format data sets.
+NOREMOVEINBEOF
+	-Specifies that the UNIX end-of-file (EOF) byte (X'1A') is not removed on inbound ASCII transfers before the data is stored. See z/OS Communications Server: IP Configuration Reference for more information.
+NORESTPUT
+	-Specifies that the FTP server does not support checkpoint or restart processing when it is receiving data.
+NOSBSUB
+	-Specifies that substitution is not allowed for data bytes that cannot be translated in a single-byte character translation. This causes a data transfer failure if a character cannot be translated during the transfer.
+NOSPRead
+	-Specifies that the output is in report format rather than spreadsheet format when the file type is SQL.
+NOTAPEREADSTREAM
+	-Specifies that a common read path is used for retrieving tape data sets from the server. This is the default value.
+NOTRAILingblanks
+	-Specifies that the FTP server does not preserve the trailing blanks that are in a fixed format data set when the data is sent to the foreign host.
+NOTRUNcate
+	-Specifies that truncation is not permitted. The FTP server will set an error and fail file transfer if a record that is longer than the LRECL of the new file is detected.
+	--Note: If WRAPRECORD is set then the data is wrapped, not truncated, no error will be set and the file transfer will continue.
+NOUCSSUB
+	--In UCS-2-to-EBCDIC conversion, the data transfer is terminated if any UCS-2 character cannot be converted into the EBCDIC code set.
+NOUCSTRUNC
+	--In UCS-2-to-EBCDIC conversion, truncation of EBCDIC data is not allowed. The data transfer is aborted if the logical record length of the receiving data set is too small to contain the data after conversion to EBCDIC.
+	--Note: The setting of the CONDdisp parameter determines what happens to the target data set if the transfer is aborted.
+NOWRAPrecord
+	-Specifies that data is truncated if no new line character is encountered before the logical record length of the receiving file is reached.
+	--Note: If NOWRAPrecord and NOTRUNcate are set, then an error will be set and the file transfer will fail.
+NOWRTAPEFastio
+	-Specifies that ASCII Stream data that is being written to tape must be written using the Language Environment® runtime library.
+PDSTYPE
+	-Specifies whether the FTP server creates MVS directories as partitioned data sets or as partitioned data sets extended.
+	--When specified without a value, FTP will not specify to z/OS whether to allocate a new MVS directory as a PDS or a PDSE. When specified without a value, the equal sign (=) is optional.
+PDS
+	-Allocate directories as partitioned data sets.
+PDSE
+	-Allocate directories as partitioned data sets extended.
+PRImary
+	-Specifies the number of tracks, blocks, or cylinders for primary allocation. When specified without an amount, no primary value is used when allocating the data set. The equal sign (=) is optional in this case.
+	-Specify PRImary with no value when you are also specifying DATAClass=data_class and you want the SMS data class to provide the PRImary amount.
+		To allow the SMS data class to determine the space allocation, both PRImary and SECondary must be specified with no value. The tracks, blocks, and cylinders setting is ignored in this case. If PRImary=amount is specified with DATAClass, the value specified by the SIte PRImary parameter overrides the DATAClass space allocation.
+	amount
+		-Specifies the number of tracks, blocks, or cylinders for primary allocation. For allocating partitioned data sets, this is the amount of space that is allocated for the primary extent.
+		--For allocating sequential data sets this is the maximum amount of space that is allocated for the primary extent. If a smaller amount of space is needed to hold the data being transferred, only the amount actually needed to hold the data is allocated. The valid range is 1 - 16 777 215.
+Qdisk
+	--Used to display statistics about available space on a volume. If the Qdisk parameter is entered without a specific volume_serial, statistics about available space are displayed for each volume that is defined with “Use Attribute=storage.”
+	volume_serial
+		Displays statistics about available space on a specific volume.
+QUOtesoverride
+	-Specifies that single quotation marks at the beginning and end of a file name should override the current working directory instead of being appended to the current working directory. This is the way single quotation marks are used in all previous MVS FTP servers and is the default. Any single quotation mark inside the beginning and ending quotation marks is treated as part of the file name.
+	--QUOtesoverride indicates the usage of single quotation mark appearing at the beginning of, or surrounding, a file name. The setting of this keyword affects all FTP subcommands that have a path name as a parameter except keywords on the SIte subcommand.
+RDW
+	-Specifies that Record Descriptor Words (RDWs) are treated as if they were part of the record and are not discarded during FTP transmission of variable format data sets in stream mode.
+	--Note: RDW information is stored in binary format. Transfer files in binary mode to avoid translation problems that can occur if you transfer this binary field in EBCDIC or ASCII mode.
+READTAPEFormat
+	-Used to provide information about an input data set on tape. If specified without the tape_format (which is the default), processing of input tapes does not take advantage of the record format information prior to open. The equal sign (=) is optional in this case.
+	--READTAPEFormat has no effect on, and is not affected by DATAClass, DCbdsn, JESLrecl, JESRecfm, LRecl, RECfm, or any other parameters associated with creating a data set.
+	tape_format
+		Specifies the format of the records on the input tape data set. Valid formats are:
+		F
+			Fixed record length
+		V
+			Variable record length
+		S
+			Spanned records
+		X
+			Logical record length is undefined (Lrecl X)
+		blank
+			Unspecified (displayed as U in messages and reply)
+		--Formats are mutually exclusive. Spanned implies variable and Lrecl X implies spanned. If specified, the tape_format value must be the most inclusive identifier in the list that matches the tape. If it is not the most inclusive identifier, an error message is issued. For example, if the tape_format value is S (spanned) and the tape contains records with undefined length (Lrecl X), the request fails. An unspecified format avoids this type of error. However, the following should be considered:
+		--Specify a value for READTAPEFormat in all the following cases. Failure to specify a format will likely cause errors in processing the tape.
+		The record length is undefined (Lrecl X).
+		The records are spanned (Recfm is VBS, VS).
+		The records are variable (Recfm is V, VB, VBA) and RDW is specified.
+		--Specify a value for READTAPEFormat for all input tapes with one of the listed formats to ensure best results.
+RECfm
+	-Specifies the record format of a data set. When specified without the format, no record format is used when allocating the data set. The equal sign (=) is optional in this case.
+	--Specify RECfm with no value when you are also specifying DATAClass=data_class and you want the SMS data class to provide the RECfm format, or when you are specifying DCbdsn=data_set_name and you want to use the record format from the DCBDSN data set.
+		--If RECfm=format is specified with either DATAClass or DCbdsn, the value specified by the SIte RECfm parameter overrides the DATAClass or DCbdsn record format.
+	format
+		--Specifies the record format of a data set. Valid record formats are: F, FA, FB, FBA, FBM, FBS, FBSA, FBSM, FM, FS, FSA, FSM, U, UA, UM, V, VA, VB, VBA, VBM, VBSA, VBSM, VBS, VM, VS, VSA, and VSM. The characters used to specify these record formats have the following meanings:
+		Code::Description:
+		F	Fixed record length
+		V	Variable record length
+		U	Undefined record length
+		B	Blocked records
+		S	Spanned records (if variable) / standard records (if fixed)
+		A	Records contain ISO/ANSI control characters
+		M	Records contain machine code control characters
+REMOVEINBEOF
+	-Specifies that the UNIX end-of-file (EOF) byte (X'1A') is removed before the data is stored on inbound ASCII transfers. See z/OS Communications Server: IP Configuration Reference for more information.
+RESTPUT
+	-Specifies that the FTP server supports checkpoint or restart processing when it is receiving data.
+RETpd
+	-Specifies the number of days that a newly allocated data set should be retained. When specified without the number of days, a retention period will not be specified when allocating new data sets. The equal sign (=) is optional in this case.
+	--Specify RETpd with no value when you are also specifying DATAClass=data_class or MGmtclass=mgmtclass and you want SMS to provide the RETpd value, or when you are specifying DCbdsn=data_set_name and you want to use the RETpd from the DCBDSN data set. If more than one of the SIte parameters (RETpd, MGmtclass, DATAClass, or DCbdsn) are specified, the order of precedence (highest to lowest) is:
+	MGmtclass
+	RETpd
+	DCbdsn
+	DATAClass
+		--If a retention period is associated with an SMS management or data class, or with a model DCBDSN data set, the value of the retention period can be overridden to another retention period, but it cannot be overridden to have no retention period specified for the newly created data sets.
+	days
+		-Specifies the number of days that a newly allocated data set should be retained. The valid range is 0—9999. A value of 0 indicates a retention period of 0 days so that the data set expires the same day it was created.
+		--Note: An attempt to either append or replace an existing data set with a retention period requires operator interaction to take place for permission to alter the data set. This is normal MVS behavior.
+SBDataconn
+	-Specifies the conversions between file system and network code pages to be used for data transfers. Valid subcommands are:
+	SITE SBDataconn=dsname
+	SITE SBDataconn=(file_system_cp,network_transfer_cp)
+	SITE SBDataconn=FTP_STANDARD_TABLE
+	SITE SBDataconn=*
+	SITE SBDATACONN=
+	SITE SBDATACONN
+	--The following forms of specifying SBDATACONN are equivalent to specifying SBDATACONN=*:
+	SBDATACONN
+	SBDATACONN=
+	dsname
+		-Specifies the fully qualified name of an MVS data set or z/OS UNIX file that contains the EBCDIC-to-ASCII and ASCII-to-EBCDIC translate tables generated by the CONVXLAT utility.
+		-Notes:
+			The name must not be enclosed in quotation marks. If quotation marks appear, they are treated as part of the name. (QUOtesoverride is ignored.)
+			The z/OS UNIX file system name is case sensitive. The MVS name is not case sensitive.
+			The name cannot begin with a left parenthesis [(].
+			The SBDataconn keyword must be the only keyword or the last keyword on a SIte subcommand.
+			The translate tables being used for the data connection can also be changed by a SIte XLate subcommand.
+			--SIte XLate and SIte SBDataconn are mutually exclusive.
+	file_system_cp
+		-Specifies the name of a code page recognized by iconv. For a list of code pages supported by iconv, see code set converters information in the z/OS XL C/C++ Programming Guide.
+	network_transfer_cp
+		-Specifies the name of a code page recognized by iconv. For a list of code pages supported by iconv, see code set converters information in the z/OS XL C/C++ Programming Guide.
+		FTP_STANDARD_TABLE
+			-Specifies that the FTP internal tables, which are the same as the tables that are shipped in TCPXLBIN(STANDARD), are to be used on the data connection.
+	*
+		-Specifies the translate tables set up at initialization for the data connection must be used.
+SBSENDEOL
+	-Specifies which end-of-line sequence to use when ENCODING is SBCS, the data type is ASCII, and data is being sent to the client.
+	CRLF
+		Append both carriage return (X'0D') and line feed (X'0A') end-of-line sequences to each line of translated text. This is the default and the standard sequence defined by RFC 959. The z/OS server can receive ASCII data in this format only.
+	CR
+		Append only a carriage return (X'0D') end-of-line sequence to each line of translated text.
+	LF
+		Append only a line feed (X'0A') end-of-line sequence to each line of translated text.
+	NONE
+		Do not append an end-of-line sequence to the line of translated text.
+	Tips:
+		The SIZE command is disabled if you configure a SBSENDEOL value other than CRLF.
+		The REST command in Mode Stream is disabled if you configure a SBSENDEOL value other than CRLF. A mode block REST command is not affected by the SBSENDEOL setting.
+		--SIZE and REST commands are sent by clients as part of a stream mode restart of an interrupted file transfer. Because these commands are disabled by changing the SBSENDEOL value from the RFC 959 standard, stream mode restarts are effectively disabled. Block mode restart is not affected by the SBSENDEOL setting.
+	Rules:
+		Most clients support only the CRLF value for incoming type ASCII data. Do not specify another value for SBSENDEOL unless you have verified that the client is expecting the EOL sequence that you specify.
+		Do not use an EOL sequence value other than CRLF if the client is a z/OS FTP client. The z/OS FTP client supports only the CRLF value for incoming ASCII data.
+SBSUB
+	-Specifies that substitution is allowed for data bytes that cannot be translated in a single byte character translation. The substitution character is specified by the SBSUBCHAR parameter.
+SBSUBCHAR nn
+	-Specifies the value that is used for substitution when SBSUB is also specified. The value is one of the following:
+SPACE
+	-When the target code set is ASCII, replace untranslatable characters with X'20' during SBCS data transfers. When the target code set is EBCDIC, replace untranslatable characters with X'40' during SBCS data transfers.
+	nn
+		--Replace untranslatable characters with nn during SBCS data transfers where nn is a hexadecimal value from 00 to FF.
+SECondary
+	-Specifies the number of tracks, blocks, or cylinders for secondary allocation. When specified without the amount for the C server, no secondary value is used when allocating the data set. The equal sign (=) is optional in this case.
+	--Specify SECondary with no value when you are also specifying DATAClass=dataclass and you want the SMS data class to provide the SECondary value. To allow the SMS data class to determine the space allocation, both PRImary and SECondary must be specified with no value. The tracks, blocks, or cylinders setting is ignored in this case. If SECondary=amount is specified with DATAClass, the value specified by the SIte SECondary parameter overrides the DATAClass space allocation.
+	amount
+		-Specifies the amount of tracks, blocks, or cylinders for secondary allocation. The valid range is 0—16 777 215.
+	SPRead
+		-Specifies that the output is in spreadsheet format when the file type is SQL.
+	SQLCol
+		-Specifies the column headings of the SQL output file.
+	any
+		-The label of the DB2 SQL table column heading is the first choice for column heading, but if there is no label, the name becomes the column heading.
+	labels
+		-Labels are the DB2 SQL table column headings. If any of the columns do not have labels, FTP supplies a column heading in the form of COLnnn.
+	names
+		-Uses the names of the DB2 SQL table column headings. The labels are ignored.
+	STOrclass
+		-Specifies the SMS storage class for the target host, as defined by your organization. Cancels the storage class specification when specified without a storage_class parameter value. The equal sign (=) is optional in this case.
+		--See Specifying values for new data sets for more information about specifying attributes when allocating new data sets.
+	storage_class
+		-Specifies the SMS storage class as defined by your organization for the target host.
+		--When an SMS storage class is in use, any of the attributes specified there can be overridden bye the user by a different specification. To avoid overriding the setting in the SMS storage class, specify BLKSize, LRecl, PDSTYPE, PRImary, RECfm, SECondary, UCOUNT, Unit, VCOUNT, or VOLume with no associated value. This removes any value specified on a prior SITE command or in FTP.DATA, and the affected attributes are not included on the allocation. To override a setting in the SMS storage class, specify the wanted value with the appropriate keyword.
+SUBSYS
+	-Specifies the name of the subsystem that is to be used when allocating data sets. If you specify the SUBSYS parameter without a subsystem name, the subsystem support is disabled.
+	--Tip: You can use the SUBSYS parameter to transfer files to BatchPipes®. See SUBSYS: Writing to BatchPipes.
+	--Restrictions: The following restrictions apply when a SUBSYS value is specified:
+	--APPE and REST commands are not supported.
+	--Only binary (type I) file transfer is supported.
+	--Only FILETYPE SEQ is supported.
+	--Checkpointing and file transfer restart are not supported. Checkpointing is described in Restarting a failed data transfer.
+	--Do not use with SMS-managed data sets (data sets with an assigned storage class).
+	--Only RECFM values F, FB, V, and VB are supported.
+TAPEREADSTREAM
+	-Specifies that a more efficient read path (read as stream) is used for retrieving tape data sets from the server.
+	--Restriction: If a SITE TAPEREADSTREAM subcommand is issued:
+	--You cannot retrieve American Standards Association (ASA) tape data sets. The server responds with an error reply if you attempt to retrieve an ASA tape data set.
+	--You cannot retrieve fixed format tape data sets when TRAILINGBLANKS TRUE is configured. The server responds with an error reply if you attempt to retrieve a fixed format tape data set when TRAILINGBLANKS TRUE is configured.
+	--If the tape data set contains <NL> characters that require translation, the data set format is incorrect.
+TRacks
+	-Specifies that primary and secondary space allocations are in tracks. If both PRImary and SECondary values are unspecified, and an SMS data class value has been specified, the space allocation is determined by the SMS data class value and the TRacks parameter value is ignored.
+TRAILingblanks
+	-Specifies that the FTP server preserves the trailing blanks that are in a fixed format data set when the data is retrieved from a foreign host.
+TRUNcate
+	-Specifies that truncation is permitted. The FTP server does not set an error when a truncated record is detected and file transfer continues.
+UCOUNT
+	-Specifies how many devices to allocate concurrently to support the allocation request.
+	unit_count
+		-Specifies number of devices to allocate. Valid values are in the range 1 - 59. When specified without a value, the FTP server does not specify a unit count when allocating data sets.
+	P
+		-Parallel mount request.
+	--Guideline: The UCOUNT statement is not meant to be used with an SMS storage class. Any UCOUNT value you specify overrides whatever is specified for the SMS managed dataclass that being used.
+UCSHOSTCS
+	-Specifies the EBCDIC code set to be used when converting to and from UCS-2. If you do not specify a code_set value, the current code set is used.
+	code_set
+		Name of the EBCDIC code set to be used when converting to and from UCS-2.
+UCSSUB
+	--In UCS-2 to EBCDIC conversion, the EBCDIC substitution character is used to replace any UCS-2 character that cannot successfully be converted. Data transfer continues.
+UCSTRUNC
+	--In UCS-2 to EBCDIC conversion, truncation of EBCDIC data is allowed. The data transfer continues even if EBCDIC data is truncated.
+	--Note: If the EBCDIC data contains any double-byte data, truncation might not honor character boundaries and EBCDIC records might not end in Shift-in state.
+UMask
+	-Defines the file mode creation mask. The file mode creation mask defines which permission bits are not to be set on when a file is created. When a file is created, the permission bits requested by the file creation are compared to the file mode creation mask, and any bits requested by the file creation which are disallowed by the file mode creation mask are turned off.
+	--The format of the UMask keyword is UMASK ooo.
+	When a file is created, the specified permission bits for the file are 666 (-rw-rw-rw-). If the file mode creation mask is 027, the requested permissions and the file mode creation mask are compared:
+		110110110   - 666
+		000010111   - 027
+		---------
+		11010000    - 640
+	The actual permission bits set for the file when it is created is 640 (-rw-r-----).
+	--Notes:
+		The default value for UMask is 027.
+		You cannot use FTP to create z/OS UNIX files with execute permissions. If you require execute permissions, use the SITE CHMod command to change permissions after the file has been created.
+UNICODEFILESYSTEMBOM
+	-Specifies whether the FTP server stores incoming Unicode files with a byte order mark (BOM).
+	--Restriction: The only Unicode encoding formats supported for file storage by z/OS FTP are UTF-8 and UTF-16. Files are always stored in big endian format.
+	Result: The byte order mark (BOM) stored with the file is determined by the encoding used to store the file rather than by the format of the BOM sent with the file.
+	ASIS
+		Store incoming Unicode files with a byte order mark only if the file was sent with a byte order mark.
+	ALWAYS
+		Store incoming Unicode files with a byte order mark regardless of whether the file was sent with a byte order mark.
+	NEVER
+		Store incoming Unicode files without a byte order mark regardless of whether the file was sent with a byte order mark.
+	Results:
+		--The Unicode byte order mark, U+FEFF, can also be interpreted as a zero-width nonbreaking space character. z/OS FTP considers only the first character of the data that is received from the client as a possible byte order mark (BOM). No other instance of the BOM sequence in the inbound data is affected by this setting.
+		--When you are appending to a nonexistent file, the FTP server respects the UNICODEFILESYTEMBOM setting. However, when you are appending to an existing file, the FTP server always strips a leading BOM from the incoming file. This prevents a superfluous BOM from being inserted in the server file.
+		--When the server file is a z/OS UNIX named pipe, incoming data is always appended to any existing data that is in the named pipe. If you code UNICODEFILESYSTEMBOM = ASIS or ALWAYS and the named pipe contains data, the server appends a BOM byte sequence to existing data in cases in which it would add a BOM at the beginning of a regular file. The BOM byte sequence is interpreted as a zero-width nonbreaking space character when it does not start the file or data stream. You must take this into consideration when you configure UNICODEFILESYSTEMBOM. See Using z/OS UNIX System Services named pipes for more information.
+Unit
+	-Specifies the unit type for allocation of new data sets.
+	unit_type
+		The unit type (for example, 3380) for the allocation of new data sets on direct access devices. If a unit_type value is not specified, the unit type used for allocation is restored to the system default.
+UNIXFILETYPE
+	-Specifies whether the server treats files in its z/OS UNIX file system as regular files or as named pipes.
+	FILE
+		Treat files in the z/OS UNIX file system as regular files. This is the default.
+	FIFO
+		Treat files in the z/OS UNIX file system as named pipes.
+VCOUNT
+	-Specifies the number of tape data set volumes that an allocated data set can span. When this parameter is specified without a volume_count value, the FTP server uses the volume count 50 when it allocates tape data sets.
+	volume_count
+		Valid values are in the range 1 - 255.
+VOLume
+	-Specifies the volume serial number for allocation of new data sets.
+	volume_serial
+		The serial number of the volume to use for allocation.
+	volume_serial_list
+		A list of one or more volume serial numbers for allocation. Delimit each volume_serial from the prior one with a comma.
+	--If a VOLume value is specified without a volume_serial_list or volume_serial parameter, no volumes are specified by the FTP server during the allocation of a new data set, and the installation default is used.
+WRAPrecord
+	-Specifies that data is wrapped to the next record if no new line character is encountered before the logical record length of the receiving file is reached.
+WRTAPEFastio
+	-Specifies that ASCII Stream data that is being written to tape is allowed to be written using BSAM I/O.
+XLate
+	-Specifies the wanted translate table to be used for the data connection. Valid subcommands are:
+	SITE XLate=name
+	SITE XLate=*
+	name
+		Specifies the name that corresponds to the wanted translate table data set. The corresponding data set name is hlq.name.TCPXLBIN unless environment variable _FTPXLATE_name = dsn was defined for the FTP server to override the data set name. In that case, dsn is the data set used.
+	*
+		Indicates that the translate tables set up at initialization for the data connection are to be used.
+	--Notes:
+		The translate tables being used for the data connection can also be changed by the SBDataconn parameter.
+		SIte XLate and SIte SBDataconn are mutually exclusive.
