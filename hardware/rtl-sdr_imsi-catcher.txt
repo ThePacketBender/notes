@@ -1,0 +1,77 @@
+RTL-SDR IMSI Catcher
+
+
+-intercept communication between mobile phones and cellular network antennas
+--sort of a GSM packet sniffer
+
+*example done using hackrfone, substitue basic installation steps to use with bladerf, &c
+
+
+GSM : Global System for Mobile communications
+	2G - used for voice calls and SMS
+IMSI : International Mobile Subscriber Identity
+	Identifier of each mobile device in the GSM network
+		--integrated in the SIM card of each phone
+TMSI : Temporary Mobile Subscriber Identity
+	Temporary identifier used by GSM network instead of IMSI to "guarantee privacy"
+ARFCN : Absolute Radio-Frequency Channel Number
+	Unique identifier granted to communication channel
+CID : Cell ID
+	Identifier of the base station in GSM network
+LAC: Local Area Code
+	Identifier of location zone
+MCC / MNC : Mobile Country Code/Mobile Network Code
+	numerical codes used together to identify the country and the network operator
+	
+#!/bin/sh
+#Installation
+sudo apt-get update
+#gnuradio/wireshark	
+sudo apt-get install gnuradio gnuradio-dev gr-osmosdr gr-osmosdr gqrx-sdr wireshark
+#gr-gsm
+##"blocks" of GNU Radio used to decode GSM packets
+#dependencies
+sudo apt-get install cmake autoconf libtool pkg-config build-essential python-docutils libcppunit-dev swig doxygen liblog4cpp5-dev python-scipy python-gtk2 gnuradio-dev gr-osmosdr libosmocore-dev
+#application package
+git clone https://git.osmocom.org/gr-gsm.git
+cd gr-gsm
+mkdir build
+cd build
+cmake ..
+mkidr ~/.grc_gnuradio
+mkdir ~/.gnuradio
+sudo make install
+sudo ldconfig
+Resulting Installed tools:
+	/usr/bin/grgsm
+	/usr/bin/grgsm_capture
+	/usr/bin/grgsm_channelize
+	/usr/bin/grgsm_decode
+	/usr/bin/grgsm_livemon
+	/usr/bin/grgsm_livemon_headless
+	/usr/bin/grgsm_scanner
+	/usr/bin/grgsm_trx
+	
+
+With gr-gsm installed intercepted GSM packet capture may init
+Possible GSM Bands to intercept:
+	--geolocation-dependent
+	GSM900
+	DCS1800
+	GSM850
+	PCS1900
+	GSM450
+	GSM480
+	GSM-R
+		--US primary use bands 850MHz && 1900MHz
+		--Canada primary use band 1900MHz, 850MHz backup
+
+grgsm_scanner -v -b <listener_band>
+grgsm_scanner -v -b GSM850
+	-returns lising of frequencies to listen on
+	--Pwr: indicates signal strength
+grgsm_livemon <freq>
+	--launches GUI listening at frequency
+
+sudo wireshark -k -Y 'gsmtap &&! icmp' -i lo
+	--launch wireshark on gsmtap

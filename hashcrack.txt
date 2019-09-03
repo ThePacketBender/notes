@@ -5,3 +5,11 @@ unshadow
 unshadow /etc/passwd /etc/shadow > unshadow
 hashcat64 -m 500 unshadow
 jtr hashfile
+
+
+
+
+
+Hashcat Masks
+	hybrid mask attack ( ! -ne all special characters )
+?u?l?d!@#$-().*_

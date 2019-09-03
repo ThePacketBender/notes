@@ -61,6 +61,13 @@ NMAP ALL - UNSAFE, Completeable
 nmap -sV -oA nse --script-args=unsafe=1 --script-args=unsafe  --script "auth,brute,discovery,exploit,external,fuzzer,intrusive,malware,safe,version,vuln and not(http-slowloris or http-brute or http-enum or http-form-fuzzer)"
 
 
+FTP Bounce Scan
+nmap -v -Pn -b user:pass@vuln.dom:21 target.dom
+nmap -v -Pn -b user:pass@target.dom:21 127.0.0.1
+	--expect slow scan rate
+	--fair likelyhood of ftp port command does not allow requests to priviliged ports 1-1024
+	--common vuln on FXP-enabled FTP servers
+
 Extensions
 nseinfo
 INSTALL:

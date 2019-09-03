@@ -1,0 +1,14 @@
+Encrpytion
+
+
+
+Encrypting files/strings/packets
+CIPHER
+command -flag /in/put --opt-ion -o out
+
+RC4
+openssl rc4 -e -nosalt -in /tmp/test -out /tmp/uuu
+
+MD5
+echo "string" | md5sum
+md5sum infile >outfile

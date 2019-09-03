@@ -1,0 +1,9 @@
+Kali Linux-specific Resources
+
+https://http.kali.org/kali/dists/
+	--listing of repositories, further useful for pulling packages.list files
+https://http.kali.org/kali/pool/main/
+	--useful for pulling specific versioned binaries
+https://bugs.kali.org/
+	--kali bug tracker, useful for troubleshooting errors in packages and after updating
+	--recent issue submissions requesting repo package additions and search function also a good source source of finding potentially useful tools

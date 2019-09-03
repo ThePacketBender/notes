@@ -1,0 +1,25 @@
+VirtualBox
+
+
+
+	
+	Mounting Host shares within VM
+mkdir /mnt/caring
+mount -t vboxsf delete /mnt/caring
+	--mount virtualbox share
+
+	Starting/Stopping vbox vi cli
+VBoxHeadless -s virtualboy
+	--start vbox vm via cli
+powershell start-process 'C:\Program Files\Oracle\VirtualBox\vboxheadless' '-s virtualboy' -WindowStyle Hidden
+	--start vbox vm in headless/hidden mode via cli
+VBoxManage controlvm "virtualboy" powerof
+	--kill vm instance
+
+	Snapshots
+VBoxManage snapshot virtualboy take clean
+	--wipe snapshot
+
+
+	Virtual Disk Management
+VBoxManage  modifyhd  nnplus2.vdi -compact

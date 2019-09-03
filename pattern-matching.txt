@@ -8,6 +8,8 @@ egrep '(this|that)' file
 OR
 grep -e '(this|that)' file
 	-grep against target file basic regex accepting patterns using basic regex
+egrep '[^\ ]\{8,\}' target
+	-pattern-match all 8+ digit chars
 
 SED
 sed 's/[[:space:]]//g'

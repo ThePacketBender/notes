@@ -8,4 +8,32 @@ Requirements
 	slave must have session/cookie
 	slave must be identified by network protocol(HTTP Auth)
 	
-	
+
+
+FINDING CSRF TOKENS QUICKLY
+curl -s -b "PHPSESSID=$PHPSESSID" -b jar.cookie "https://target.dom/endpoint >en.html
+curl -s -b "PHPSESSID=$PHPSESSID" -b jar.cookie "https://target.dom/endpoint >token.html
+diff {tok,}en.html | grep "<input type='hidden'"
+
+
+TIMING CHECKS
+for x in {1..3}; do
+  time curl -s -b 'PHPSESSID=$PHPSESSID' -b jat.cookie 'https://target.dom/endpoint?usr=uname&pword=pass&login=True' > /dev/null
+done
+
+
+BurpSuite
+	Macro
+Options -> Sessions -> Session Handling Rules -> Add
+>Rule Description:CRSF_Handle -> Rule Action -> Add -> Run a macro
+>Select macro -> Add
+>Macro Recorder -> (Select) /endpoint/login
+>Macro Description:Get CRSF_Token
+>1 ->& Configure Item (top right button)
+>Custom parameters locations in response -> Add
+>>Parameter name: CRSF_Token
+>>Start after expression: CSRF_Token' value='
+>>End at delimter: ' />
+>Enable: Tolerate URL mismatch when matching parameters (use for URL-agnostic CSRF tokens)
+>Scope -> Tool Scope -> <Choices always were a problem for you>
+>URL Scope -> Use Suite scope [defined in Target tab]

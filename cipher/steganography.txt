@@ -2,3 +2,25 @@ STEGONOGRAPHY
 
 steghide extract -sf picture.jpg
 steghide info picture.jpg
+
+
+
+Tools:
+	CODES
+STEGCRACKER
+https://github.com/Paradoxis/StegCracker
+pip3 install stegcracker
+DCODE
+https://dcode.fr/
+	IMAGES
+STEGHIDE
+http://steghide.sourceforge.net/download.php
+STEGOSUITE
+sudo apt-get install stegosuite
+EXIFTOOL
+sudo apt-get install exiftool
+	AUDIO
+AUDACITY
+sudo apt-get install audacity
+SONIC VISUALIZER
+https://code.soundsoftware.ac.uk/projects/sonic-visualiser

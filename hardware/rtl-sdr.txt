@@ -103,3 +103,21 @@ libgnuradio-*
 rtlsdr-scanner
 soapysdr-module-rtlsdr
 sox
+
+HackRF Tools:
+	hackrf_cpldjtag
+	hackrf_debug
+	hackrf_info
+	hackrf_spiflash
+	hackrf_sweep
+	hackrf_transfer
+
+GR-GSM Tools:
+	/usr/bin/grgsm
+	/usr/bin/grgsm_capture
+	/usr/bin/grgsm_channelize
+	/usr/bin/grgsm_decode
+	/usr/bin/grgsm_livemon
+	/usr/bin/grgsm_livemon_headless
+	/usr/bin/grgsm_scanner
+	/usr/bin/grgsm_trx

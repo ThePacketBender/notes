@@ -31,6 +31,7 @@ $socket = new-object System.Net.Sockets.TcpClient(192.168.2.222, 445); If(socket
 
 unicornscan -mU -Ir 1000 111.11.1.11:a -v
 	--fast udp scan
+unicornscan -L 10 -R 2 -r 1000 -p 21,25,53,80,110,111,135,139,143,443,445,993,995,1723,3306,3389,5900,8080 target.dom
 	
 	
 masscan -p80,8000-8100 111.11.0.0/16
