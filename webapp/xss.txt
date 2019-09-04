@@ -234,6 +234,31 @@ data:text/html,<iframe src=javascript:alert(1)>
 <iframe src=TARGET_URL onload=”frames[0].postMessage(‘INJECTION’,’*’)”>
 	--message event listener, e.g. “window.addEventListener(‘message’, …)”, without a check for origin
 	
+ESCAPING JSON-SPECIFIC SANITIZATION (Reflected/DOM-based XSS in JSON/xmlhttp requests)
+1.)first test escaping characters within JSON strings if they are being sanitized by the application in the response application/json response body
+	--JSON escaper functionality of the application should ‘double-escaped’ payloads that were already escaped
+2.)test xss payload in the space following the JSON string value, if possible format as a valid JSONic value to avoid invalid json responses, but in rare cases where invalid json bodies are accepted in partial form, the sanitized form may result itself in any of the 3 types of xss, though most commonly through DOM-level parsing into the html body
+	e.g. payload: test"/><a%20href="data:text/html,<ScRIpt>alert(document.domain)</sCriPT>">ing</a>
+	--why? implicit assumption by devs that input will not be “pre-escaped” before submitting it
+		--JSON-escape functionality always escaped input (by adding ” or ‘ chars before it)
+	--remediation:
+		never allow direct use of HTML/Script tags
+		URLencode them escaped characters
+
+
+XSS (Three Different Ones):
+Reflected:
+	input becomes output, you may sanitize it, but it's hard to filter every payload through the bloat of massive "compliant/compatible" browsers, only whitelisting entirely successful and even then...
+		-- features <--> bugs ???
+DOM Based XSS - XSS vector dependent on the improper handling within text/html page corresponding the data from its correlated DOM
+	-client side Javascript is unable to sanitize the input prior to writing it into the DOM
+	--most common in xmlhttp requests, file uploads (usually plaintext-containing, but ocassionally via metadata)
+	--exploit may first successful trigger pages after originally submitted, because DOM is site-static
+Stored:
+	Best Kind!
+	--try to do the worm, thx for all the fish, Sammy
+
+	
 https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
 
 Advanced Payloads
