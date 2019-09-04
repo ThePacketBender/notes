@@ -23,3 +23,4 @@ Mounted Docker socket
 				--symlinks will take you as far as you can write destinations to
 					//thanks past seld that was a clever one <redacted?> (the world may never know)
 	--moral to the subsection of note: don't trust the security of docker.sock just as Serj said, "Attack Attack Attack!"
+CGROUPS
