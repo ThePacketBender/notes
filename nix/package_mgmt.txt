@@ -30,3 +30,7 @@ rpm
 rpm -ivh package.rpm
 rpm -Uvh package.rpm
 rpm -qa
+
+
+ppa
+sudo add-apt-repository ppa:foo/bar
