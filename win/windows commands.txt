@@ -315,6 +315,26 @@ icacls "dir\"
 	enable a feature
 %windir%\System32\cmd.exe /c "%SystemRoot%\system32\Dism.exe" /online /disable-feature /featurename:TFTP
 	disable a feature
+	
+	
+Windows Licensing
+slmgr.vbs /dli
+	display information about windows license
+slmgr.vbs /dlv
+	display information about windows license (detailed)
+slmgr.vbs /xpr
+	 display expiration date of current license
+slmgr.vbs /upk
+slmgr.vbs /cpky
+	uninstall Windows product license key
+slmgr.vbs /ato
+	active windows online
+slmgr.vbs /dti
+	activate windows offline
+slmgr.vbs /rearm
+	reactivate windows license key (**import for running Windows testing environment VMs)
+slmgr.vbs computername username password /option
+	run slmgr remotely
 
 
 INTERESTING FILES

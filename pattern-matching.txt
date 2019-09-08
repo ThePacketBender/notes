@@ -20,7 +20,25 @@ awk 'NR==FNR{a[$0];next}!($0 in a)' file2 file1
 	--Compare 2 files and return the unique lines in first file
 awk NF -
 	--remove newlines from stdin
-	
+awk 'match($0,"="){print substr($0,RSTART-5,5)}'
+	-print characters before+after a pattern is matched
+awk  -F":" '{print $2}' file.txt
+awk  -F":" '{if ($2)print $2}' file.txt
+	-print second colum of ":"-delimited lines in a file
+awk -F, '{ print $1 "-" $3 "-" $5 }' file.csv
+	-print alternating lines of a csv file
+awk -F: '{ print $NF }' file.txt
+	-print last column of delimited text file
+awk  -F":" '/regex_here/{print $2}' file.txt
+	-print second field of lines matching regex from delimited file
+awk '/exp/,/end/' file.txt
+	-print all lines in a file from match "exp" to match "end"
+awk '!/regex/{print $1 " " $2 }' file.txt
+	-print all lines not matching regex from first two whitespace-delimited fields
+awk '/regex/&&!/regex2/{print $1}' file.txt
+	-print all lines matching regex while not matching regex2
+
+
 
 xclip -selection clipboard -o | sed 's/[[:space:]]//g' | awk NF - >http_response_codes.txt
 	--remove all whitespace and newlines from a copied selection of text (from clipboard)

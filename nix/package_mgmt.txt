@@ -34,3 +34,19 @@ rpm -qa
 
 ppa
 sudo add-apt-repository ppa:foo/bar
+
+
+
+Troubleshooting:
+	Ignore dependency Warnings
+apt-get download package
+dpkg -i --ignore-depends=lib3 package_version.deb
+rm -f package_version.deb
+OR
+apt-get download package
+dpkg-deb -x package.deb PackageDir
+dpkg-deb --control package.deb PackageDir/DEBIAN
+vim PackageDir/DEBIAN/control
+dpkg -b PackageDir package2.deb
+apt-get install ./package2.deb
+rm -f package.deb package2.deb
