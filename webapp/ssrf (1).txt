@@ -13,6 +13,11 @@ Pending the particular limits to which a given SSRF vuln may be exploited, its i
         --e.g. when a service requests a url or uri taking improperly-sanitized user input
         --most common when import functions are invoked to import resources (especially images) accepting a URL --or occasionally processing an insufficiently sanitized URI of an arbitrary user-defined(uploaded) file--, e.g. vuln introduces on setting a user profile image.
     --infrastructure vulnerabilities are common regardless of type of hosting (traditional hosting, serverless architecture, microservices)
+Blind SSRF
+	-server does not return irregular HTTP Response or error message
+Remediation
+	--proper input validation restricting access to internal resources
+	--easiest way to discover and exploit is manual code review, by far
 
 Testing:
 Requests may be confirmed via external service interaction, viz. requests to attacker-controlled internet-facing service including DNS request records.
@@ -22,6 +27,25 @@ Requests may be confirmed via external service interaction, viz. requests to att
 file_put_contents(“intended_target.png”, file_get_contents($_GET[‘url’]));
     SSRF Attack:
 curl https://target.dom/wget.php?url=http://127.0.0.1/api/v3/users/uid/1/username
+
+Targets:
+	information files
+	sensitive files
+	internal API calls
+	internal service access
+		--e.g. admin panel
+	cloud hosting metadata
+
+Functions commonly vulnerable to SSRF:
+	webhooks
+	file upload expecting URL as input
+	document file processors
+	image file processors
+	link expansion
+	HTTP proxying service
+	--functions that fetch external resources (or internal resources using URI schema)
+
+
 
 
 Cloud hosting service Metadata SSRFs:
