@@ -16,4 +16,4 @@
 	
 	<\3<\3<\3<\3<>TPB<><\3<\3<\3<\3>
 
-# Used to be a bunch of backstabbing, untalented skids that leeched off this part of the repository here. But we systematically removed them like you would any kind of termite or roach.
+# Used to be a bunch of untalented skids that leeched off this part of the repository here. But we systematically removed them like you would any kind of termite or roach.
