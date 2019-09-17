@@ -405,6 +405,22 @@ Standard
 			{"key":string}
 			{"key":"int"}
 		Error messages of varying verbosity may be found and are a common source of information disclosure vulnerabilities information from which may facilitate exploitation of more severe vulnerabilities
+>If there are users how are users uniquely identified? If user endpoints exist are they related to a primary key identifier? How?
+	serial identifier
+		PKID
+		--iterable
+			non-numeric iteration possible, e.g. alnum, decimal notations
+		OID
+	non-random identifier
+		username
+			any vector or endpoint that does not strictly enforce unicity?
+			are non-alnum characters valid input?
+				can stored identifier string value escape sequence generate errors or long response times on any requested endpoint? Injection possible: sqli, SSTI, ldapi
+				if the stored escape sequence containing identifier string is reflected is it always properly sanitized in generated response? Client-side exploits: stored xss, dom xss, on-site request forgery
+		if hashed/encoded value, non-unique identifiers still predictable passing hash or encoded values
+	pseudo-random identifier
+		UUID
+		pseudo-random-seeded hash
 >SSL
 	Is the application also hosted as plaintext?
 	Is the HSTS header sent in HTTP responses?
@@ -461,7 +477,7 @@ Standard
 						location /path/ {
 							limit_req zone=alimit;
 				
-
+>Webhooks
 		
 		
 

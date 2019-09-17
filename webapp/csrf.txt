@@ -45,6 +45,7 @@ Common Implementation Vulnerabilities:
 					pwn.dom/.target.dom
 					pwn.dom/www.target.dom
 		--application may only validate Referer if value is set, add '<meta name=”referrer” content=”no-referrer”>' to CSRF PoC as an html header
+	Undeleted CMS/application install or update scripts may in some cases be leveraged to reinstall applications/CMS with new or default credentials or to delete/remove the intalliation entirely via CSRF targeting authenticated or adminsitrative users
 		
 
 Chained attacks:

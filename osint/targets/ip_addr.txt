@@ -1,0 +1,69 @@
+Static IP Address
+
+
+
+	Standard TCP/IP information gathering
+whois 111.11.1.11
+dig 111.11.1.11
+ping 111.11.1.11
+traceroute 111.11.1.11
+	Geolocation
+sudo apt-get install geoipupdate mmdb-bin libmaxminddb0 tor-geoipdb geoip-database geoip-bin
+https://www.maxmind.com/en/home
+https://www.ip2location.com
+https://db-ip.com/
+https://www.iplocation.net/
+https://www.infosniper.net/
+http://en.utrace.de/
+https://www.infobyip.com/
+https://www.iptrackeronline.com/
+	Reverse DNS
+curl https://api.hackertarget.com/reversedns/?q=111.11.1.11
+	Cell Tower Addressing and Geolocation
+https://opencellid.org/
+	IP block for ISP
+https://www.search.org/resources/isp-list/
+	Blacklisting/Reputation/fail2ban
+https://www.ipvoid.com/ip-blacklist-check/
+https://www.apivoid.com/api/ip-reputation/
+https://www.liveipmap.com/
+https://www.spamcop.net/bl.shtml
+https://www.ripe.net/support/abuse
+http://www.blocklist.de/en/search.html
+https://isc.sans.edu/api/
+http://iplists.firehol.org/
+	Wardriving (MAC Addr info)
+https://wigle.net/
+http://www.wardrive.net/
+	Known Honeypots
+https://honeyscore.shodan.io/
+https://www.projecthoneypot.org/list_of_ips.php
+	Tor History Check
+https://metrics.torproject.org/exonerator.html
+	Tor (general)
+https://github.com/s-rah/onionscan
+	port scan, service fingerprinting
+https://nmap.org/download.html
+https://shodan.io/
+https://censys.io/
+https://www.zoomeye.org/
+https://urlscan.io/search/#*
+https://github.com/vesche/scanless
+	Bittorrent Download History
+https://iknowwhatyoudownloaded.com/
+	--bittorent public tracker torrent history
+People Finders
+https://thatsthem.com/ip/
+	Cloudflare
+http://www.crimeflare.com/
+https://github.com/m0rtem/CloudFail
+https://github.com/SageHack/cloud-buster
+	BGP
+https://bgp.he.net/
+https://www.bgp4.as/tools
+	ASN
+https://asn.cymru.com/
+
+
+	Combined tools
+https://www.onyphe.io/

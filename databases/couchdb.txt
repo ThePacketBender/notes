@@ -1,0 +1,11 @@
+CouchDB
+
+
+
+
+
+
+Reference:
+http://wiki.apache.org/couchdb/Complete_HTTP_API_Reference
+http://docs.couchdb.org/en/stable/api/server/common.html#replicate
+http://wiki.apache.org/couchdb/HTTP_view_API

@@ -1,5 +1,11 @@
 SSRF
 
+
+--vulnerable applications pull content from address-located sources (TCP/IP or DNS)
+--make unauthorized requests that would normally be block by firewall/WAF/access controls as requests to secondary resources requested by the application
+	e.g. administrative panels
+
+
 Tools
 SSRFmap - https://github.com/swisskyrepo/SSRFmap.git
 Gopherus - https://github.com/tarunkant/Gopherus.git

@@ -1,0 +1,27 @@
+Groovy
+
+
+Directory Listing
+	(Win, Relative)
+dir = new File(“..\\..\\”)
+dir.eachFile {
+	println it
+}
+	(*nix, Relative)
+dir = new File("../../home/users")
+dir.eachFile {
+	println it
+}
+
+Dump Environment Variables
+def env = System.getenv()
+println “${env}”
+
+Remove File
+deleteme = new File('C:\\target\filename.ext')
+deleteme.delete()
+
+Write File
+createme = new File(“C:\\target\filename.ext”)
+createme.createNewFile()
+

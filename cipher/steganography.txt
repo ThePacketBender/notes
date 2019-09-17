@@ -17,6 +17,12 @@ STEGHIDE
 http://steghide.sourceforge.net/download.php
 STEGOSUITE
 sudo apt-get install stegosuite
+STEGIFY
+git clone https://github.com/DimitarPetrov/stegify.git
+go get -u github.com/DimitarPetrov/stegify
+stegify -op encode -carrier <file-name> -data <file-name> -result <file-name>
+stegify -op decode -carrier <file-name> -result <file-name>
+	--LSB stegonography
 EXIFTOOL
 sudo apt-get install exiftool
 	AUDIO

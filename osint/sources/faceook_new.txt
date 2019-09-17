@@ -1,0 +1,76 @@
+FACEBOOK (NEW)
+
+FIND ID IN SOURCE:
+entity_id
+page_id
+user_id
+group_id
+
+new baseurl
+	facebook.com/search/top/?q=people&epa=FILTERS&filters=
+
+URL ENDPOINTS/"PARAMETERS" (replace "top" in baseurl)
+	top			-	top content
+	posts		-	public posts
+	people		-	people (users)
+	photos
+	videos
+	pages
+	places
+
+
+filters
+	--base JSON (convert b64)
+	top/
+	{“rp_chrono_sort”:”{\”name\”:\”chronosort\”,\”args\”:\”\”}”}
+		--Most recent popular content
+	{“rp_author”:”{\”name\”:\”merged_public_posts\”,\”args\”:\”\”}”}
+		--Most popular public content
+	{“rp_author”:”{\”name\”:\”author\”,\”args\”:\”PutIDHere\”}”}
+		--Most popular content from a specific page
+	{“rp_group”:”{\”name\”:\”group_posts\”,\”args\”:\”PutIDHere\”}”}
+		--Most popular content from a specific group
+	{“rp_location”:”{\”name\”:\”location\”,\”args\”:\”PutIDHere\”}”}
+		--Most popular content tagged with a specific location
+	{“rp_creation_time”:”{\”name\”:\”creation_time\”,\”args\”:\”{\\\”start_year\\\”:\\\”2019\\\”,\\\”start_month\\\”:\\\”2019-1\\\”,\\\”end_year\\\”:\\\”2019\\\”,\\\”end_month\\\”:\\\”2019-12\\\”,\\\”start_day\\\”:\\\”2019-1-1\\\”,\\\”end_day\\\”:\\\”2019-12-31\\\”}\”}”}
+		--Most popular content posted within a specific time range
+	posts/
+	{“rp_author”:”{\”name\”:\”merged_public_posts\”,\”args\”:\”\”}”}
+		--Most popular posts
+	{“rp_author”:”{\”name\”:\”author\”,\”args\”:\”PutIDHere\”}”}
+		--**Posts from a specific page**
+	Posts from a specific group
+		--**Posts from a specific group**
+	{“rp_location”:”{\”name\”:\”location\”,\”args\”:\”PutIDHere\”}”}
+		--posts tagged with a specific location
+	people/
+	{“city”:”{\”name\”:\”users_location\”,\”args\”:\”PutIDHere\”}”}
+		--people located within specific city
+	{“school”:”{\”name\”:\”users_school\”,\”args\”:\”PutIDHere\”}”}
+		--people who alumni of
+	{“employer”:”{\”name\”:\”users_employer\”,\”args\”:\”PutIDHere\”}”}
+		--people who work for
+	{“friends”:”{\”name\”:\”users_friends_of_people\”,\”args\”:\”PutIDHere\”}”}
+		--friends of a user
+	photos/
+	{“rp_author”:”{\”name\”:\”merged_public_posts\”,\”args\”:\”\”}”}
+		--public photos
+	{“rp_author”:”{\”name\”:\”author\”,\”args\”:\”PutIDHere\”}”}
+		--photos posted by a specific page
+	{“rp_group”:”{\”name\”:\”group_posts\”,\”args\”:\”PutIDHere\”}”}
+		--photos posted by a specific group
+	{“rp_location”:”{\”name\”:\”location\”,\”args\”:\”PutIDHere\”}”}
+		--photos tagged with a specific location
+	{“rp_creation_time”:”{\”name\”:\”creation_time\”,\”args\”:\”{\\\”start_year\\\”:\\\”2019\\\”,\\\”start_month\\\”:\\\”2019-1\\\”,\\\”end_year\\\”:\\\”2019\\\”,\\\”end_month\\\”:\\\”2019-12\\\”,\\\”start_day\\\”:\\\”2019-1-1\\\”,\\\”end_day\\\”:\\\”2019-12-31\\\”}\”}”}
+		--photos posted within time range
+	videos/
+	{“videos_source”:”{\”name\”:\”videos_live\”,\”args\”:\”\”}”}
+		--live videos
+	{“rp_location”:”{\”name\”:\”location\”,\”args\”:\”PutIDHere\”}”}
+		--videos tagged to a location
+	{“rp_creation_time”:”{\”name\”:\”creation_time\”,\”args\”:\”{\\\”start_year\\\”:\\\”2019\\\”,\\\”start_month\\\”:\\\”2019-1\\\”,\\\”end_year\\\”:\\\”2019\\\”,\\\”end_month\\\”:\\\”2019-12\\\”,\\\”start_day\\\”:\\\”2019-1-1\\\”,\\\”end_day\\\”:\\\”2019-12-31\\\”}\”}”}
+		--videos posted within time range
+	pages/
+	{“verified”:”{\”name\”:\”pages_verified\”,\”args\”:\”\”}”}
+		--search for "verified" pages
+	
