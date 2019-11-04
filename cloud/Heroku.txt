@@ -1,2 +1,65 @@
 Heroku
 
+PaaS
+	Platform as a Service
+	--platform allows users to deploy, run and manage applications written in a selected set of languages (specifically languages commonly used for hosting web services and other APIs)
+	-Hosting an application requires:
+		application source
+			dependencies
+		language-specific conf file or mechanism defining dependencies (usually by version)
+			--package.json, composer.lock, gemfile, pom.xml, requirements.txt, &c
+		Procfile definig what to execute
+	--CL/CI support for most major platforms
+
+
+Heroku Toolbelt
+	https://toolbelt.heroku.com/
+apt-get install snapd snapclient ubuntu-core-launcher snap snap-confine
+/etc/init.d/snapd start
+snap install --classic heroku
+snap run heroku login -i
+snap run heroku logs -a app -t
+snap run heroku logs --app app-staging-stable --tail
+snap run heroku logs -n 1500
+
+Deploying Golang Applications
+	--Heroku implements godep to manage Go dependencies
+Workflow:
+	edit code			 Godep depdendency management	init Heroku app		Push Code to Heroku App
+		---------------->	--------------------------->	--------------->
+	-get port from env	 godep save
+
+Edit src to conform to Heroku app requirements
+HTTP Server
+	--portno cannot be set arbitrarilly, must be taken from Heroku envornment, if values -ne, then program will fail to launch
+	e.g.
+include {
+	"net/http"
+	"os"
+}
+func main() {
+	server := http.Server{
+		Addr: ":" os.GetEnv
+	}
+	http.HandleFunc("/endpoint/", HandleEndpoint)
+	server.ListenAndServe()
+}
+
+-Create Dependencies File
+go get githbu.com/godep
+	--heroku depends godep for package management of golang applications
+	--mkdirs Godeps; dependencies and their src will be stored at $GOPATH/src/golang-program-name/Godeps/_workspace/
+	--creates godeps.json for tacking package dependencies
+godep save
+
+-set commands necessary for successful execution in Procfile
+	--most commonly simply taken form Godeps root project
+		--unless libraries from other languages or additional system services/utilities/settings configuration are required
+git init
+git add *
+git commit -m "heroku initial commit"
+initialize heroku app
+snap run heroku create go-staging
+	--creates subdomain with target name of herokuapp.com and git repository on git.heroku.com/
+git push heroku master
+	--push master branch (should be only code unless branch was created between init and pushing your commit[ment]) code to git.heroku.com

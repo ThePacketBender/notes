@@ -1,0 +1,10 @@
+Image Files (jpg,png,&c)
+
+
+IMAGE METADATA
+	EXIFTOOL
+sudo apt-get install libimage-exiftool-perl
+exiftool file.png
+	--read exif metadata
+exiftool -all= image.jpeg
+	--remove all exif metadata from image file

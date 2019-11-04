@@ -1,5 +1,48 @@
 Kubernetes
 
+	--operates at the container level rather than at the hardware level
+	
+
+	Components
+kube-apiserver
+	front end for the Kubernetes control plane
+etcd
+	key-value store used as Kubernetes’ backing store for all cluster data
+kube-scheduler
+	component on master watches newly created pods that have no node assigned, and selects a node for them to run on
+kube-controller-manager
+	component on the master runs controllers
+		controller types:
+			node controller
+				notice + respond when node exits
+			replication controller
+				maintains + corrects # pods for replication controller objects in system
+			endpoints controller
+				populates Endpoints object
+					--joins services & pods
+			sevice account & token controllers:
+				create default accounts & API access tokens for created namespaces
+cloud-controller-manager
+	runs controllers that interact with the underlying cloud providers
+		--cloud-controller-manager runs cloud-provider-specific controller loops only
+	Node Components
+kubelet
+	agent runs on each node in the cluster; ensures containers are running in a pod
+kube-proxy
+	network proxy that runs on each node in cluster
+		--maintains network rules on nodes
+			--uses the operating system packet filtering layer if available
+			--else forwards traffic itself
+container runtime
+	software responsible for running containers
+		Docker
+		containerd
+		cri-o
+		rktlet
+		Kubernetes CRI (Container Runtime Interface) [implementation]
+
+
+	
 
 KUBECTL
 kubectl controls the Kubernetes cluster manager

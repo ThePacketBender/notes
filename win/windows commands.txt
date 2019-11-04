@@ -789,6 +789,8 @@ c:\sysprep.inf
 c:\sysprep\sysprep.xml
 %WINDIR%\Panther\Unattend\Unattended.xml
 %WINDIR%\Panther\Unattended.xml
+%WINDIR%\Panther\unattended.xml
+%WINDIR%\Panther\Unattend\unattended.xml
 
 Trusted Service Paths
 	exploit/windows/local/trusted_service_path

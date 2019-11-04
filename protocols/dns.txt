@@ -399,7 +399,7 @@ SOA Records - (Start of Authority) record can show the primary name server for t
 		X.25 - Maps host name to X.121 address (X.25 networks)
 TXT Records - Originally intended to consist of arbitrarily human readable text in a record. Are dynamic and can be used for several purposes.
 	SPF - (Sender Policy Framework) records; records used by mail systems to help identify if an email is coming from a trusted source, helping filter out spam or messages pretending to be from some domain(spoofing).
-		---https://www.openspf.net/
+		---https://www.open-spf.net/
 	DKIM - (DomainKeys) used to verify that email directed from a trusted source.
 		---https://www.dkim.org/
 SRV Records - (Service) record points one domain to another domain name using a specific destination port. SRV records allow specific services, such as VOIP or IM, to be be directed to a separate location. Commonly SIP and XMPP (chat) servers

@@ -1,0 +1,35 @@
+Django
+
+
+initialization:
+python3 -m django --version
+python3 -m django-admin startproject mysite
+
+startproject intializes:
+mysite/					root directory, just a container, for project	--name doesn’t matter to Django, can rename
+    manage.py			command-line utility to interact with django projet
+    mysite/				actual Python package for project; name is Python package name
+        __init__.py		empty file that tells Python that this directory should be considered a Python package
+        settings.py		config for this Django project
+        urls.py			URL declarations for this Django project	--https://docs.djangoproject.com/en/2.2/topics/http/urls/
+        wsgi.py			entry-point for WSGI-compatible web servers to serve project	--https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
+
+
+manage.py
+	development server (staging/testing)
+python manage.py runserver
+	http://127.0.0.1:8000/
+python manage.py runserver 8080
+python manage.py runserver 0:8000
+	-0 == 0.0.0.0 (all interfaces)
+python manage.py startapp appname
+appname/
+    __init__.py
+    admin.py
+    apps.py
+    migrations/
+        __init__.py
+    models.py
+    tests.py
+    views.py
+	

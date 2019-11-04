@@ -10,14 +10,72 @@ from:foobar					Sent from user "foobar"
 to:foobar					Sent to user "foobar"
 @foobar						Referencing user "foobar"
 "foo bar" near:"foobar"		Containing the exact phrase "foo bar" and sent from "foobar"
-near:foo within:15mi		Sent from 15 miles of "foo"
+near:"foo" within:15mi		Sent from 15 miles of "foo"
 foobar since:2018-11-11		Containing "foobar" and sent since date "2018-11-11" (year-month-date)
 foo until:2018-11-11		Containing "foo" and sent up to date "2018-11-11"
 foobar filter:links			Containing "foobar" and linking to URLs
 foo source:"Twitter Lite"	Containing "foo" and entered via Twitter Lite
 geocode:47.37,8.541,10km	Sent from 10km from Zurich
 
+
+twint
+	https://github.com/twintproject/twint
+pip3 install --upgrade twint
+twint -u targetname
+	--scrape all twits from user's timeline
+twint -u targetname -o target-twit.txt
+twint -u targetname -o target-twit.csv --csv
+twint -u targetname -o target-twit.json --json
+twint -u targetname --database target-twits.db
+	--sqlite3
+twint -u targetname -es localhost:9200
+	--send to elasticsearch
+twint -u username --email --phone
+	--search for email addresses or phone numbers
+twint -u username --followers
+twint -u username --following
+twint -u username --favorites
+twint -u username --followers --user-full
+twint -u username --following --user-full
+	--scrape full user info of users followed
+twint -u username --retweets
+twint -u username --profile-full --stats
+	--gathers ~3200 Tweets, including retweets
+		--slow, thorough
+
+
+Offical/on-site
 https://twitter.com/search-advanced
 
+Toolset/framework
+http://tweetbeaver.com/
+
+User reporting
+https://tinfoleak.com/
+
+User linking
+https://www.tweeplers.com/map/
+https://analytics.mentionmapp.com/
+https://doesfollow.com
+
+Analytics
+https://socialbearing.com/
+https://analytics.mentionmapp.com/
+https://foller.me/
+http://twiangulate.com/search/
+https://treeverse.app/
+https://snapbird.org/
+
+Twitter Archives
+http://staringispolite.github.io/twayback-machine/
+
+Profile Changes
+https://spoonbill.io/
+
+Media
+https://twdown.net/
+
+
+Tools
 https://tinfoleak.com/
 https://github.com/vaguileradiaz/tinfoleak

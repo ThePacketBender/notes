@@ -202,6 +202,23 @@ CLIENT
 Netsh (Windows)
 netsh interface portproxy add v4tov4 listenaddress=localaddress listenport=localport connectaddress=destaddress connectport=destport
 	--native port forwarding on windows host
+	
+ngrok
+https://dashboard.ngrok.com/signup
+npm install -g ngrok
+https://ngrok.com/download
+ngrok auth <auth_key>
+ngrok http 80
+	-expose local webserver to internet
+TUNNELING
+ngrok http -subdomain=inconshreveable 80
+	-Open a tunnel with the subdomain 'inconshreveable'
+ngrok http -auth="username:password" 8080
+	-password-protected tunnel
+ngrok http -region=us -hostname=dev.example.com 8000
+	-tunnel over specific domain
+Inspect Traffic
+http://localhost:4040
 
 
 Metasploit

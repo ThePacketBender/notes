@@ -1,0 +1,22 @@
+SEARCH
+
+https://web.archive.org/web/*/query
+https://google.com/
+https://duckduckgo.com/
+https://bing.com/
+https://yandex.com/
+https://qwant.com
+
+
+Custom Search Engine
+https://cse.google.com/cse/create/new
+	-> complete form using an unregisterd apex domain
+	-> "Create"
+https://cse.google.com/cse/all
+	->rm all "sites to search" entries
+	->toggle "Search the entire web" ON
+	->select "Search engine ID"
+return google_cx_id=
+CSE API key
+https://console.developers.google.com/apis/credentials
+	->“Create Credentials” -> “API Key”

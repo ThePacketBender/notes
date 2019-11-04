@@ -1,0 +1,19 @@
+Cloud Hosting Service Types
+
+
+-Defined by NIST (National Institute of Standards & Technology, US Depratment of Commerce)
+		--so take the dialectics from which these distinct typifications are derived with a strong HINT! of NaCl
+	3 distinct models of services offered by cloud hosting providers
+		IaaS - Infrastructure as a Service
+			--most "basic" (read: distinct from self-hosted ifrastructure)
+			--offers computing capailities, often scalable
+				inc.: (ec2/compute, s3/storage, VPC/networking, GCP Compute, Digital Ocean Droplets)
+		PaaS - Platform as a Service
+			-providers offering application deployment directly to infrastructure
+			--e.g. Heroku, AWS EBS(ElasticBeanstalk), Google App Engine
+		SaaS - Software as a Service
+			-provdiers offering hosted application services
+			*--*--current dominant distribution model of proprietary and support-premium FOSS software to both end users and enterprise clients
+				--trivia: overtook software licensing as the dominant model (popularized by Microsoft in early-mid 1980s, particularly following the Savings and Loans Crisis, in turn having replaced IBM's [mainframe] computer hardware sales as the dominant model of information technology capitalization and distribution; with no irony Microsoft launched DOS and BASIC as hardware independent and interoperable accross various hardware types) circa 2009 in the crisis facing lack of capitalization, liquidity and spending accross all sectors; the rate at which SaaS is fairly anomalous, but again was partially driven by the need for interoperable software after highly portable internet pocket computers became ubiquitous at an even more extreme rate.
+					--just saying, nobody is going to tell you this in economics, business or computer science school
+			--catch-all category including both end user software, e.g. MS Office/OneDrive, iCloud or Dropbox, AWS Relation Database Service (RDS), Google Cloud SQL (more recently BigQuery) or Heroku Postgres database service (which is merely a cloud-hosted postgresql instance for storage of non-trivial data of Heroku PaaS applations)

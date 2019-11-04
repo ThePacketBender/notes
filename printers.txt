@@ -1,0 +1,200 @@
+Printer Exploitation
+
+
+
+
+network printing protocol acts as a channel to deploy print jobs
+	--either contain page description language directly or invoke printer/job control language first
+	
++----------------------------------------------------+
+                     | Network printing protocols    |
+ Printing channel    +-------------------------------+--+
+                     |                                  |
+                     | IPP, LPD, SMB, raw port 9100     |
+                     |                                  |
++--------------------------------------------------+    |
+                     | job/printer control langs.  |    |
+ Printer language    +-----------------------------+--+ |
+                     |                                | |
+                     |  PJL, PML                      | |
+                     |                                | |
+                     | +------------------------+     | |
+                     | | Page descr. langs.     |     | |
+                     | +------------------------+---+ | |
+                     | |                            | | |
+                     | | PS, PCL, PDF, XPS, ...     | | |
+                     | |                            | | |
+                     | +----------------------------+ | |
+                     +--------------------------------+ |
+                     +----------------------------------+
+
+Printer Firmware:
+	thin, embedded GNU/Linux
+	WindRiver Linux
+	VxWorks
+	ThreadX
+
+
+Commonalities between printers:
+	limited command/instruction set
+	legacy kernels
+	non-working functionalities possible to patch in
+		e.g. sshd files (legacy, exploitable for privesc) exist/operable, but require config changes to execute
+	ssh is common on office printers, but less so on home printers
+	firmware storage/loader is often physicall acessible in <1min
+		e.g. removeable sd card
+
+
+Network Printing Protocols
+	Windows
+		smb/cifs(445)
+	MacOS
+		NCP, Appletalk, AFP?
+	*nix
+		LPD(p515), IPP(p631)
+	Universal
+		Raw(p9100),FTP(p21),HTTP(p80,8000,8080)
+	LPD
+		Line Printer Daemon
+		$>lpr
+		client sends control file defining job/username & data file to be printed
+	IPP
+		--Includes CUPS
+			--most commmon
+		extensible HTTP-based protocol
+			--inherits security features (Basic AUTH, SSL/TLS)
+	SMB/CIFS
+		Server Message Block
+		--default Windows printing protocol
+	RAW/Port 9100
+		--default method used by CUPS and the Windows printing architecture
+		data sent is directly processed by the printing device
+			--like Parallel connection over TCP
+		--lacks interpreted printer control/page description languages
+			--may sending direct feedback to the client
+				--inc. status and error messages
+		--bidirectional channel
+			--may give access to results of Printer control languages
+		--service banner or nmap may return name “JetDirect”, “Raw” or “AppSocket”
+		Test: telnet 111.11.1.11 9100
+			--whatever is printed during this session should be printed after the connection is closed
+
+
+Printer Control Languages
+	--job control language managing settings
+	--situated between printing protocol and page description language in printing stack
+	--affect both single print job and global device functioning
+SNMP
+	--161UDP
+	Simple Network Management Protocol
+PJL
+	Printer Job Language
+	--de-facto standard language
+	x--can manipulate global/general settings
+		--changes often permenant
+	--PJL command reference partially implemented on given device
+		--varies by manufacturer
+		--commong to discover proprietary command reference equivelant to non-impemented PJL commands
+	--sets file format that print data follows
+		x--common attack vector
+
+
+Page Description Language
+	--specifies print document appearance
+	--printer driver translates file into PDL understood by printer
+PostScript
+	--Adobe protocol, very common
+	--many capabilities beyond defining print doc appearance
+	x--commong attack vector
+		DOS (recursive or non-limited iteration functions)
+		print job manipulation/retention
+		filesystem access!
+PCL
+	--minimal PDL
+	--de-facto protocol
+	--not instended to access device filesystem
+	--not a great attack vector, but sometimes works anyway
+
+
+Attack Vectors:
+	Remote:
+		Port 9100
+		port scan or Shodan.io
+	Physical:
+		plug in USB drive or SD Card
+		**--pretend you're fixing a jam, turn off device and reset CMS battery for factory defaults (no/default auth)
+	
+	DoS
+		Transmission Channel
+			block printing port to keep printer busy
+			continuously overload the printer with (priority) jobs like you did to the dot matrix pritner in your middle school, raster images if you're clever
+		Document processing
+			manipulate a Document via PDL and let the printer interpret it
+				--infinite iteration
+		Physical damage (dont do this)
+			malware causing writes on NVRAM chips
+				--life expectancy of ~10^5 writes
+	PrivEsc
+		Factory defaults
+			reset for no auth/default auth
+		Account bypass
+			print without auth
+	Print Job Access
+		Print Job retention
+			find stored print jobs and return them as files
+				--possibly sensitive data
+		Print Job manipulation
+			instead of returning valuable data, just do vandalism instead
+				--can be useful to distract employees when performing physical attacks
+					--e.g. make them walk to tech support while you plant a device at their station or run commmands on their devices (physically or remotely)
+	Information Disclosure
+		Memory access
+			--sensitive data like passwords or printed documents
+		File system access
+			--configuration files, stored print jobs
+		Credential Disclosure
+			--brute force, NTLM relay, reuse creds, &c
+				--occassionally discloses credentials for administrators or non-admin IT Support accounts on network
+	Code Execution
+		Buffer Overflow
+			--printer language and network service implementations potentially vuln, older printers less likely to be compiled with DEP/ASLR
+		Firmware Upgrade
+			--most printers deploy firmware updates as ordinary print jobs
+		Software Packages
+			--create, tailor & deploy
+	Malware
+		--target network printer, do the worm
+		--printer ransomware is sort of funny
+
+
+PJL Injection
+	echo "@PJL FSUPLOAD FORMAT:BINARY NAME="../../etc/passwd" OFFSET=0 SIZE=648" | nc -nv 111.11.1.11 9100
+	echo "@PJL INFO ID" | nc -nv 111.11.1.11 9100
+
+Cross-Site Printing
+	--Raw CUPS Printing (port 9100) connected to over http
+	-an XSS wherein attacker gains execution in the target browser and induces an arbitrary request to target device, e.g. to print a document
+		--must know printer ip address to induce action
+			--http basic auth should parse cached credentials in many cases
+		--most interesting attacks involve fax-connected "all-in-one" printers to forge fax requests
+	--similar attacks possible via CSRF requests to print service
+
+
+LDAP credentials (SMB capture)
+After accessing a printer which authenticates with LDAP, modify network settings to refer to controlled host rather than DC, ncat on port 445 (unless Kerberos auth)
+
+
+
+Tools:
+ 
+BeEF
+	--Cross-site printing attack
+Praeda
+	https://github.com/percx/Praeda
+	-automated printer data harvesting tool
+		--systematically collects sensitive information from the printer’s embedded web server
+			--device passwords, usernames, email addresses
+PRET
+	https://github.com/RUB-NDS/PRET
+	Printer Exploitation Toolkit
+	--connect to the printer via network or USB exploit printer language implentation

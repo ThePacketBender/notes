@@ -1,0 +1,31 @@
+VOIP/messaging applications
+
+
+telegram
+https://tlgrm.eu/channels
+	--search telegram channels/groups
+https://search.buzz.im/
+	--search open telegram messages
+https://lyzem.com/
+	--various telegram search vectors
+https://tgstat.ru/en/search
+	--telegram analytics
+https://cse.google.com/cse?q=+&cx=006368593537057042503:efxu7xprihg#gsc.tab=0&gsc.q=%20&gsc.page=1
+	--telegogo telegram search google cse
+
+snapchat
+https://somesnapcode.com/
+https://www.snapdex.com/
+	(geo-ip)
+https://map.snapchat.com
+https://sovip.io
+
+TikTok
+https://tiktokapi.ga/
+https://www.osintcombine.com/tiktok-quick-search
+https://en.savefrom.net/download-from-tiktok
+https://airmore.com/watch-tik-tok-pc.html
+
+skype
+google dork
+	site:broadcast.skype.com organization

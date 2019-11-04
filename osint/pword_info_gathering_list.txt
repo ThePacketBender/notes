@@ -1,0 +1,24 @@
+Password Profiling
+
+Targeted password cracking:
+	Information Gathering:
+Name First,Middle,Last
+	--yes, targets must have such awful memory or disregard that they just use their own name as user &/or pass
+Spouse/SO name
+	-exes if testing accounts no longer in use
+		--or generally?
+pet'(s) name(s)
+DoB
+Year of Birth
+Anniversary date(s)
+Spouse/SO Year/Date of Birth
+Kids' names
+Kids DoB/Year
+	--esp. first born (year)
+Favorite Sports Teams
+Birth location/Locations lived in
+Addresses
+Aliases
+Schools Attended
+slang used interests-based cultures target identifies/assoiciates with (urban dictionary and vice are fruitful)
+-Check for additional Proper Nouns or anything else arbitrary used in social postings or publications

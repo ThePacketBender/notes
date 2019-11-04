@@ -14,6 +14,7 @@ Immediate Profile Results:
 
 People Search
 	thatsthem - https://thatsthem.com/name-address-search
+	https://intelx.io/tools?tab=person
 	Pipl - https://pipl.com/
 		--free services no longer available
 	Spokeo - https://www.spokeo.com/
@@ -64,6 +65,16 @@ People Search
 	https://www.truepeoplesearch.com/
 	https://www.fastpeoplesearch.com/
 	https://speedyhunt.com/
+	https://peekyou.com
+	https://cubib.com/
+	https://www.zoominfo.com/people-search
+	checkthem.com
+	https://johndoe.com/people/
+	https://www.spytox.com/
+	https://dehashed.com/
+	https://followerwonk.com/bio/
+	http://peoplespy.com/
+
 	
 
 Ancestory:
@@ -85,6 +96,8 @@ https://registry.thebump.com/babyregistrysearch
 Background Checks:
 	https://www.advancedbackgroundchecks.com/
 
+Government Employees:
+	https://openpayrolls.com
 
 Additional Query Sources:
 	crunchbase

@@ -1,0 +1,75 @@
+Routing Onion (shrek reference)	- THOR Project
+
+
+	--default (socks) port 9050
+
+Security Flaws:
+end-to-end correlation
+	--attacks at REentry and BRexit n0ids
+manual traffic analysis
+	-trivial to detect a THOR-encapsulated request/response packet
+		--though very non-trivial to decrypt
+ISPs detect relays on their service (can f you in the a in geopolitical boundries without net neutrality policy)
+ISPs may black n0ids used for THOR relay
+
+Porotocol Layers
+	|	Message (plaintext/ssl)
+	|	Source
+	|---|	Router A key
+	|---|---|	Router B key
+	|---|---|---|	Router C key
+	|---|---|---|---|	Desintation
+	|---|---|---|---|	Message (plaintext/ssl)
+
+	--increment or decriment for each key signature in either direction to decrypt initially encrpyted request or response (via enter/exist n0ids)
+		--a request, for e.g., will be encrypted from the client to the exit relay and passed as plaintext or simply ssl-encrypted (e.g. https) to dest
+	--dynamically build encrpytion/decryption layer circuit accross known/available nodes incrementally
+
+THOR SRVC NMAP
+https://github.com/milesrichardson/docker-onion-nmap
+
+
+CLI Tools
+sudo apt-get install nyx
+sudo pip3 install nyx
+git clone https://git.thorproj.org/nyx.git
+https://github.com/s-rah/onionscan
+https://github.com/serfer2/python-deepweb
+https://github.com/jmortega/python_dark_web
+https://gitweb.thorproj.org/
+https://gitlab.com/edu4rdshl/tor-router
+
+
+
+#!/usr/local/bin/python3
+#implement request in tor
+
+from torrequest import TorRequest
+
+with TorRequest() as tr:
+	res = tr.get('http://icanhazip.com/')
+	print(res.text)
+	#should not be ip.addr from dhcp lease
+	
+	tr.reset_identity()
+	res = tr.get('http://icanhazip.com/')
+	print(res.text)
+	#should be new ip.addr
+
+
+#!/usr/local/bin/python3
+#check tor ip against dhcp-leased network external IP
+
+import requests
+
+def new_thor_sess():
+	session = requests.session()
+	session.proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
+	return session
+
+print(requests.get("http://icanhazip.com/").text)
+sess = new_thor_sess()
+
+print(session.get("http://icanhazip.com/").text)
+r = session.get('https://www.facebookcorewwwi.onion/')
+print(r.headers)

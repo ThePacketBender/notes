@@ -26,15 +26,41 @@ https://api.hunter.io/v2/email-finder?domain=target.dom&first_name=First&last_na
 	--email finder
 https://api.hunter.io/v2/email-verifier?email=user@target.dom&api_key=
 	--email verification
+https://whitepages.com/
 
 emailrep.io
 curl https://emailrep.io/user@target.dom
+spycloud.com
+https://portal.spycloud.com/endpoint/enriched-stats/user@target.dom
+linkedin
+https://www.linkedin.com/sales/gmail/profile/viewByEmail/user@target.dom
+https://viewdns.info/reversewhois/
 
 https://myspace.com/search/people?q=user@target.dom
 https://api.github.com/search/users?q=user@target.dom+in:email
 https://darksearch.io/api/search?query="user@target.dom"
 https://haveibeenpwned.com/api/v2/pasteaccount/user@target.dom
 curl https://digibody.avast.com/v1/web/leaks -d '{"email":user@target.dom}'
+
+
+SPF (spoofing [bypass spam])
+https://www.kitterman.com/spf/validate.html
+
+DKIM
+https://mxtoolbox.com/dkim.aspx
+
+
+By Domain
+	Google Dorks
+site:target.dom intext:@target.dom
+intext:"@target.dom" filetype:pdf
+https://hunter.io/
+https://mxtoolbox.com/
+
+
+From Username:
+https://github.com/sherlock-project/sherlock
+https://netbootcamp.org/pastesearch.html
 
 
 Tools:
@@ -69,7 +95,8 @@ h8mail -t target@target.dom
 	-query for a single target
 h8mail -t targets.txt -bc ../BreachCompilation/ -sk
 	-search breachcollection locally
-
+HaveIBeenPwned
+https://haveibeenpwned.com/
 buster	
 	https://github.com/sham00n/buster
 buster -e user@mail.com
@@ -77,3 +104,6 @@ buster -u username
 buster -f first -m middle -l last
 buster -f first -l last -c target.dom
 buster -f first -l last -b 07**1970
+Spiderfoot
+	--documentation: https://www.spiderfoot.net/documentation/
+python osint-spy.py --email gulible@target.dom

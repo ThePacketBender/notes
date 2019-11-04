@@ -19,6 +19,7 @@ https://www.infobyip.com/
 https://www.iptrackeronline.com/
 	Reverse DNS
 curl https://api.hackertarget.com/reversedns/?q=111.11.1.11
+https://viewdns.info/
 	Cell Tower Addressing and Geolocation
 https://opencellid.org/
 	IP block for ISP
@@ -61,8 +62,9 @@ https://github.com/SageHack/cloud-buster
 	BGP
 https://bgp.he.net/
 https://www.bgp4.as/tools
-	ASN
+	ASN (Autonomous System Number)
 https://asn.cymru.com/
+https://www.peeringdb.com
 
 
 	Combined tools

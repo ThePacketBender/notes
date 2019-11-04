@@ -1,0 +1,5 @@
+Username GET-formatted
+
+https://twitter.com/LOSERNAME
+https://www.reddit.com/user/LOSERNAME
+https://web.archive.org/web/*/https://www.reddit.com/user/LOSERNAME

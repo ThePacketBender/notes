@@ -1,0 +1,53 @@
+Media
+
+
+Images:
+	Searching:
+Reverse Image Search (all include Forward Search):
+https://images.google.com/
+https://tineye.com/
+https://www.bing.com/images/
+https://www.yandex.com/images/
+http://images.baidu.com/
+
+Image Search (forward-only):
+http://www.picsearch.com/
+
+
+	Image Metadata:
+exif data:
+exiftool file.jpg
+
+Edit Detection:
+http://www.errorlevelanalysis.com/
+
+Reverse Metadata Search:
+https://www.stolencamerafinder.com/
+
+
+Forensic Analysis:
+https://fotoforensics.com/
+https://www.newocr.com/
+
+Flickr:
+https://www.flickr.com/map
+http://exif.regex.info/exif.cgi
+
+
+
+
+Video:
+Downloading(embedded):
+https://www.downloadhelper.net/
+https://github.com/ytdl-org/youtube-dl
+https://addons.mozilla.org/en-US/firefox/addon/video-downloader-profession/
+
+Archival Video Request:
+https://archiving.witness.org/archive-guide/acquire/acquiring-raw-video-and-metadata/
+
+
+
+
+PDF Search:
+http://www.findpdfdoc.com/
+https://www.base-search.net/

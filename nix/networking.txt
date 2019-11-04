@@ -18,6 +18,11 @@ route
 	-show routing table
 nmcli device status
 nmcli connection show
+ss
+	--socket statistics
+ss -ln
+	-listening, numeric
+
 
 Assigns IP address to interface
 ip a add {ip_addr/mask} dev {interface}

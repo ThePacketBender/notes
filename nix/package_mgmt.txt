@@ -37,6 +37,13 @@ sudo add-apt-repository ppa:foo/bar
 
 
 
+snap
+apt-get install snapd snapclient ubuntu-core-launcher snap snap-confine
+/etc/init.d/snapd start
+snap install --classic heroku
+snap info heroku
+
+
 Troubleshooting:
 	Ignore dependency Warnings
 apt-get download package

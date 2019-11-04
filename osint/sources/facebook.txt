@@ -1,6 +1,12 @@
 Facebook Search
 
 
+Shortened URLs
+facebook.com
+fb.me
+on.fb.me
+
+
 	--graph search/graphql api recently limited, existing tools and searches no longer readily available
 	Read the API documentation and figure out how to make queries until new tools become avilable.
 	https://developers.facebook.com/docs/graph-api/
@@ -78,7 +84,9 @@ Search Target Profile:
 (Relatives)
 (Friends' Likes)
 
+facebook unique identifier
 https://findmyfbid.com/
+https://lookup-id.com/
 
 Places	/search/UserID/places
 Places visited	/search/UserID/places-visited
@@ -110,6 +118,17 @@ Employers	/search/UserID/employers
 Co-workers	/search/UserID/employees
 Page likers	/likers
 
+
+graph search interfaces:
+http://socmint.tools/graph.htm
+https://peoplefindthor.dk/
+https://pitoolbox.com.au/facebook-tool/
+
+
+
+Media:
+https://www.facebook.com/watch
+https://www.fbdown.net/index.php
 
 Links:
 https://findmyfbid.com/

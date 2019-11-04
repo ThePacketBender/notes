@@ -31,6 +31,8 @@ unattend.txt
 unattend.xml
 \Windows\Panther\Unattend\Unattended.xml
 \Windows\Panther\Unattended.xml
+\Windows\Panther\unattended.xml
+sysprep.xml
 sysprep.inf
 	--(ALL)Used in the automated deployment of windows images and can contain user accounts. No known default location.
 

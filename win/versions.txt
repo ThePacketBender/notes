@@ -9,3 +9,15 @@ WINDOWS NT
 6.2 8/Server 2012
 6.3 8.1/Server 2012R2
 10.0 10/Server 2016
+
+	Windows 10 Versions
+Release Date	Version		OS 				Build	Codename			System Support Version
+Oct 2019		1909 (October 2019 Update)	18363	19H2				Windows 10 version 1909 (October 2019)
+May 2019		1903 (May 2019 Update)		18362	19H1				Windows 10 version 1903 (May 2019)
+October 2018	1809 (October 2018 Update)	17763	Redstone 5 (RS5)	Windows 10 version 1809 (October 2018)
+April 2018		1803 (April 2018 Update)	17134	Redstone 4 (RS4)	Windows 10 version 1803 (April 2018)
+October 2017	1709 (Fall Creators Update)	16299	Redstone 3 (RS3)	Windows 10 Fall Creators Update version 1709 (October 2017)
+April 2017		1703 (Creators Update)		15063	Redstone 2 (RS2)	Windows 10 version 1703
+August 2016		1607 (Anniversary Update)	14393	Redstone 1 (RS1)	Windows 10 Update July 2016 / Version 1607 "Anniversary Update"
+November 2015	1511 (November Update)		10586	Threshold 2 (TH2)	Windows 10 Update November 2015 / Version 1511
+July 2015		1507						10240	Threshold 1 (TH1)	Windows 10 Upgrade July 2015 / Version 1507

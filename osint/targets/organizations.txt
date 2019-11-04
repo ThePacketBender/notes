@@ -1,0 +1,78 @@
+Organization/Forest/Domain Owner Profiling
+
+Shared VHost enumeration
+	"IP Neighbors"
+
+
+DNS Records & whois/reverse whois & dns lookup
+	--see dns osint notes files
+	-to enumerate organization search fields
+		whois:
+			unique information:
+			Registrant Organization
+			Admin Organization
+			Tech Organization
+			potentially correlated information:
+			Registrar
+			Create Date
+			Expires Date
+		DNS:
+			SOA records email
+			CNAME records (forwarding)
+			A/AAAA records
+				--records pointing to same IP Address(es)
+			NS Records
+				--check for organizational nameserver registration (for Domain/Forest)
+			TXT Records
+				--manually check txt records for org-relevant information
+				--correlate unique shared records
+				--SPF records
+					--check for included mx domains other than shared Apex Domain
+	--Historcal data, e.g. dnsdumpster/security trails/&c, often contains temporal metadata; correlating first seen dates or (better) first-last seen/duration dates (especially common for organizations who deploy PaaS/IaaS-hosted applications/infrastructure) between record types or linked to other attributes can indicate co-deployment or organization-wide roleout schedules; though this can be a false positive for very high level providers (though such providers will be visible in record data)
+https://securitytrails.com/
+https://hackertarget.com/
+https://dnsdumpster.com/
+
+
+Shodan
+
+
+Reverse Analytics (Google) Search
+https://hackertarget.com/reverse-analytics-search/
+https://api.hackertarget.com/analyticslookup/?q=UA-<whatever>
+
+
+CORS Headers
+
+
+PGP Keys
+
+
+Web crawl dataset anyalsis
+https://commoncrawl.org/the-data/get-started/
+
+
+Page Link Extraction
+lynx -listonly -dump sub.target.dom
+https://api.hackertarget.com/pagelinks/?q=target.dom
+
+
+Corporate Intel
+http://bportal.com/
+https://brownbook.net
+https://corporationwiki.com
+https://opencorporates.com/
+https://www.sec.gov/edgar/searchedgar/webusers.htm
+
+
+Crunchbase
+
+
+Campaign Donors
+https://www.opensecrets.org/
+
+
+Slack
+google dork:
+	company.slack.com
+https://securitytrails.com/list/apex_domain/slack.com

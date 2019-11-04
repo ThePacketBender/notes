@@ -40,6 +40,7 @@ padfly.com
 paste.bradleygill.com
 paste.debian.net
 paste.edvx.net
+paste.ee
 paste.fedoraproject.org
 paste.frubar.net
 paste.is

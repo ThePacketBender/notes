@@ -1,0 +1,15 @@
+Archival webpages
+
+archive access webpages
+https://archive.org/
+https://archive-it.org/
+
+
+
+archive request endpoints
+https://web.archive.org/web/*/https:/FQDN/ENDPOINT/*
+
+
+
+Tools:
+https://github.com/motherboardgithub/massarchive

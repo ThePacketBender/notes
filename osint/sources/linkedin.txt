@@ -13,3 +13,14 @@ curl {<uri with populated parameters, take from burpsuite>} | awk '{gsub("firstN
 echo finished  $i sleeping 
 sleep 5
 done
+
+#Search Endpoints:
+https://linkedin.com/people/search
+https://www.linkedin.com/organization-guest/company/
+https://www.linkedin.com/jobs
+
+# check for profile by email (google mail extension)
+https://www.linkedin.com/sales/gmail/profile/viewByEmail/test@test.com
+
+https://hunter.io/search/target.dom
+	--search emails by domain

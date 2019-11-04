@@ -44,6 +44,13 @@ $1
 $(shift)
 
 
+STDIN
+While iteration over file by line
+while read p; do
+  echo "$p"
+done <file.ext
+
+
 Test existence
 if [[ ! -d "$this" ]]; then mkdir ${this} ; fi
 	--test for directory  (does not) exist

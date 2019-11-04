@@ -1,0 +1,155 @@
+GeoIP
+
+
+geocoordinate <--> geopolitical territory name conversion (e.g. cities, states/providences, country)
+	geonames service
+http://www.geonames.org/enablefreewebservice
+	-create account and login (remember login name)
+http://www.geonames.org/enablefreewebservice
+	-enable web service for account
+http://geonames.r-forge.r-project.org
+http://www.geonames.org/export/client-libraries.html
+http://www.geonames.org/export/
+http://www.geonames.org/export/web-services.html
+	In R:
+install.packages("geonames")
+library("geonames)
+options(geonamesUsername="username")
+GNcountryInfo(country="US")
+#country info (for US)
+usadm1=GNchildren(geonameId=6252001)
+usadm1$name
+# OR
+GNchildren(geonameId=6252001)$name
+#return administrative territories by name for country (e.g. us states)
+GNtimezone(lat=49.384358,lng=-66.949607)
+#get timezone for geocoordinates
+GNsearch(name=x, country="AF")
+#^^^^^^^^^^^^^^^^^^^^^this is what you came here for^^^^^^^^^^^^^^^ (cont...v)
+#search toponomy names in country (inc cities, town, villages, populated places, (seat of) administrative divisions, second-order administrative divisions, third-order administrative divisions, airports, parks, lakes, islands, &c), each toponomy type given a unique fcode 
+
+
+
+maps
+maps.google.com 
+map.baidu.com 
+https://bing.com/maps
+map.qq.com
+	--tencent
+yandex.com/maps
+inteltechniques.com/osint/maps.html
+data.mashedworld.com/dualmaps/map.htm
+	--Combines Google’s road maps, aerial view, and street view in one embeddable tool.
+github.com/musafir-py/find2places
+	--querying Google Maps API for two specific places in precise distance from each other within given radius
+		--useful for geolocating photos and videos
+industryabout.com/country-territories-3 
+	--industrial maps
+mapchecking.com 
+	--maps population density
+mapotic.com
+	--community-curated maps
+oldmapsonline.org 
+qgis.org
+https://overpass-turbo.eu/
+wikimapia.org
+http://www.animaps.com
+
+
+GOEIP-ingesting Applications/APIs
+https://citymapper.com/
+https://citymapper.3scale.net/
+
+
+location name searches/datasets
+geonames.org
+resourcewatch.org
+echosec.net 
+geonames.org 
+warwire.net
+youtube.github.io/geo-search-tool/search.html
+
+
+geotagged images
+images.google.com
+descarteslabs.com
+geograph.org
+
+
+Social Networks
+Twitter
+	twitter.com
+		geocode:[coordinates],[radius-km]
+		geocode:36.222285,43.998233,2km
+	twitter.com/search-advanced
+	http://qtrtweets.com/twitter/
+	botcheck.me
+	botometer.iuni.iu.edu
+	onemilliontweetmap.com
+	tweetreach.com
+	twitteraudit.com
+	github.com/sferik/t
+Spacebook
+	graph.tips/beta 
+	whopostedwhat.com
+	osintcombine.com/facebook-intersect-search-tool
+	facebook.com/livemap
+	fbdown.net
+	peoplefindthor.dk 
+	searchisback.com
+	netbootcamp.org/facebook.html
+	stalkscan.com
+	fbdown.net
+	skopenow.com
+Instantgrams
+	gramfly.com
+	websta.me
+	storiesig.com
+	isdb.pw/save-instagram-stories.html
+LinkedIn
+	sociliab.com
+	http://addons.mozilla.org/firefox/addon/linkedin-overlay-remover/
+Reddit
+	intoli.com/blog/f5bot/
+SnapChat
+	map.snapchat.com
+	https://sovip.io
+YouToob
+	amnestyusa.org/sites/default/custom-scripts/citizenevidence
+	youtube.github.io/geo-search-tool/search.html
+	mattw.io/youtube-geofind/location
+	http://rg3.github.io/youtube-dl/
+	
+
+Satellite
+earthengine.google.com/
+https://www.google.com/earth/download/gep/agree.html
+	--google earth pro (download)
+scihub.copernicus.eu
+discover.digitalglobe.com 
+earthexplorer.usgs.gov
+eos.com/landviewer
+earth.esa.int/web/guest/eoli
+step.esa.int/main/toolboxes/snap
+search.descarteslabs.com/?layer=naip_v2_rgb_2014-2015#lat=39.2322531&lng=-100.8544921&skipTut=true&zoom=5
+wego.here.com
+radiant.earth
+satellites.pro
+terraserver.com
+
+
+Street Views
+mapillary.com
+openstreetmap.org
+
+
+Live
+openstreetcam.org
+
+
+Coordinate Conversion
+synnatschke.de/geo-tools/coordinate-converter.php
+
+
+Datasets
+https://download.geonames.org/export/dump/

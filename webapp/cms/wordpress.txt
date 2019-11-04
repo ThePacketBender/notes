@@ -11,6 +11,7 @@ wp-comments-post.php
 wp-config.php
 wp-config-sample.php
 wp-cron.php
+wp-json
 wp-links-opml.php
 wp-load.php
 wp-login.php

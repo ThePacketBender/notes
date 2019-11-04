@@ -47,8 +47,11 @@ bcrypt -r plaintext.bfe
 
 
 Grepping Archives
+.zip, .z
+zipgrep something file.zip
 .gz, .tar.gz
 zgrep foor file.gz
+zgrep -eir '(this|that)' file.gz
 .tar.gz
 tar xf file.tar.gz --to-command "awk '/foor/ { print ENVIRON[\"TAR_FILENAME"]; exit}'"
 	--prints names of archived files containing pattern

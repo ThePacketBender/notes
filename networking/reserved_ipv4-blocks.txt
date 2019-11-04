@@ -1,0 +1,15 @@
+RESERVED IP ADDRESSING BLOCKS
+
+
+IPv4
+Block			Address Range				Scope			Description
+0.0.0.0/8		0.0.0.0–0.255.255.255 		Software		Current network (as source address)
+10.0.0.0/8 		10.0.0.0–10.255.255.255		Private network	Local communications (private network)
+100.64.0.0/10	100.64.0.0–100.127.255.255	Private network	Shared address space (ISP <--> Subscriber) (Carrier-grade NAT)
+127.0.0.0/8		127.0.0.0–127.255.255.255	Localhost		Loopback address (lo addapter)
+169.254.0.0/16	169.254.0.0–169.254.255.255	Subnet			Local-link address (Link-layer connections without DHCP lease)
+172.16.0.0/12	172.16.0.0–172.31.255.255	Private network	Local communications (private network)
+192.0.0.0/24	192.0.0.0–192.0.0.255		Private network	IETF Protocol Assignments
+192.0.0.0/24	192.0.0.0–192.0.0.255		Documentation
+192.88.99.0/24	192.88.99.0–192.88.99.255	Reserved
+192.168.0.0/16	192.168.0.0–192.168.255.255	Private network	Local communications (private network)

@@ -1,0 +1,26 @@
+LaTeX / TexLive
+
+
+Compilation
+pdflatex live.tex
+	--create a pdf-formatted document from LaTex markup in a directory contianing both the .tex markup file and the .cls markup class definitions file
+
+
+QREF
+	Document Style
+\documentstyle [options] {style}
+		article: 11pt, 12pt, twoside, twocolumn, draft, fleqn, leqno, acm
+		report: 11pt, 12pt, twoside, twocolumn, draft, fleqn, leqno, acm
+		letter: 11pt, 12pt, fleqn, leqno, acm
+		book: 11pt, 12pt, twoside,twocolumn, draft, fleqn, leqno 
+	Pagination
+\\		new paragraph
+\\*		new line, but not new paragraph
+\-		hyphenate word
+\linebreak
+\nolinebreak
+\newline
+\newpage
+\pagebreak
+\nopagebreak
+

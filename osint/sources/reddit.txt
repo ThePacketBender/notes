@@ -1,0 +1,15 @@
+Reddit
+
+
+Reddit search endpoints:
+http://reddit.com/domain/site.com
+	--links from site
+https://www.reddit.com/user/username
+	--reddit user
+	
+Search/Anayltics Sites
+https://pushshift.io/api-parameters/
+
+
+Tools:
+https://github.com/JosephLai241/Universal-Reddit-Scraper
