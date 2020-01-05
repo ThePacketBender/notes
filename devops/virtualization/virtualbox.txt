@@ -1,6 +1,13 @@
 VirtualBox
 
 
+--**To use vbox cli commands add "C:\Program Files\Oracle\VirtualBox\" to the Path environment variable (Windows)
+
+
+VBoxManage list
+	--return list of items to list
+VBoxManage list vms
+VBoxManage list hdds
 
 	
 	Mounting Host shares within VM
@@ -13,7 +20,7 @@ VBoxHeadless -s virtualboy
 	--start vbox vm via cli
 powershell start-process 'C:\Program Files\Oracle\VirtualBox\vboxheadless' '-s virtualboy' -WindowStyle Hidden
 	--start vbox vm in headless/hidden mode via cli
-VBoxManage controlvm "virtualboy" powerof
+VBoxManage controlvm "virtualboy" poweroff
 	--kill vm instance
 
 	Snapshots
@@ -22,4 +29,6 @@ VBoxManage snapshot virtualboy take clean
 
 
 	Virtual Disk Management
-VBoxManage  modifyhd  nnplus2.vdi -compact
+VBoxManage modifyhd nnplus2.vdi -compact
+VBoxmanage modifyhd somethingwhatever.vdi --resize 1000000
+>VBoxManage showmediuminfo uu-i-d

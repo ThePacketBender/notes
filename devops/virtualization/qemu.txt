@@ -1,0 +1,4 @@
+Qemu
+
+
+--**To use qemu cli commands add "C:\Program Files\qemu\" to the Path environment variable (Windows)

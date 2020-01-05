@@ -87,4 +87,7 @@ ettercap -TqM arp:remote -P sslstrip // //
 cain.exe
 
 
-
+*****
+WPA/2 Rainbow Tables:
+	https://ia800209.us.archive.org/15/items/wpa-tables-renderman/README.txt
+	

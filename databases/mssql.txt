@@ -78,3 +78,9 @@ systypes
 sysfulltextcatalogs
 sysusers
 sysindexes
+
+builtin stored procedures
+xp_cmdshell
+xp_dirtree
+xp_fileexist
+xp_getfiledetails

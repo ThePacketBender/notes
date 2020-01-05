@@ -25,6 +25,12 @@ https://github.com/nccgroup/vlan-hopping---frogger
 
 modprobe
 modprobe 8021q
+	--adds or removes a module from kernel
+depmod
+insmod
+modinfo
+lsmod
+/etc/init.d/modprobe.d
 
 voiphopper
 voiphopper -c 0 -i eth0

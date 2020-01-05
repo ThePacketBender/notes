@@ -61,6 +61,7 @@ enum4linux -u guest -p "" -a 127.0.0.1
 python3 nullinux.py -shares -U 'Domain\User' -P 'Password1' 10.0.0.1,10.0.0.5
 python3 nullinux.py -users -quick DC1.Domain.net
 python3 nullinux.py -all -r 500-600 192.168.0.1
+python3 nullinux.py 192.168.0.1 -a -r 500-800 -t 15
 
 Other smb enumeration:
 smbpasswd

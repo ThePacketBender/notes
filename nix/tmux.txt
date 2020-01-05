@@ -210,3 +210,19 @@ set -g message-fg colour232
 set -g message-bg colour166
 
 # }
+
+##Set modes for Tmux
+# Prefix Modes {
+# Unset prefix
+set-option -g prefix None
+# ctrl+’ ‘: enter _prefix mode_
+bind-key -n C-Space set-option key-table prefix ';' display-message 'Entering prefix mode'
+# Esc: exit prefix mode
+bind-key Escape set-option key-table root ';' display-message 'Exiting mode'
+# }
+# Display Mode {
+set-option -g status-left '[#{session_name}] [#{client_key_table}] '
+set-option -g status-left-length 0
+# }
+
+

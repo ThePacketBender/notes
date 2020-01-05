@@ -193,9 +193,15 @@ xrandr --list-monitors
 xrandr --list-active-monitors
 xrandr --list-providers
 Save X Windows system Display settings to restore on boot (user):
-vi ~/.xprofile
+vi ~/.xprofile 	 
 xrandr --output VGA-1 --mode 3840x2160 --primary
 xrandr --output DVI-1 --mode 1920x1080 --left-of VGA-1
+touch $HOME/.xprofile
+<< echo xrandr command here >>
+chmod +x $HOME/.xprofile
+echo "~/.xprofile" >> ~/.profile
+ELSE
+sudo nano /etc/X11/xorg.conf
 
 
 filesystem management

@@ -104,7 +104,12 @@ gps | ?{$_.name -match "<process/service name>"} | ?{$_.id -match "<process/serv
 	-query drives on localhost
 PS C:\> Get-ChildItem "C:\Users\" - recurse -include *passwords*.txt 
 	-search recursively for filenames matching a pattern
-	
+Get-ChildItem -path env: | get-member
+	-return all member attribute names (ONLY NAMES, it's not wrong -stop bothering me, you grown-ass skid-lifers, I'm not your FUCKING technical support on DM, google the error message or stackoverflow like a grown-ass (wo)man- YOU [MAY BE:->read: (ARE)]([DEAD]WRONG)!) set in working runtime environment (the in-memory [via CLR] runtime executing powershell process)
+	--any questions? good. Now, you all need to read the non-directly security-relevant notes documents on what you're working on if you want to change anything more than params; powershell notes docs explain how to and to, just to (often PS does this FOR YOU, just look, be aware of your terminal's stdout, else gtfo, --you've got to strike when the moment is right without thinking and after a while you can work on points for style--, check the object type (hint, the answer for this one is TypeName: System.Collections.DictionaryEntry)
+Get-Member -inputobject (get-childitem env:)
+	-return values for each ChildItem name values, expect return for all members the object input(-->)DictionaryEntry-type Collection returned as child-items of members in path env:
+
 CHECK STATUS OF POWERSHELL LOGGING
 reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
 reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\Transcription
@@ -136,6 +141,9 @@ Test-NetConnection -Port 80 -ComputerName 192.168.1.111
 Test-NetConnection 10.10.11.111 -Port 445 -quiet
        -Port scan outputs connection attempt as BOOL value, good for building conditional statements around in scripts
 
+Syntactical convetntions for object and attribute inheritance/inheriting command functions in powershell (via CLR)
+	the primary and essential difference between object and attribute inheritance in most sensible programming language design patterns (*caugh* ANSI C99 *caugh/*) is that while both items inherit their privileges and access for the partent function defining them (unless global/extern/&c) is the existence of self-modifiable (assuming permissions inherited or otherwise granted by some context other than the items direct parent as initally invoked/declared
+		--powershell executes its runtime in an assembly/machine code context via reference to the CLR (thus must import nevessary & relevant dll libraries), just as C# (on MS Windows) and MS Windows-flavor C++ extenionible libraries, but rather than execute via JIT compilation or the, frankly, rather bloated (esp. in terms of physical RAM/VMEM allocation) MS C++ heavy dll-import dependency compilation for most .NET runtime-contextualized applications.
 	
 LINKS, COME GET YOUR LINKS! READ ALL ABOUT IT!
 POWERSHELL EMPIRE (remote exploitation framework)

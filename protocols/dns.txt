@@ -445,3 +445,25 @@ https://public-dns.info/nameservers.csv
 https://public-dns.info/nameservers-all.csv
 https://public-dns.info/nameservers-all.txt
 https://github.com/pentest-io/commonspeak/archive/master.zip
+
+Major Primary DNS Server Reputations
+1.0.0.1 Cloudflare NS2 +
+1.1.1.1 Cloudflare NS1 +
+8.8.4.4 Google NS2   +
+8.8.8.8 Google NS1    +
+23.253.163.53 AlternateDNS NS1 ++
+75.75.75.75 Xfiniti NS1 (Comcast) --
+75.75.76.76 Xfiniti NS2 (Comcast) --
+77.88.8.2 Yandex NS1 -
+77.88.8.88 Yandex NS2 -
+178.21.23.150 PeerDNS NS1 ++
+198.101.242.72 AlternateDNS NS2 ++
+205.204.88.60 PeerDNS NS2 ++
+208.67.222.222 OpenDNS(Cisco) NS1 ++
+208.67.220.220 OpenDNS(Cisco) NS2 ++
+2001:4860:4860::8844 Google NS2 +
+2001:4860:4860::8888 Google NS1 +
+2606:4700:4700::1111 Cloudflare NS1 +
+2606:4700:4700::1001 Cloudflare NS2 +
+2620:0:ccc::2 OpenDNS(Cisco) NS1 ++
+2620:0:ccd::2 OpenDNS(Cisco) NS2 ++

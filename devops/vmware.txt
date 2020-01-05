@@ -1,4 +1,0 @@
-VMWARE
-
-ovftool RW2\ Dev.ovf what.vmx --skipManifestCheck --skipManifestGeneration
-	--convert ovf virtual disk to vmx format

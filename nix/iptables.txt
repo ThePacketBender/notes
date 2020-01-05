@@ -291,3 +291,8 @@ for _sub in "${_subnets[@]}" ; do
   iptables -t mangle -A PREROUTING -s "$_sub" -j DROP
 done
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
+
+
+IPTABLES PORT FORWARDING RULES
+iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j DNAT --to 192.168.1.2:8080
+iptables -A FORWARD -p tcp -d 192.168.1.2 --dport 8080 -j ACCEPT

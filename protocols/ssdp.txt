@@ -1,0 +1,41 @@
+SSDP (Simple Service Discovery Protocol)
+
+	-for advertisement and discovery of network services and presence information
+		--without assistance of server-based configuration mechanisms (DHCP, DNS) or static configuration of network host(s)
+	-intended for use in residential or SMB networks
+	-basis for UPnP
+		--incorporated into the UPnP protocol stack, and a description of the final implementation is included in UPnP standards documents
+		https://web.archive.org/web/20151107123618/http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v2.0.pdf
+	--proposed by Microsoft and Hewlett-Packard in 1999 to IETF (denied)
+
+
+Packet Anatomy
+UDP 1900
+	-(dst port)/destination port
+	REQUEST
+HTTP-TYPE Request
+	Header:
+M-SEARCH * HTTP/1.1
+	Method: M-SEARCH
+	URI: *
+	Version: HTTP/1.1
+Host: 239.255.255.250:1900\r\n
+	IP ADDR (target/dest): 239.255.255.250
+	IP/PORTNO Delimited: :
+	PORTNO (dest): 1900
+	Line seperater/delimited: carraige return, line feed(CRLF: \r\n)
+MAN: "ssdp:discover"\r\n
+
+MX: 1\r\n
+
+ST: urn:dial-multiscreen-org:service:dial:1\r\n
+
+USER-AGENT: Google Chrome/79.0.1345.12 Windows\r\n\r\n
+	-identifies requesting service/device/application
+\r\n
+	-repeated CR\linefeed, end packet
+
+	
+	
+Links:
+https://openconnectivity.org/

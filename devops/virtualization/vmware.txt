@@ -1,0 +1,10 @@
+VMWARE
+
+
+Add the following to Path environment variable to use vmware from cli (Windows):
+C:\Program Files (x86)\VMware\VMware Player
+C:\Program Files (x86)\VMware\VMware Player\x64
+C:\Program Files (x86)\VMware\VMware Player\OVFTool
+
+ovftool RW2\ Dev.ovf what.vmx --skipManifestCheck --skipManifestGeneration
+	--convert ovf virtual disk to vmx format

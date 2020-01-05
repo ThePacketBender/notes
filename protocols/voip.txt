@@ -156,3 +156,15 @@ IP Phone Boot Process
 	The phone retrieves its configuration from one of the TFTP servers specified in the DHCP option
 5. Registration
 	The phone registers with the call server(s) specified in its configuration
+	
+	
+	
+	
+	
+
+
+	Tools
+		Cisco-specific
+m33tfinder
+https://github.com/ElevenPaths/m33tfinder
+	--tests for cve https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20181107-meeting-server

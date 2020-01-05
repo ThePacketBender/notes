@@ -1,0 +1,43 @@
+NTLM Hashed Auth(/Challenge/
+
+
+Network Auth/Active Directory
+
+
+
+
+
+SMB
+	--network file sharing over SMB -importantly entirely dependent on MS network discovery protocol suite, modify your Windows Firewall configuration to block-
+
+
+HTTP
+	
+	emumeration:
+	HTTP NTLM null Auth Request
+		HTTP NTLM authentication request with null domain and user credentials (passed in the 'Authorization' header)
+			>application host service will respond with NTLMSSP message disclosing information including NetBIOS, DNS, and OS build version (encoded within 'WWW-Authenticate' Host Response HTTP Header)
+		IF:
+			WWW-AUTHENTICATE and NTLM response are included in first response to HTTP NTLM null Auth Request
+		THEN:
+			base64 decode response in WWW-AUTHENTICATE Header
+			get host info (possibly including NetBIOS, DNS Name and OS Build Versioning information)
+			64-bit (once decoded) timestamp included in WWW-AUTHENTICATE Header counts #100ns clicks since 1/1/1601 at current datetime\
+				1000000000 - 1216443000		//will always evaluate as an 11-digit number subtracted from smallest digit occupying a 10-decimal place integer (1000000000) ///at least for the rest of your lifetime, there, buddy
+			Target Host for HTTP NTLM-authenticating service will be returned following current datetime stamp
+			NetBIOS computer name, DNS Domain Name (simple) FQDN may follow as additional segment in AD-joined networks as tailing segment of decoded NTLM response 
+	Tools:
+	Nmap
+		nmap -p 80,443,8000,8080,8443,10080,10443 --script http-ntlm-info --script-args http-ntlm-info.root=/root/ <target>
+
+
+MS-SQL
+		--portno:1433 (default)
+	enumeration:
+	Establish TDS Stream connection to target Host running NTLM-authenticated MS-SQL service
+	MS-TDS NTLM authentication request with an invalid domain and null authentication credential pair and database name (of, to connect to if authorized, permitted) value, as well as a Domain value of "." to cause service to respond with NTLMSSP message disclosing information including NetBIOS, DNS, and OS build version
+		--sends MS-SQL Login Request packet, the same as with any standard MS-SQL connection/authentication, only populating the Target field (may be either as correct HostName, that is if DomainName were set to correct value for Name of target [if packet is routed over known network]) as AD-joined network to which target host is authenticated/may authenticate (pending domain configurations) identical to the unique value field in its FQDN and the Domain field with the invalid empty non-nullable value "."
+		--setting Domain to empty non-nullable value "." is necessary, the request will be rejected/dropped by MS-SQL service if a null value exists rather than a populatd parameter, other invalid domain domains may work on certain systems under certain, even most, conditions/confs 
+		Tools:
+		Nmap
+			nmap -p 1433 --script ms-sql-ntlm-info host.sub.target.dom

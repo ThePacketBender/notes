@@ -6,3 +6,36 @@ Instance Metadata
 http://169.254.169.254/metadata/instance?api-version=2017-04-02
 http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2017-04-02&format=text
 	--https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
+
+
+az Azure-CLI
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ stretch main" > /etc/apt/sources.list.d/azure-cli.list
+curl -L https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo apt-get update && sudo apt-get install azure-cli
+
+az login
+
+
+Azure AD
+	enumeration
+az ad user list --output=table --query='[].{Created:createdDateTime,UPN:userPrincipalName,Name:displayName,Title:jobTitle,Department:department,Email:mail,UserId:mailNickname,Phone:telephoneNumber,Mobile:mobile,Enabled:accountEnabled}'
+	-all users
+az ad user list --output=json --query='[].{Created:createdDateTime,UPN:userPrincipalName,Name:displayName,Title:jobTitle,Department:department,Email:mail,UserId:mailNickname,Phone:telephoneNumber,Mobile:mobile,Enabled:accountEnabled}' --upn='<upn>'
+	-specific user
+az ad group list --output=json --query='[].{Group:displayName,Description:description}'
+	-all groups
+az ad group member list --output=json --query='[].{Created:createdDateTime,UPN:userPrincipalName,Name:displayName,Title:jobTitle,Department:department,Email:mail,UserId:mailNickname,Phone:telephoneNumber,Mobile:mobile,Enabled:accountEnabled}' --group='<group name>'
+	-members of group
+az ad app list --output=table --query='[].{Name:displayName,URL:homepage}'
+	-account applications
+az ad app list --output=json --identifier-uri='<uri>'
+	-specific application
+az ad sp list --output=table --query='[].{Name:displayName,Enabled:accountEnabled,URL:homepage,Publisher:publisherName,MetadataURL:samlMetadataUrl}'
+	-all service principals (SPNs)
+az ad sp list --output=table --display-name='<display name>'
+	=specific service principal
+
+
+
+Appendix
+https://packages.microsoft.com/repos/

