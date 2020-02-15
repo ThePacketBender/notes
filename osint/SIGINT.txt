@@ -1,0 +1,16 @@
+SIGINT
+
+Signal Intelligence
+
+--consists of gathering samples, metadata and if compliant standards information about radio wave-form signal communication.
+Over what range of frequencies are a signal being transmitted?
+What if any patterns can be discerned by oscillation, frequency hopping and signal-to-noise ratio can be discerned sampled over variant space and time? What changes and constants are predictable with a fair degree of certainty? Types of modulation are an ideally point of reference after discerning the band of frequency.
+      --frequency-shift keying (FSK) modulation transmits across a range of frequencies on a limited band.
+      --amplitude-shift keying (ASK) modulation transmits over a consistent frequency rather hopping across a band of frequencies.
+             --ASK signals tend to be significantly more ephemeral, often appearing as “blips” on radar, going out of existence as rapidly as they came into it.
+What information about the transmission can be inferred? Is the transmission received on a regulated or commonly used band? Is the signal strength weak or strong? Is there consistent interference? Can direction or distance of origin be attributed by applying directional gain to the antenna and can signal strength be determined by changes in antenna gain along with direction?
+If the transmitting device is available at hand, or are manuals on the communication device, sender or receiver, otherwise available and discoverable given what can be know about series of transmitted signals?
+      --FCC IDs can often be found on proprietary transmitters, e.g. a remote, or by referring to the manual and are an ideal starting point when reverse engineering a signal.
+       https://fcc.io/
+
+In order to replay or interpret signals of any complexity, even unencrypted it is usually necessary to reverse engineer some series of single or multi-party transmissions, which may or may not depend on on each other for predicted or desired outcomes.

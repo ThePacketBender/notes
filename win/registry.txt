@@ -1,0 +1,26 @@
+Registry
+
+
+Sensitive Keys:
+HKEY_LOCAL_MACHINE\SAM
+HKEY_LOCAL_MACHINE\Security
+HKEY_LOCAL_MACHINE\Software
+HKEY_LOCAL_MACHINE\System
+HKEY_CURRENT_CONFIG
+HKEY_USERS\DEFAULT
+
+Pre-defined Registry Root Keys(Hives):
+HKEY_CURRENT_USER
+	HKCU
+HKEY_USERS
+	HKU
+HKEY_LOCAL_MACHINE
+	HKLM
+HKEY_CLASSES_ROOT
+	HKCR
+	--non-root key
+		HKLM\Software
+		HKCU\Software
+	HKEY_CURRENT_USER\Software\Classes	
+		--use instead for interactive user
+HKEY_CURRENT_CONFIG

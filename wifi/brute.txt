@@ -73,6 +73,9 @@ HASH_FILE=hackme.hccapx POT_FILE=hackme.pot HASH_TYPE=2500 ./naive-hashcat.sh
 hashcat64 -a 0 -m 400 -r rules/best64.rule hs_ATT1p0n3dU.hccapx \Users\hackerman\rockyou.txt
 hashcat64 -a 0 -m 400 -r rules/d3ad0ne.rule hs_ATT1p0n3dU.hccapx /home/hackerman/rockyou.txt
 
+Hashcat Modes:
+2500	WPA/WPA2
+2501	WPA/WPA2 PSK
 
 
 #WPA2 rainbow tables

@@ -1,0 +1,324 @@
+At.exe	
+Execute
+Binaries
+Atbroker.exe	
+Execute
+Binaries
+Bash.exe	
+Execute AWL bypass
+Binaries
+Bitsadmin.exe	
+Alternate data streams Download Copy Execute
+Binaries
+Certutil.exe	
+Download Alternate data streams Encode Decode
+Binaries
+Cmd.exe	
+Alternate data streams
+Binaries
+Cmdkey.exe	
+Credentials
+Binaries
+Cmstp.exe	
+Execute AWL bypass
+Binaries
+Control.exe	
+Alternate data streams
+Binaries
+Csc.exe	
+Compile
+Binaries
+Cscript.exe	
+Alternate data streams
+Binaries
+Dfsvc.exe	
+AWL bypass
+Binaries
+Diskshadow.exe	
+Dump Execute
+Binaries
+Dnscmd.exe	
+Execute
+Binaries
+Esentutl.exe	
+Copy Alternate data streams Download
+Binaries
+Eventvwr.exe	
+UAC bypass
+Binaries
+Expand.exe	
+Download Copy Alternate data streams
+Binaries
+Extexport.exe	
+Execute
+Binaries
+Extrac32.exe	
+Alternate data streams Download
+Binaries
+Findstr.exe	
+Alternate data streams Credentials Download
+Binaries
+Forfiles.exe	
+Execute Alternate data streams
+Binaries
+Ftp.exe	
+Execute
+Binaries
+Gpscript.exe	
+Execute
+Binaries
+Hh.exe	
+Download Execute
+Binaries
+Ie4uinit.exe	
+Execute
+Binaries
+Ieexec.exe	
+Download Execute
+Binaries
+Infdefaultinstall.exe	
+Execute
+Binaries
+Installutil.exe	
+AWL bypass Execute
+Binaries
+Jsc.exe	
+Compile
+Binaries
+Makecab.exe	
+Alternate data streams Download
+Binaries
+Mavinject.exe	
+Execute Alternate data streams
+Binaries
+Microsoft.Workflow.Compiler.exe	
+Execute AWL bypass
+Binaries
+Mmc.exe	
+Execute
+Binaries
+Msbuild.exe	
+AWL bypass Execute
+Binaries
+Msconfig.exe	
+Execute
+Binaries
+Msdt.exe	
+Execute AWL bypass
+Binaries
+Mshta.exe	
+Execute Alternate data streams
+Binaries
+Msiexec.exe	
+Execute
+Binaries
+Odbcconf.exe	
+Execute
+Binaries
+Pcalua.exe	
+Execute
+Binaries
+Pcwrun.exe	
+Execute
+Binaries
+Presentationhost.exe	
+Execute
+Binaries
+Print.exe	
+Alternate data streams Copy
+Binaries
+Reg.exe	
+Alternate data streams
+Binaries
+Regasm.exe	
+AWL bypass Execute
+Binaries
+Regedit.exe	
+Alternate data streams
+Binaries
+Register-cimprovider.exe	
+Execute
+Binaries
+Regsvcs.exe	
+Execute AWL bypass
+Binaries
+Regsvr32.exe	
+AWL bypass Execute
+Binaries
+Replace.exe	
+Copy Download
+Binaries
+Rpcping.exe	
+Credentials
+Binaries
+Rundll32.exe	
+Execute Alternate data streams
+Binaries
+Runonce.exe	
+Execute
+Binaries
+Runscripthelper.exe	
+Execute
+Binaries
+Sc.exe	
+Alternate data streams
+Binaries
+Schtasks.exe	
+Execute
+Binaries
+Scriptrunner.exe	
+Execute
+Binaries
+SyncAppvPublishingServer.exe	
+Execute
+Binaries
+Tttracer.exe	
+Execute
+Binaries
+Verclsid.exe	
+Execute
+Binaries
+Wab.exe	
+Execute
+Binaries
+Wmic.exe	
+Alternate data streams Execute
+Binaries
+Wscript.exe	
+Alternate data streams
+Binaries
+Wsreset.exe	
+UAC bypass
+Binaries
+Xwizard.exe	
+Execute
+Binaries
+Advpack.dll	
+AWL bypass Execute
+Libraries
+Comsvcs.dll	
+Dump
+Libraries
+Ieadvpack.dll	
+AWL bypass Execute
+Libraries
+Ieaframe.dll	
+Execute
+Libraries
+Mshtml.dll	
+Execute
+Libraries
+Pcwutl.dll	
+Execute
+Libraries
+Setupapi.dll	
+AWL bypass Execute
+Libraries
+Shdocvw.dll	
+Execute
+Libraries
+Shell32.dll	
+Execute
+Libraries
+Syssetup.dll	
+AWL bypass Execute
+Libraries
+Url.dll	
+Execute
+Libraries
+Zipfldr.dll	
+Execute
+Libraries
+Appvlp.exe	
+Execute
+OtherMSBinaries
+Bginfo.exe	
+Execute AWL bypass
+OtherMSBinaries
+Cdb.exe	
+Execute
+OtherMSBinaries
+csi.exe	
+Execute
+OtherMSBinaries
+Devtoolslauncher.exe	
+Execute
+OtherMSBinaries
+dnx.exe	
+Execute
+OtherMSBinaries
+Dxcap.exe	
+Execute
+OtherMSBinaries
+Excel.exe	
+Download
+OtherMSBinaries
+Mftrace.exe	
+Execute
+OtherMSBinaries
+Msdeploy.exe	
+Execute AWL bypass
+OtherMSBinaries
+msxsl.exe	
+Execute AWL bypass
+OtherMSBinaries
+Powerpnt.exe	
+Download
+OtherMSBinaries
+rcsi.exe	
+Execute AWL bypass
+OtherMSBinaries
+Sqldumper.exe	
+Dump
+OtherMSBinaries
+Sqlps.exe	
+Execute
+OtherMSBinaries
+SQLToolsPS.exe	
+Execute
+OtherMSBinaries
+Squirrel.exe	
+Download AWL bypass Execute
+OtherMSBinaries
+te.exe	
+Execute
+OtherMSBinaries
+Tracker.exe	
+Execute AWL bypass
+OtherMSBinaries
+Update.exe	
+Download AWL bypass Execute
+OtherMSBinaries
+vsjitdebugger.exe	
+Execute
+OtherMSBinaries
+Winword.exe	
+Download
+OtherMSBinaries
+Wsl.exe	
+Execute
+OtherMSBinaries
+CL_Mutexverifiers.ps1	
+Execute
+Scripts
+CL_Invocation.ps1	
+Execute
+Scripts
+Manage-bde.wsf	
+Execute
+Scripts
+Pubprn.vbs	
+Execute
+Scripts
+Slmgr.vbs	
+Execute
+Scripts
+Syncappvpublishingserver.vbs	
+Execute
+Scripts
+winrm.vbs	
+Execute AWL bypass
+Scripts
+Pester.bat	
+Execute
+Scripts

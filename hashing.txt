@@ -28,3 +28,12 @@ md5               rmd160            sha1              sha224
 sha256            sha3-224          sha3-256          sha3-384          
 sha3-512          sha384            sha512            sha512-224        
 sha512-256        shake128          shake256          sm3
+
+
+
+Hash-matching regex patterns:
+md5: egrep -oE '(^|[^a-fA-F0-9])[a-fA-F0-9]{32}([^a-fA-F0-9]|$)' - | egrep -o '[a-fA-F0-9]{32}'
+Unix md5: egrep -o '$1$w{8}S{22}'
+md5-apr1: egrep -o '$apr1$w{8}S{22}'
+sha512crypt: egrep -o '$6$w{8}S{86}'
+blowfish: grep -e "$2a\$\08\$(.){75}"

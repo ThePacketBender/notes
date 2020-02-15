@@ -57,7 +57,44 @@ SMB
 ?get=\\127.0.0.1\boot.ini	
 	-commonly resolves (ASP/PHP/JSP) UNC path to local filesystem root for smb/cifs
 	--e.g. C:\boot.ini
+
+Best practices:
+Know which encoding are likely to be interpreted by different languages in different environments.
+Always escape the directory delimiter, especially on windows, in HTTP GET/POST/PUT parameters slashes are likely to be satanized -esp. in Windows/dotnet- for functional purposes even without any consideration of security.
+       --iconv, the standard *nix/gnu enc/decoding utility is ideal for this purpose.
+
+It is occasionally preferable to pivot from an RFI and LFI, more often vice-versa. I wrote a webshell for specifically this pivot to test the many possible techniques available -some by default- to gain LFI in PHP when only an ephemeral RFI (does not touch the filesystem) is otherwise possible within the application context to attempt gaining remote command execution preferable to code execution or reflected client-side script inclusion.
+https://github.com/thepacketbender/we shells.git
+
+LFI->RFI usually involves creating a gadget on the target filesystem executed in memory to make an out-of-band request pointing to an attacker-hosted file and service that will be processed or served in code execution on the host.
+Ideally the application can be induced to request and store a file.
+      --most scripting language file upload functions move uploaded files through temporary storage -rare chance to race condition for it- and rename the file in arbitrary and long conventions at a storage location; often the resulting file name/location is not returned in a visible portion of the response body, save for within administrative panels. If the final name of the stored file is not reflected in a response and directory browsing is not possible this may take considerable brute forcing -significantly less if the naming convention is standard to a public library- to discover and even then may not be served in a mime type or with a file extension that will be executed by the application server. 
+
+In the last case noted above it is occasionally possible to preserve the filetype of a directory configuration file that has been uploaded (e.g. .htaccess, .ini, web.config) where the directives of the configuration file takes precedence (& also must precede the establishment of a file handle on it by the code that has popped a pointer to its temporary file location on the stack, though this should only be the case if its symbolic storage location is already nested within the webroot directory, even then pending the language handling it as a filesystem artifact) the privileged imperative of the naming schema conversion function to modify the created file on the target host.
+
+Out-Of-Band file transfer:
+      --Know where your file is landing and what it or any link to it will be named for reference.
+SMTP/SMTPS/web email (check the MX record first, but the contact or about pages are great sources for these if SMTP/RTCP are not enumerable).
+File shares (SMB/AFP/NFS)
+Network-based distribution systems
+FTP/TFTP/SFTP/SCP
+SNMP
+DNS
+Database entry
+Log Poisoning (host/network-based, esp. Splunk, web server access/error logs and syslog)
+s3/cloud blob storage buckets
+cloud logging utilities
+memcached?
+Redis?
+NAS
+CORS misconfiguration
+Glassfish/Tomcat/Jenkins
+Java RMI
+WinRM
 	
+
+
+
 TODO
 /zip/tar file read/write methods
 Log poisoning

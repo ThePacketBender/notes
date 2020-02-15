@@ -1,0 +1,16 @@
+X.509
+
+X.509 Public Key Infrastructure (PKI)
+	Certificate Policy and Certification Practices Framework
+
+ASN.1 (Abstract Syntaxt Notation)-encoded
+	--usually reprented in DER (distinguished encoding rules) format
+
+participants within public key infrastructures:
+	Certificate Authorities (CA)
+	Policy Authorities (PA)
+	communities of interest [those who rely on ("public") certificates (for authentication)]
+	
+public-key certificate binds a public key held by an entity to a set of information which identifies entity associated with use of the corresponding private key
+
+openssl asn1parse -in tificate.cer

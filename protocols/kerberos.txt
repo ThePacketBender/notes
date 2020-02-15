@@ -46,7 +46,7 @@ Kerberos Protocol:
 
 
 Authentication Process:
-	1.) client sends a request to the authentication server (AS) requesting "credentials" for a given server
+	1.) (AS-REQ)client sends a request to the authentication server (AS) requesting "credentials" for a given server
 	2.) AS responds with these credentials, encrypted in the client's key
 		credentials consist of:
 			1) a "ticket" for the server
@@ -59,6 +59,16 @@ Authentication Process:
 	4.) session key used to authenticate the client and optionally used to authenticate the server
 		--session key may also encrypt further communication between the two parties
 		--may exchange a separate sub-session key to be used to encrypt further communication
+
+Authentication Process (in depth):
+1-Authentication Service Request (AS-REQ):
+User initially authenticates to KDC's authentication service (AS) for service the ticket primitive: a ticket-granting ticket (TGT). -commonly occurs on interactive logon, but can initiate in other situations too.
+-initial request encrypts the current UTC timestamp formatted YYYYMMDDHHMMSSZ with a long-term key. 
+--in password-based environments, the long-term key is derived from the user password
+-multiple encryption types are available for negotiation in most implementations. Client should negotiate strongest mutually-supported encryption type, but a downgrade attack inducing the client to choose weaker encryption is possible.
+2-Authentication Service Response (AS-REP):
+-time within accepted skew (5 minutes by default) and proper available encryption will auth user
+
 
 Implementation Consists of:
 	--one or more authentication servers running on physically secure hosts
@@ -93,6 +103,20 @@ Kerberos Protocol consists of:
 			--"hash" or "digest"
 		
 	--modifications to Kerberos Database (auth and validation function require read-only privileges) executed using protocol between client and third Kerberos server: Kerberos Administration Server (KADM)
+
+Microsoft Kerberos Implementation:
+Stored in Hyper-V-separated vmem lsass process, which is system user-accessible.
+AS-REQ
+Cryptographic protocols available:
+DES-CBC-CRC (disabled by default in Vista/2008)
+DES-CBC-MD5 (disabled by default in Vista/2008)
+RC4-HMAC (XP & 2003 default, as well as the strongest encryption they support)
+AES128-CTS-HMAC-SHA1-96 (introduced with Vista/2008)
+AES256-CTS-HMAC-SHA1-96 (default in Vista/2008 and higher)
+-For legacy support RC4-type cryptographic algorithms the stored hash value is the same as the RC4 long-term key stored for NT password hashes, which are MD4-type hashes still used by some legacy system components in Windows environments.
+echo -n Pass-The-Word | iconv -t UTF-16LE | openssl md4
+(stdin)= e456d67ce26e0f174ba2c92f4b677cac
+
 
 Kerberos Realms:
 	--kbr5 auth designed to operate across organizational boundaries
@@ -493,6 +517,9 @@ Attacking Kerberos:
 			--generate TGT with AES
 		export KRB5CCNAME=<TGS_ccache_file>
 			--set TGS as default for further use with impacket using global var
+Overpass-the-Hash
+-use the NT hash to create Kerberos tickets
+--advantages over passing the NTLM challenge bash > changing a user's password and joining a machine to a domain; use services, e.g. Remote Desktop or Outlook Web Access, which require password auth
 		Mimikatz:
 			https://github.com/gentilkiwi/mimikatz
 		mimikatz # kerberos::golden /domain:<domain_name>/sid:<domain_sid> /rc4:<krbtgt_ntlm_hash> /user:<user_name>

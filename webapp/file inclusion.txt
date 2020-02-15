@@ -22,9 +22,13 @@ PAYLOADS
 	-if injectable, then refer can be executed by the remote machine
 
 
-tools
+tools:
 fimap
 burp
 curl
+lfifreak
+LFISuite <-best
+https://github.com/D35m0nd142/LFISuite
+
 
 	

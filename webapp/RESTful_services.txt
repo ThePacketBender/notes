@@ -1,13 +1,7 @@
 Restful Services
 
+Representational State Transfer
 
-
-Tools:
-Postman - https://www.getpostman.com/downloads/
-Astra	- https://github.com/flipkart-incubator/astra
-BurpSuitePro
-OWASP Zaproxy
-wfuzz
 
 
 Important Commands:
@@ -65,6 +59,11 @@ Hydra
 Standard
 	/robots.txt
 	/robots-dissallow.txt
+
+
+REST alternatives:
+SOAP
+	WSDL
 
 
 >How are sessions authenticated and handled?
@@ -128,6 +127,7 @@ Standard
 				does the resulting url for the authentication page contain an open redirect?
 		-test for parameter modification if direct access is forbidden
 	Is BASIC AUTH in use?
+		--Digest is better, not great
 		APIs should support standard AUTH (JWT, OAUTH, &c)
 			e.g.
 				GET / HTTP/1.1
@@ -398,6 +398,7 @@ Standard
 					account number (incremented)
 >JSON (JavaScript Object Notation)
 	--most common format for API request and response data body
+	--objects serialized in the form of javascript literal types
 	JSON-Tampering
 		Send differing JSON request bodies, each invalid in a uniquely different way, to each given endpoint for each valid HTTP verb (POST,PUT,&c), e.g.:
 			{"key":"value"}=-
@@ -478,22 +479,35 @@ Standard
 							limit_req zone=alimit;
 				
 >Webhooks
+	Are webhook receivers authenticated?
+	If the webprovide an HMAC and implicitly assume that consumer applications of the webhook are properly implemented and will verify all requests. Like any application component webhooks are iterated on and vulnerabilities may be further introduced to consumer applications or the webhook hosts via the consumer application if improperly maintained.
+		-verification should be cryptographically unique as in the Plaid verification system.
+If the we hook has is accessible via subdomain can the webhooks scope to or inherit document objects to a parent domain?
+
+>SOQL
+	Salesforce REST API accepting sql-like string as a parameter.
+	-No parametrization in the API itself, many consumer allocation are inherently vulnerable by default.
+		--similar to downstream vulns caused by early SAML implementations
+
 		
 		
 
 
 Best Practices:
-Prefer to scan/fuzz item update/modification requests rather than creation requests
+	Prefer to scan/fuzz item update/modification requests rather than creation requests
 
 
 
 Appendix 1:
-Common Languages/Libraries used to implement APIs
+Common Frameworks(Languages/Libraries) used to implement APIs
 	node.js
 		ExpressJS
 		Electron
-		node-restify
+		Restify
+		Adonis
 		Sails.js
+		Loopback
+		hapi.js
 	Python
 		Flask
 			flask-restful
@@ -502,23 +516,41 @@ Common Languages/Libraries used to implement APIs
 		Django
 			Django-REST-Framework
 			django-tastypie
+		FastAPI
+		Web2Py
 		Bottle
 		Cherrypy
 		Twisted
 		webpy
+		Connexion
+		falcon
 		restless
+		slashdb
+		hug
 	Java
 		Scala
 			Akka
+		Spring
+			Spring-Boot
 		Glassfish
 			Jersey
+		CodeIgniter
+		Grails
+		Apache Spark
 		Netty
 			Wildfly
 				--formerly JBoss Application Server
 			RestExpress
+		Play!
+		Blade
+		Ninja Web
+		Resteasy
+		Restlet
 	PHP
 		Symphony2
 		Laravel
+		Yii
+		Lumen
 		Slim
 		Microrest
 	Ruby
@@ -526,13 +558,28 @@ Common Languages/Libraries used to implement APIs
 		Sinatra
 		Grape
 	ASP.NET
+		ASP.NET.Core
 		Nancy
 	Go
+		Revel
+		Gin
+		Martini
+		Web.go
 		gocrud
 		go-rest
 			go-json-rest
+		go-restful
+		go-relax
 		sleepy
+	Elixer
+		Phoenix
+	Agnostic microservices:
+		Azure Functions + Azure Api-Management
+		AWS API Gateway + AWS Lambda
 Web Server API Management gateways (API Gateways):
+Microservices:
+	AWS API Gateway
+	Azure API Management
 NGINX
 	OpenResty
 		--NGINX+Lua
@@ -577,3 +624,31 @@ Appendix 3:
 References
 	HTTP Authentication schemas:
 	https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
+
+
+Appendix 4:
+OWASP API Top 10
+API1:2019 — Broken object level authorization
+DIY: substitute the ID of an owned resource in an API call with the ID of a resource belonging to some other user
+Why? lack of proper authorization checks allows access a specified resource
+What? IDOR (Insecure Direct Object Reference)
+API2:2019 — Broken authentication
+BASIC auth or HS256 JWT tokens are non-complex and cryptographically weak.
+Single Auth factor.
+Industry standard Auth mechanisms are fairly standard and robust and it’s usually the implementation or that’s broken.
+SSO, esp. using legal identity, email and multi-account identity-linked accounts, make downstream components vulnerable to multi-account take-over.
+No MFA, weak MFA or MFA that involves a weak factor (SIM swap) or transmission mechanism (Plaintext HTTP Auth, lack of or short-lived HSTS).
+Sessionable cookies not flagged HTTP-Only or Secure.
+Cross-origin tokens involving an misconfigured or insecure upstream host.
+Lack of rate limiting (brute force, credential spraying).
+Predictable/poorly seeded pseudo-random or non-randomly seeded usernames &/or Auth Tokens.
+Token validation implementation error (e.g cryptographic signature confusion or vuln to downgrade attacks).
+
+
+Appendix 5:
+Tooling:
+Postman - https://www.getpostman.com/downloads/
+Astra	- https://github.com/flipkart-incubator/astra
+BurpSuitePro
+OWASP Zaproxy
+wfuzz

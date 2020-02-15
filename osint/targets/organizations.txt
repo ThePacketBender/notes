@@ -32,18 +32,71 @@ DNS Records & whois/reverse whois & dns lookup
 https://securitytrails.com/
 https://hackertarget.com/
 https://dnsdumpster.com/
+https://passivedns.mnemonic.no/
+https://securitytrails.com/
+https://www.robtex.com/
+https://hackertarget.com/domain-profiler/
 
+
+search endpoints
+<target.dom>
+https://www.robtex.com/dns-lookup/<target.dom>
+https://securitytrails.com/domain/<target.dom>/dns
+https://securitytrails.com/list/ns/<nsX.target.dom>
+
+Archival web content
+WaybackMachine
+	https://web.archive.org
+Google:
+	cache:target.dom
 
 Shodan
 
 
-Reverse Analytics (Google) Search
+Watching the Watchers - Reverse Searching Advertising Tracker Identifiers:
+Theory is simple, most large consumer-facing companies/websites use third-party analytics, indexing, &c services routing client browsing data cross-origin to collect user information. Users can easily be followed on-site by simple logging and increasingly often via client-side scripts asynchronously polling user input/navigation. 
+
+Reverse Analytics (google) Search:
 https://hackertarget.com/reverse-analytics-search/
 https://api.hackertarget.com/analyticslookup/?q=UA-<whatever>
+https://dnslytics.com/reverse-analytics
+
+Reverse Adsense (google):
+https://dnslytics.com/reverse-adsense
+
+Common tracking id, metadata, files and org recon regexes:
+Trademarks/
+.^.*®
+®.*.$
+?!®
+®?!
+Adsense(google)/
+"pub-(.+?)\""
+.+?(?=ca-pub-\d)
+(?<=\d)&adurl=.+
+Analytics(google)/
+UA-(.+?)-
+Amazon Affiliates/
+tag=(.+?)-20
+addthis:
+pubid=(.+?)$
+Analytics(facebook)
+https://www.facebook.com/tr?id=
+https://www.facebook.com/tr?id=.*&amp;ev=
+https://www.facebook.com/tr?id=.*&ev=
+https://www.facebook.com/tr?id=.*&ev=
+https://www.facebook.com/tr?id=.*&cd[
+<img src="https://www.facebook.com/tr?id=
+“fbq\((\s)?!((\{(\’|\”).*:\s\'.*\'\?\)?+),\s)!?\s?\}\)\;”
+“\<img\ssrc\=\"https\:\/\/www\.facebook\.com\/tr\?id\=.*\(&amp\;(ev|cd\[.*\])\=.*)?!\s.*?style\=\"display\:none\"\/\>”
+<!-- Facebook Pixel Code -->
+Jive uploads/
+"j-attachment-icon" href="(.*?)"
 
 
 CORS Headers
-
+Access-Control-Allow-Origin
+Timing-Allow-Origin
 
 PGP Keys
 
@@ -67,12 +120,93 @@ https://www.sec.gov/edgar/searchedgar/webusers.htm
 
 Crunchbase
 
+Off-site company files google dorks:
+
+https://www.google.com/search?q=inurl:hosted.jivesoftware.com
+
 
 Campaign Donors
 https://www.opensecrets.org/
 
 
+ASN (netblock) lookup:
+	-Autonomous System Number
+	--assigned by IANA to an autonomous system (AS)
+		--group of IP networks that have their own independent route policy
+	
+Public Organization Services Accounts
+github.com
+wordpress.com
+
+Cross-Domain Analytics/Tracking Identifiers:
+	google analytics
+	google tag manager
+	yoast
+	newrelic
+	cloudflare?
+      facebook analytics
+      facebook pixel
+      amazon affiliates
+	
+
 Slack
 google dork:
 	company.slack.com
 https://securitytrails.com/list/apex_domain/slack.com
+
+
+TLD brute-forcing
+https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+	--iana list of top-level domains
+for i in $(cat tlds-alpha-by-domain.txt); do host -a target.dom.${i} ; done
+for i in $(cat tlds-alpha-by-domain.txt); do host -a target.${i} ; done
+https://publicsuffix.org/list/public_suffix_list.dat
+	--public suffix list (includes government domains)
+		--gov domains unnecessary, undesireable to brute force
+		--not all domains are TLDs
+
+Emails
+
+
+Webpage & Social media outlinks
+
+
+
+Methodology (recursive for domains, after initial domain limit to known top-level domains):
+Scrape DNS request records
+##Registration Information
+(nameserver information)
+dig -t ns +short <target.dom>
+dig -t soa +short <target.dom>
+	>known registered domains (if target org has unique NS)
+	>reverse NS lookup (domains pointing to NS)
+	>NS-associated ip addresses (further enumerate org nameservers)
+dig -t txt +short <target.dom> | egrep -i '(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)+[a-zA-Z]{2,63}(\.)?)'
+(organization registrant information)
+whois <target.dom>
+	>Registrant Organization
+	>Admin Organization
+	>IT Organization
+	>>reverse whois the above
+(certificate transparency logs)
+(common TLDs)
+for i in $(cat tlds.lst); do host -a <target.dom>"."${i} ; done
+	--if not null, append to file
+for i in $(cat tlds.lst); do host -a <target>"."${i} ; done
+	--if not null, append to file
+brute force most common top-level domains
+
+(addressing information)
+dig +short <target.dom>
+	>reverse IP addr search, discover vhosts
+nmap --top-ports 60 -sS <target.dom>
+	(nmap service discovery)
+for http(s) services:
+if ssl:
+	curl --head -s -L https://www.target.dom | egrep -i 'Content-Security|CSP'
+else:
+	curl --head -s -L <http://target.dom> | egrep -i 'Content-Security|CSP'
+>search shodan for unique header value(s)
+>query archived web pages (waybackmachine) going back every 6 months until first archived
+for dns services:
+	ret (nameserver information)

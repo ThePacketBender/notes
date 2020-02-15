@@ -1,0 +1,25 @@
+how do you use pointers?
+	variable whose value is the address of another variable
+		direct address of the memory location
+	type *var;	/* pointer variable declaration */	//asterisk dereference pointer can be read as “value pointed by”
+	var = &ip;  /* store address of var in pointer variable*/	//ampersand reference operator can be read as “address of”
+	printf("Address of var variable: %x\n", &var  );
+	printf("Address stored in ip variable: %x\n", ip );	/* address stored in pointer variable */
+	printf("Value of *ip variable: %d\n", *ip );	/* access the value using the pointer */
+	int  *ptr = NULL; /* assign a NULL value to a pointer variable in case you do not have an exact address to be assigned */
+
+differences between interfaces and abstract classes?
+	abstract class can fully, partially or not implemented at all, but an interface should be fully implemented
+	interface contains only the declaration of members including methods, properties, events or indexers. It doesn’t contain the implementation of these members.
+		class or struct implements the interface, must provide the definition of methods declared in the interface
+		interface provides a standard structure that the derived class needs to follow
+	abstract class can have abstract as well as non-abstract members. But, in an interface, all the members are implicitly abstract and must be overridden in the derived class
+		 class may inherit several interfaces but only one abstract class
+		 
+
+CString vs BString?
+
+What is OOP?
+
+diff Process v Thread?
+

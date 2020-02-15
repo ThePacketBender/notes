@@ -52,7 +52,9 @@ path
 set var 
 setx c:\Program Files(x86)\bin\
 	-append target directory to currently defined execution path
+runas /noprofile
 runas /profile /user:administrator "C:\absolute\path\pcoff.exe"
+runas /profile /user:subdomain\username "C:\absolute\path\pcoff.exe"
 	-run target "executable" with user profile permissiosn for /user:
 		--*should prompt for target user's password
 START /B process.exe

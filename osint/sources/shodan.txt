@@ -10,3 +10,10 @@ version: Search for the version of the product
 os: Search for a specific operating system name
 title: Search in the content scraped from the HTML tag
 html: Search in the full HTML contents of the returned page
+
+
+#shodarn alternatives:
+	https://censys.io/
+	https://scans.io/
+	https://www.zoomeye.org/
+	

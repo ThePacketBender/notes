@@ -184,3 +184,16 @@ vi /etc/apt/apt.conf.d/95proxies
 >Acquire::https::proxy "https://myproxy.server.com:8080/";
 
 
+
+	Routing:
+Enable Routing
+sysctl net.ipv4.conf.all.forwarding=1
+sysctl net.ipv6.conf.all.forwarding=1
+(MacOS)
+sysctl -w net.inet.ip.forwarding=1
+	SNAT
+--configure multiple machines behind single router
+	--route through a single addressing information instance
+iptables -t nat -F
+iptables -t nat -A POSTROUTING -o INTNAME -j SNAT --to INTIP
+iptables -t nat -A POSTROUTING -o INTNAME -j MASQUERADE

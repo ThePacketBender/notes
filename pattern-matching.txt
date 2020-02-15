@@ -37,12 +37,13 @@ awk '!/regex/{print $1 " " $2 }' file.txt
 	-print all lines not matching regex from first two whitespace-delimited fields
 awk '/regex/&&!/regex2/{print $1}' file.txt
 	-print all lines matching regex while not matching regex2
-
+awk '{print length, $0}' file.txt | sort -n | cut -d " " -f2-
+	-sort wordlists by length
 
 
 xclip -selection clipboard -o | sed 's/[[:space:]]//g' | awk NF - >http_response_codes.txt
 	--remove all whitespace and newlines from a copied selection of text (from clipboard)
-	
+
 	
 Bash variables
 ${var% *}

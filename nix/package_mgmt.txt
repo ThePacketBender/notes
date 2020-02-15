@@ -2,17 +2,25 @@ Package Management
 
 dpkg
 dpkg -l
-dpkg -i install_some-package
+dpkg -G -E -i install_some-package
 dpkg -S /path/to/file
+OR
+dpkg --search filename.ext
 	-returns which(if) package installed a file
 dpkg-reconfigure package_revert-default.conf
+dpkg --audit
+	--search for missing package dependencies
 
 
 apt
-apt-get install package
+apt-get install package --fix-missing
 apt-cache search pattern
 apt-cache show package
 apt-cdrom
+apt-get upgrade
+apt-get dist-upgrade
+apt --upgradeable
+apt-get -u upgrade --assume-no
 
 
 yum
