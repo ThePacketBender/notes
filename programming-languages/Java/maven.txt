@@ -1,0 +1,69 @@
+MAVEN
+
+common, standard build toolchain and dependency injection framwork for java
+
+
+Usage (basic):
+mvn package
+	--create a jar file not containing dependencies after collecting dependendant package and building bytecode .class files in ./target dir
+mvn clean
+	--clean up (rm) build files used to package/install/build/deploy a POM
+mvn build clean
+	--build bytecode jvm-executable file, remove build files
+mvn site
+	--generates a site based upon information on the project's pom
+mvn fatjar clean
+	--build a fatjar (injecting dependency libraries into bytecode jar executable)
+
+Usage (from documentation)
+validate: validate the project is correct and all necessary information is available
+compile: compile the source code of the project
+test: test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
+package: take the compiled code and package it in its distributable format, such as a JAR.
+integration-test: process and deploy the package if necessary into an environment where integration tests can be run
+verify: run any checks to verify the package is valid and meets quality criteria
+install: install the package into the local repository, for use as a dependency in other projects locally
+deploy: done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
+
+
+
+Project structure
+my-app
+|-- pom.xml
+`-- src
+    |-- main
+    |   `-- java
+    |       `-- com
+    |           `-- mycompany
+    |               `-- app
+    |                   `-- App.java
+    `-- test
+        `-- java
+            `-- com
+                `-- mycompany
+                    `-- app
+                        `-- AppTest.java
+
+POM
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+ 
+  <properties>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+  </properties>
+ 
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

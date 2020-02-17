@@ -31,6 +31,17 @@ Swagger
 	(Conversion tools)
 	https://apimatic.io/transformer
 	https://openapi.tools/
+	OPENAPI
+		https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi
+		https://github.com/swagger-api/swagger-core
+		https://github.com/swagger-api/swagger-codegen
+		https://github.com/swagger-api/swagger-ui
+		https://github.com/swagger-api/swagger-editor
+		https://github.com/swagger-api/swagger-codegen-generators
+		https://github.com/Azure/autorest
+		https://sdks.io/
+		https://github.com/Azure/autorest
+			https://github.com/Azure/autorest/blob/master/.attic/developer/architecture/AutoRest-extension-protocol.md
 https://readme.io
 iOS
 	/.well-known/apple-app-site-association
@@ -56,21 +67,28 @@ SERIN
 	--Semantic Restful Interfaces
 Hydra
 	--Hydra Core Vocabulary
-Standard
+Well-Known URIs
 	/robots.txt
 	/robots-dissallow.txt
-
+	
+	/security.txt
+	/.well-known/security.txt
 
 REST alternatives:
 SOAP
 	WSDL
 
 
+>Enumeration
+	-check for common indexing filenames in both webroot, applicationroot (e.g. /appname/) apiroot (e.g. /appname/api/), versioned apiroot (e.g. .appname/api/v2/) and any subdirectories nested within version apiroot that appear to directly reference dynamic application code rather than a request object/function routing endpoint names
+		--
+	--check https://sdks.io/ , https://any-api.com/ , https://readme.io for open documentation/programming language apis using framework or solution for target if using SaaS solution
+	--if openapi or convertable file is available, statically analyze REST .json document for contract-level vulnerabilities in authorization https://apisecurity.io/tools/audit/
 >How are sessions authenticated and handled?
 	*NOTE: Authentication is one of the most primary and in my experience commonly exploitable functions in RESTful APIs
 	**which in no suggests the most common Authentication vulnerabilities are easy to exploit; though they should be easy to find instances of during source code review,
 	**since most instances of insecure authentication are the result of non-cryptographic or weak cryptographic PRNGs and hashing algorithms (calls to standard libraries)
-	**or in many cases dependant on easily reversible encodings (JWT, base64 obfuscation elsewhere) for secrecy
+	**or in many cases dependant on easily reversible encodings (JWT, base64 obfuschttps://readme.ioation elsewhere) for secrecy
 	authentication should be handled by a centralized IdP (Identity Provider); IdP issues authentication tokens
 		-are issued tokens sufficiently complex and random?
 			test for unpredictability
@@ -157,6 +175,13 @@ SOAP
 	Does the authentication function have a max retry limit?
 		Is the there a strong ReCaptcha mechanism protecting against further attempts?
 	Are multiple concurrent sessions allowed/possible?
+>Rate Limiting
+	-test limitations on application authentication requests, determine what if any factors auth rate limits are applied to
+		-often possible to bypass token-based authentication ip-based rate limiting by rotating ips
+		Max-Retry less likely to be bypassed on client-side than in traditional web applications, but still a possible vector, try submitting the initialization value of Max-Retry/Max-Retries and higher to authenticate
+		User-based auth jails are more difficult to bypass, but less frequetly implemented than tokens, especially when for most WebAPIs auth tokens either include/contain usernames or name-based auth factors
+		If token can be generate, create them over as predictable of a sequence as possible, calaculate shannon entropy and/or other cryptanalytic frequency prediction algorithms for each sequence collected and any aggregated collection of sequence to determine if, and if so which subocomponents, of time predicte any significant difference in entropy valures; generated with more predible tokens sequenced over as many control groups as possible for best results
+		Authenticated requests should be equally as rate-limited by load-balancer, proxy or application component as unauthenticated requests to prevent DoS or TCP starvation attacks
 >API Access Tokens
 	Generating sufficiently many tokens in (as near simultaneously as possilbe) succession, how much entropy is measured in the generated tokens?
 	Are there any noticeable patterns in the generated tokens by either examining successively (e.g. incrementation) or common patterns noticeable between tokens without examining them in sequential order?
@@ -530,6 +555,8 @@ Common Frameworks(Languages/Libraries) used to implement APIs
 	Java
 		Scala
 			Akka
+				https://github.com/swagger-akka-http/swagger-akka-http
+				https://github.com/akka/akka-http
 		Spring
 			Spring-Boot
 		Glassfish
@@ -628,10 +655,12 @@ References
 
 Appendix 4:
 OWASP API Top 10
+
 API1:2019 — Broken object level authorization
 DIY: substitute the ID of an owned resource in an API call with the ID of a resource belonging to some other user
 Why? lack of proper authorization checks allows access a specified resource
 What? IDOR (Insecure Direct Object Reference)
+
 API2:2019 — Broken authentication
 BASIC auth or HS256 JWT tokens are non-complex and cryptographically weak.
 Single Auth factor.
@@ -644,11 +673,60 @@ Lack of rate limiting (brute force, credential spraying).
 Predictable/poorly seeded pseudo-random or non-randomly seeded usernames &/or Auth Tokens.
 Token validation implementation error (e.g cryptographic signature confusion or vuln to downgrade attacks).
 
+A3: Excessive Data Exposure
+      API exposes more data than client requirements, or in most cases is programmed to return as output or render, client browser or client software filtering is a client side control.
+      Most common in applications for which data retrieval is simpler or more efficient where returning the full set of a columns (or column as used by the server, may reuse queries) especially common amongst SAP-consuming APIs, nosql collections-type JSONic document retrieval and rushed into production graphql-type JSONic API instances for databases storage retrieval as well as blobable and serialized data retrieved from externally-hosted file storage hosting (s3 /bucket type storage).
+      -Web API returns full data objects as they are stored by a database or on/off-site file system parsing only the formatted storage object(file).
+            -/-worst case scenario for scalable services usually involves users’ data storage also being mounted as a fileshare on the application server host, esp. common with IIS/Azure.
+      -direct API calls or captured asynchronous responses often directly expose unnecessary, if not sensitive data.
+
+A4: LACK OF RESOURCES & RATE LIMITING:
+Application lacks load balancing, client/ip-based blacklisting to handle excessive unexpected requests (DoS/DDoS) or especially when vulnerable endpoint is component of authentication function (brute force), which may further starve database connections. This includes TCP Starvation. Or accepts excessively long or malformed payloads (POST, PUT, PATCH), arbitrary and/or arbitrarily many request parameters of potentially arbitrary length (GET, parameter pollution), payloads -esp. including file uploads- containing metacharacters (largely language-defendant; Java [frameworks], server-side JavaScript and SAP S/4HANA tend to be vuln, but still throw a * at PL/SQL or a large  poorly indexed sql table ..) that will be processed files whose structure will process as recursive self-reference (ReDoS, zip bombs/extreme compression ratio). Second order vulnerabilities, esp. the otherwise rare application race condition, may also become exposed, e.g. insufficient load balancing or a bypassed WAF/IPS may expose improper structure of a validation function if requests are allowed to keep-alive or not wait for app accepts processed ingress while all workers  occupied.
+
 
 Appendix 5:
 Tooling:
+Manual Developer tooling:
 Postman - https://www.getpostman.com/downloads/
+HTTPie - https://httpie.org/
+Firecamp - https://firecamp.app/
+Mockoon - https://mockoon.com/
+Insomnia - https://insomnia.rest/
+Server/Mockup tooling:
+JSON-SERVER - https://github.com/typicode/json-server
+prmd - https://github.com/interagent/prmd
+https://github.com/Mermade/widdershins
+https://api.github.com/repos/postmanlabs/swagger2-to-postman
+https://github.com/8x8Cloud/swagger2raml
+https://api.github.com/repos/swagger-hub/swagger-editor
+https://github.com/Reckon-Limited/serverless_swagger
+https://api.github.com/repos/postmanlabs/raml2postman
+https://github.com/apiaryio/Paw-APIBlueprintGenerator/
+widdershins - Pentest tooling:
+API dev libraries:
+https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi
+https://square.github.io/retrofit/
+https://github.com/paulcbetts/refit
+https://github.com/mattiasnordqvist/Web-Anchor=
+Pentest-specific tooling:
 Astra	- https://github.com/flipkart-incubator/astra
 BurpSuitePro
 OWASP Zaproxy
 wfuzz
+
+
+Appendix 6:
+API Architecture, Development & Style Guides:
+https://cloud.google.com/apis/design/
+https://github.com/paypal/api-standards/blob/master/api-style-guide.md
+https://github.com/interagent/http-api-design
+https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md
+https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design
+Standardized Documentation:
+https://github.com/Rebilly/ReDoc
+https://github.com/swagger-api/swagger-ui
+https://github.com/lord/slate
+https://api-docs.io/
+http://apicommons.org/
+https://apis.guru/openapi-directory/
+http://apisjson.org/
