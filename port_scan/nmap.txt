@@ -1,5 +1,9 @@
 NMAP NOTES
 	/usr/share/nmap
+
+
+Scan Cloudflare hosts with Nmap
+nmap -sS -sV -Pn -F target.com
 	
 	
 Scan with Nmap over Tor
