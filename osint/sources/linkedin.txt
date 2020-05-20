@@ -21,6 +21,16 @@ https://www.linkedin.com/jobs
 
 # check for profile by email (google mail extension)
 https://www.linkedin.com/sales/gmail/profile/viewByEmail/test@test.com
+“See all <target> employees on Linkedin”
 
 https://hunter.io/search/target.dom
 	--search emails by domain
+	
+
+Tools
+https://github.com/mdsecactivebreach/LinkedInt
+https://github.com/leapsecurity/InSpy
+https://github.com/m8r0wn/CrossLinked
+https://github.com/yatish27/linkedin-scraper
+https://github.com/0x09AL/raven
+https://github.com/linkedtales/scrapedin

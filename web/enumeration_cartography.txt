@@ -1,0 +1,16 @@
+Web Application cartography
+
+
+gobuster -u http://dom.ain/ -l -e -w /usr/share/wordlists/dirb/big.txt
+	-directory brute force attack
+wfuzz -c -z file,/usr/share/wordlists/dirb/common.txt -Z -u https://dom.ain/pages/FUZZ.php
+	-brute force only files with extension type
+gobuster -u http://dom.ain/ -l -e -x .asp,.aspx -w /path/to/SecLists/Discovery/Web-Content/IIS.fuzz.txt
+	-file and directory brute for attack
+wfuzz -c -z file,/mnt/b/git/wordlists/SecLists/Discovery/DNS/subdomains-top1mil-20000.txt -Z -u http://FUZZ.dom.ain | grep -v '0 L'
+	-subdomain enumeration
+wfuzz -c -z file,/usr/share/wordlists/dirb/common.txt -Z -u https://sub.dom.ain/?page=FUZZ | grep -v '0 L'
+	-pages with GET parameter values
+wfuzz -c -z file,/usr/share/wordlists/dirb/common.txt -Z -u https://sub.dom.ain/ -d page=FUZZ -b session=cookie | grep -v '0 L'
+	-pages with POST parameter values
+

@@ -1,4 +1,4 @@
-Powershell
+gopPowershell
 
 Cmdlets
 	Syntax: Verb-Noun
@@ -18,11 +18,20 @@ Select-String $string $dataRead -Context 1, 3 | % { $_.context.PreContext + $_.l
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned
 Set-Location C:\powershell\scripts
-set workDrv=D:
+Set-WorkDrv=D:
+Get-ChildItem .
+Expand-Archive archive.zip
+
 set workDir=powershell\scripts
 & "C:\powershell\scripts\script.ps1"
 PowerShell -Exec Bypass
 	-bypass execution policy limitations
+
+BitsAdmin
+Import-Module BitsTransfer
+Start-BitsTransfer -Source https://github.com/fireeye/commando-vm/archive/master.zip -Destination c:\users\me\Downloads\commandovm.zip
+	--download target file via http/s
+Start-BitsTransfer -DisplayName MyJob -Credential User\Domain 
 
 Import Modules
 Import-Module C:\Scripts\PowerShellFunctionsLibrary.psm1

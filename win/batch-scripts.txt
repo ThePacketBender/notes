@@ -1,0 +1,8 @@
+Windows Batch Scripts
+
+
+@ECHO OFF
+	-header line
+		--"shebang"
+::
+	--leads commented line

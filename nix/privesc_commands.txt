@@ -150,6 +150,8 @@ route
 /sbin/route -nee
 GENERIC SOFTWARE VERSION INFORMATION
 gcc -v
+lua --version
+luac --version
 mysql --version
 perl -v
 python --version
@@ -540,6 +542,7 @@ perl -e 'exec "/bin/bash";'	Perl
 Jobs/Tasks:
 
 Command	Result
+crontab -l
 crontab -l -u %username%	Display scheduled jobs for the specified user – Privileged command
 ls -la /etc/cron*	Scheduled jobs overview (hourly, daily, monthly etc)
 ls -aRl /etc/cron* | awk '$1 ~ /w.$/' 2>/dev/null	What can ‘others’ write in /etc/cron* directories

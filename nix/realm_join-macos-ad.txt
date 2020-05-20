@@ -1,0 +1,7 @@
+REALM JOINING MacOS to AD
+
+As Admin:
+‘System Preferences’ => ‘Users & Groups’
+‘Login Options’ => 'join'
+	add FQDN of AD domain to join
+		enter domain-level credentials

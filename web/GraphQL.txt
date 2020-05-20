@@ -1,0 +1,161 @@
+GraphQL
+
+
+	--data query language
+	--developed by Facebook, public release: 2015
+		--high adaptation rate since (esp. in enterprise)
+	--Burp Suite and other intercepting proxies as do not currently evaluate GraphQL syntax (may interpret request as invalid xml)
+
+	GraphQL Endpoints (common):
+/graphql/
+/graphql/console/
+/graphql.php
+/graphiql/
+/graphiql.php
+/graphql.php?debug=1
+		--graphql api endpoints range in verbosity from fully interactive request debuggers to low information JSON error response body
+	/graphql/?query={}
+		--if expected GraphQL API endpoint returns a response not indicative of its purpose provide empty GraphQL request {} as parameter value
+			--parameter name in some cases may be non-obvious and require brute force enumeration
+		--parameter may be accepted as paramter for only one of GET/POST/&c request method
+
+	Design Philosophy:
+		Queries always return predictable results
+		Return all data necessary for application operations in a single request
+			--typically RESTful APIs requires requesting data from with one or multiple different sets of parametesrs to multiple URI endpoints
+				--organized in terms of types and fields, not endpoints
+		Access all application data making requests to only a single endpoint
+			--multiple interior endpoints resolve to a single forward-facing endpoint
+		Strongly Typed
+			--(on error/enumration) application asks only what it is possible to request
+			--(on error) returns distinct and verbose error messages
+		New fields and types can be added to GraphQL API without impacting existing queries
+			--depricated fields can be hidden from returning within query requests
+				--also hidden from standard enumeration requests processing (hidden from application)
+	3 Distinct Request Types:
+		Query
+		Mutation
+		Subscription
+	Query Language Syntax:
+		query{
+			Object{
+				Field,
+				Fields
+			}
+		}
+		-Scalars and Enums form the leaves in request and response trees
+			--normally scalars are consituted by 4 simple primitives:
+				String
+				Int
+				Float
+				Boolean
+			--custom scalars are used when included simple primitives are insufficient to flesh out the input and output schema of a complex web application
+				--application defines custom scalar type and functionality required (de)serialize that type into and out of a GraphQL request
+					--e.g. a DateTime type (de)serializes language-specific DateTime objects into/from strings
+		-intermediate levels are Object types, which define a set of fields
+			--each field is another type in the system
+			--allows definition of arbitrary type hierarchies
+	--Returns JSON-formatted response
+	--GraphQL requires definition of entire application’s schema down to its scalar leaves
+		--every field sent to client or passed by user is a field of a known type
+		--scalars can be grouped and nested within objects
+	x-GraphQL framework does not provide any means for securing data
+		--developers implement access control
+			"However, for a production codebase, delegate authorization logic to the business logic layer". -The Documentation
+		x--first test whether a user without proper authentication and/or authorization can request the whole underlying database from the server
+	x--security vulnerabilities most commonly result from architecture and/or code-level choices on how the application maps data to queries for some chosen database technology
+		Vulnerabilaties (likely, some others possible for some DBMS):
+			Broken Access Controls
+			Insecure Direct Object Reference (IDOR)
+			Injections (SQL/NSQL)
+		e.g.:
+		query{
+			userid(id: 16161){
+				...clip...
+				password
+			}
+		}
+			--Broken Access Control: a request querying unexpected field password, but not explicity defining sufficient access controls, may return a hash value used to validate an access credential for some other user with horizontal or vertically greater privileges
+	x-Injection (SQL/NoSQL)
+		--GraphQL is just a layer between client apps and the database
+			--intracts with arbitrary code written for API interaction
+		SQL Injection
+			x-Variables not properly sanitized lead directly to classic SQL Injection
+			x--first test for SQLi by adding single quote ' to an argument, e.g.
+				object(type: "unsafe'"){
+				--often sufficient to generate syntax error response from DBMS
+				-accounts for most common instances of non-blind error-based inections
+				--should not account for for error-based blind, time-based blind or OOB SQLi
+				--scalar types can be vulnerable, e.g.
+					object(id: "1'"){
+		NoSQLi
+			x-NoSQL injection (esp. MongoDB and CouchDB) unlikely to occur passing first-order payloads, because GraphQL lacks capacity for type juggling
+			-Incomplete Argument Checks
+				--GraphQL API frameworks need to run individually-written type checks over objects' fields to ensure type-safety
+				--most common error when type-checking that allows security vulnerabilities to remain despite checking is failure to check objects nested as fields
+				--type assertions shoudl be made over each field in an object
+			-Custom Scalar Types
+				*see Query Language Syntax section for description of Custom Scalar Types
+				-an entire JSON object may be passed directly into a Collection query
+				--passing an arbitrary fields object within a payload could overwrite the fields specified by the server
+					--common when a search object is dependant on a required, but potentially superfluous secondary object limiting the primary search field, which may potentially be induced to query as an object void of field values, e.g.
+						object(query: "{\"this\": {\"gte\": \"\"}}",
+						opt: "{\"fields\": {}}"){
+					--vulnerability resides in client-side control, because users allowed to query both fields in a single request
+						--mitigated by requesting each field individually
+							--mitigation depends of protections against object fields being overwritten
+				--when using JSON types, or any other sufficiently expressive custom scalar types, assertions must be made about the type and shape of all user-supplied data inputs
+					--e.g. if assuming data passed through JSON field value is a string, run type check verifying that it is a string that will be treated as a string by the NoSQL Database engine
+					--always prefer primitive types
+		--vulnerable segmnet of code most likely reside in the application layer developed to fetch variables from GraphQL queries in order to query mapped database
+	x-XSS Reflected
+		--GraphQL responses that reflect payloads may be vulnerable to XSS in reflected parameters depending on GraphQL client and escaping/sanitizing behavior
+			--especially common for validation errors
+			--response will usually be of content-type: application/json and will have to be processed as code by the client in order to execute
+				--may require additional escapes
+				--increases liklihood of DOM-Based xss
+	x-XSS Stored
+		--potential to store XSS data vi Mutation requests
+	x-IDOR (Insecure Direct Object Reference)
+		--If GrapQL API expose Query/Mutation/Subscription for which data identifier is guessable/predictable then Query/Mutation/Subscription exposed to IDOR attack on which attack uses custom list of identifiers in order to try to access or act on data having an identifier that is part of that list and that action will succeed if authorization issues are also present on the target Query/Mutation/Subscription handling the target data
+	x-DoS(/second-order ReDOS)
+		-occurs in GraphQL where overly complex nested queries may be evaluated, consuming entirety of server resources
+		--mitigation: set timeout, maximum depth or query complexity threshold value
+	x-Information Disclosure
+		--illegal queries are still forwarded to DBMS, potentially evaluated thereby and potentially return sensitive information in verbose error responses later returned in json response body
+	Encoding Vectors
+	
+	Intropsection
+		--query the schema
+		https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js
+		-given a fully interactive GraphQL endpoint browse to "< Docs" section for information on how to construct valid queries
+		-to obtain schema information from non-interactive endpoint:
+			-issue introspection query manually and derive schema information by reading response bodies
+				*see Appendix
+			-graphql-ide
+				--will fetch schema information automatically
+			-GraphQL_Introspection.py
+				https://github.com/doyensec/graph-ql/tree/master/Introspection
+			
+	
+Tools:
+	https://github.com/doyensec/graph-ql/
+		GraphQL_Introspection.py
+			-enumerates a GraphQL endpoint (with introspection) in order to pull out documentation
+				--useful for examining the GraphQL schema looking for information leakage, hidden data and fields that are not intended to be accessible
+	https://github.com/andev-software/graphql-ide
+		-IDE for exploring GraphQL APIs manually
+	https://github.com/br3akp0int/GQLParser
+		-GraphQL parsing and scanning BurpSuite extension
+	https://github.com/skevy/graphiql-app
+	https://github.com/skevy/graphiql-app/releases/
+	https://electronjs.org/apps/graphiql
+		
+		
+Appendix:
+	Manual Introspection query:
+{__schema{queryType{name},mutationType{name},subscriptionType{name},types{...FullType},directives{name,description,locations,args{...InputValue}}}},fragment FullType on __Type{kind,name,description,fields(includeDeprecated:true){name,description,args{...InputValue},type{...TypeRef},isDeprecated,deprecationReason},inputFields{...InputValue},interfaces{...TypeRef},enumValues(includeDeprecated:true){name,description,isDeprecated,deprecationReason},possibleTypes{...TypeRef}},fragment InputValue on __InputValue{name,description,type{...TypeRef},defaultValue},fragment TypeRef on __Type{kind,name,ofType{kind,name,ofType{kind,name,ofType{kind,name,ofType{kind,name,ofType{kind,name,ofType{kind,name,ofType{kind,name}}}}}}}}
+	Manual Introspection query (URL):
+%0A%20%20query%20IntrospectionQuery%20%7B%0A%20%20%20%20__schema%20%7B%0A%20%20%20%20%20%20queryType%20%7B%20name%20%7D%0A%20%20%20%20%20%20mutationType%20%7B%20name%20%7D%0A%20%20%20%20%20%20subscriptionType%20%7B%20name%20%7D%0A%20%20%20%20%20%20types%20%7B%0A%20%20%20%20%20%20%20%20...FullType%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20directives%20%7B%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20description%0A%20%20%20%20%20%20%20%20locations%0A%20%20%20%20%20%20%20%20args%20%7B%0A%20%20%20%20%20%20%20%20%20%20...InputValue%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20fragment%20FullType%20on%20__Type%20%7B%0A%20%20%20%20kind%0A%20%20%20%20name%0A%20%20%20%20description%0A%20%20%20%20fields(includeDeprecated%3A%20true)%20%7B%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20description%0A%20%20%20%20%20%20args%20%7B%0A%20%20%20%20%20%20%20%20...InputValue%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20type%20%7B%0A%20%20%20%20%20%20%20%20...TypeRef%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20isDeprecated%0A%20%20%20%20%20%20deprecationReason%0A%20%20%20%20%7D%0A%20%20%20%20inputFields%20%7B%0A%20%20%20%20%20%20...InputValue%0A%20%20%20%20%7D%0A%20%20%20%20interfaces%20%7B%0A%20%20%20%20%20%20...TypeRef%0A%20%20%20%20%7D%0A%20%20%20%20enumValues(includeDeprecated%3A%20true)%20%7B%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20description%0A%20%20%20%20%20%20isDeprecated%0A%20%20%20%20%20%20deprecationReason%0A%20%20%20%20%7D%0A%20%20%20%20possibleTypes%20%7B%0A%20%20%20%20%20%20...TypeRef%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20fragment%20InputValue%20on%20__InputValue%20%7B%0A%20%20%20%20name%0A%20%20%20%20description%0A%20%20%20%20type%20%7B%20...TypeRef%20%7D%0A%20%20%20%20defaultValue%0A%20%20%7D%0A%0A%20%20fragment%20TypeRef%20on%20__Type%20%7B%0A%20%20%20%20kind%0A%20%20%20%20name%0A%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20kind%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20ofType%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20kind%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A
+	Manual Itrospection query (base64-encoded)
+e19fc2NoZW1he3F1ZXJ5VHlwZXtuYW1lfSxtdXRhdGlvblR5cGV7bmFtZX0sc3Vic2NyaXB0aW9uVHlwZXtuYW1lfSx0eXBlc3suLi5GdWxsVHlwZX0sZGlyZWN0aXZlc3tuYW1lLGRlc2NyaXB0aW9uLGxvY2F0aW9ucyxhcmdzey4uLklucHV0VmFsdWV9fX19LGZyYWdtZW50IEZ1bGxUeXBlIG9uIF9fVHlwZXtraW5kLG5hbWUsZGVzY3JpcHRpb24sZmllbGRzKGluY2x1ZGVEZXByZWNhdGVkOnRydWUpe25hbWUsZGVzY3JpcHRpb24sYXJnc3suLi5JbnB1dFZhbHVlfSx0eXBley4uLlR5cGVSZWZ9LGlzRGVwcmVjYXRlZCxkZXByZWNhdGlvblJlYXNvbn0saW5wdXRGaWVsZHN7Li4uSW5wdXRWYWx1ZX0saW50ZXJmYWNlc3suLi5UeXBlUmVmfSxlbnVtVmFsdWVzKGluY2x1ZGVEZXByZWNhdGVkOnRydWUpe25hbWUsZGVzY3JpcHRpb24saXNEZXByZWNhdGVkLGRlcHJlY2F0aW9uUmVhc29ufSxwb3NzaWJsZVR5cGVzey4uLlR5cGVSZWZ9fSxmcmFnbWVudCBJbnB1dFZhbHVlIG9uIF9fSW5wdXRWYWx1ZXtuYW1lLGRlc2NyaXB0aW9uLHR5cGV7Li4uVHlwZVJlZn0sZGVmYXVsdFZhbHVlfSxmcmFnbWVudCBUeXBlUmVmIG9uIF9fVHlwZXtraW5kLG5hbWUsb2ZUeXBle2tpbmQsbmFtZSxvZlR5cGV7a2luZCxuYW1lLG9mVHlwZXtraW5kLG5hbWUsb2ZUeXBle2tpbmQsbmFtZSxvZlR5cGV7a2luZCxuYW1lLG9mVHlwZXtraW5kLG5hbWUsb2ZUeXBle2tpbmQsbmFtZX19fX19fX19Cg==

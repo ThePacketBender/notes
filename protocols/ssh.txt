@@ -140,3 +140,22 @@ modify private keys to single-user accessbility
 cmd /c icacls id.pem /c /t /inheritance:d
 cmd /c icacls id.pem /c /t /grant %username%:F
 cmd /c icacls id.pem  /c /t /remove Administrator BUILTIN\Administrators BUILTIN Everyone System Users
+
+
+
+
+Configuration Files
+~/.ssh/config
+
+~/.ssh/authozied_keys
+	--During a pentest add an authorized_keys file to let you log in using an SSH key.
+	authorized_keys file lives in a user’s home directory on the SSH server.  It holds the public keys of the users allowed to log into that user’s account.
+ssh-keygen -f key
+cat key.pub
+	--generate a public/private key pair
+p
+cat key.pub
+	--generate shortest possible key
+ssh -i key user@10.10.10.01
+	--authorized_keys file might not work if it’s writable by other users
+chmod 600 ~/.ssh/authorized_keys

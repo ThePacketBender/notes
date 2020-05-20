@@ -1,0 +1,60 @@
+Linux macros and shortcuts
+
+
+Keyboard shortcuts
+Ctrl+A			Move cursor to start of line
+Ctrl+B 			Move cursor backward one character
+Ctrl+C			Kill process executing in foreground
+Ctrl+D			Log out active session
+Ctrl+E			Move cursor to end of line
+Ctrl+F			Moves cursor one character
+Ctrl+G			Open system default calendar program
+Ctrl+H			Del one character (backward) [e.g. backspace]
+Ctrl+I			Italecize selected
+Ctrl+M			Open system default mail program
+Ctrl+P			Paste previous line(s)
+Ctrl+R 			Search command history || Mark mail "Unread"
+Ctrl+S			Kill screen device output (XOFF)
+Ctrl+Q			Restart screen device output (XON) || Close application window
+CTRL+T			Create new tab or task in application runtime
+Ctrl+U			Del line || Underline selected
+CTRL+V			Paste clipboard buffer to stdout
+Ctrl+W			Delete previous whitespace-delimited word typed
+Ctrl+X			Trim element of Unix file object || Trim fragment of text
+Ctrl+Y			Redo 
+Ctrl+Z			Undo || Cancel operation executing in foreground || cd to parent directory || foreground operation executes as background job
+Ctrl+TAB		Move application foreground execution to next tab-segmented runtime display output in some tabbed application
+Ctrl+SHIFT+A	New Calendar entry
+Ctrl+SHIFT+P	Create new message (desktop or application context)
+Ctrl+SHIFT+R	Create new reminder (desktop or application [e.g. calendar])
+Ctrl+Alt+D		Minimize windows in workstation
+Ctrl+Alt+L		Lock session, kill screen device output (TTYs stay alive)
+Ctrl+Alt+T		Open new default terminal in window
+Ctrl+Alt+Up		Switch workspaces
+Ctrl+Alt+Down	Switch workspaces
+CTRL+SHIFT+C	Copy selected/highlited as stdin to clipboard buffer
+CTRL+SHIFT+V	Paste clipboard buffer to stdout
+ALT+ENTER		Display additional information about highlighted/selected item if available
+ALT+UP			Increase zoom
+ALT+Down		Decrease zoom
+Arrow Up/Down 	Scroll command history
+WINDOWS			Open Start menu and bring to foreground
+
+
+Function Keys
+F1				Open Linux online help page
+F2				Initialize text search
+F3				Jump to next occurance off a word discovered by in-text search (F2)
+F5				Refresh application/page
+F7				Spellcheck term under cursor
+F8				Select highlighted/selected item
+Shift+F3		Jump to prev occurance off a word discovered by in-text search (F2)
+Alt+F2			Open run command console
+
+CLI shortcuts (Bash)
+~				Current User home directory
+!!				Repeat previous entry in command history
+!$				Repeat last argument vector of previous entry in command history
+reset			Reset terminal if screen display interrupted (e.g. stdout bin-hex corrupts ascii-hex terminal output display as converted human-readable on screen display)
+shutdown -h	now	Shutdown local or remote logged-in system (e.g. current TTY or most nested system command execution context)
+shutdown -r		Restart logged-in system

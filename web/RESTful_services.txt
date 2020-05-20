@@ -1,0 +1,732 @@
+Restful Services
+
+Representational State Transfer
+
+
+
+Important Commands:
+curl -v -k --ssl-no-revoke -x 'http://127.0.0.1:8080' -H "Authorization: <uuid-pattern>" -H "Content-Type: application/json; charset=utf-8" -X POST 'https://api.webservice.dom/v2/path/to/endpoint' --data '{}'
+	-Pipe (RESTful) API request to proxy
+
+
+RESTful Servicce Description Languages & ENUMERATION:
+Description Languages/Resource Listings:
+WSDL
+	(web service description language)
+	enumeration:
+	/path/to/name-of-service.wsdl
+WADL
+	(web application description language)
+	enumeration:
+	/path/to/name-of-service.wadl
+	--http://www.w3.org/Submission/wadl/
+Swagger
+	-json-formatted
+	/path/to/api/v1/name-of-service/swagger.json
+	Swagger-Tools:
+	https://www.getpostman.com/
+	https://portswigger.net/bappstore/6bf7574b632847faaaa4eb5e42f1757c
+	https://github.com/RhinoSecurityLabs/Swagger-EZ
+	https://editor.swagger.io/
+	(Conversion tools)
+	https://apimatic.io/transformer
+	https://openapi.tools/
+	OPENAPI
+		https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi
+		https://github.com/swagger-api/swagger-core
+		https://github.com/swagger-api/swagger-codegen
+		https://github.com/swagger-api/swagger-ui
+		https://github.com/swagger-api/swagger-editor
+		https://github.com/swagger-api/swagger-codegen-generators
+		https://github.com/Azure/autorest
+		https://sdks.io/
+		https://github.com/Azure/autorest
+			https://github.com/Azure/autorest/blob/master/.attic/developer/architecture/AutoRest-extension-protocol.md
+https://readme.io
+iOS
+	/.well-known/apple-app-site-association
+XML Sitemaps
+	/sitemap.xml
+	/XMLSitemap
+	/wp-includes/wlwmanifest.xml
+	/XMLSchema
+RSDL
+	--RESTful Service Description Language
+RAML
+	--Restful API Modeling Languages
+Apache Avaro
+Barrister
+Hypermedia
+CloudRail
+Google Cloud Endpoints
+OData
+	--Open Data Protocol
+	--OASIS standard
+	--Microsoft-developed
+SERIN
+	--Semantic Restful Interfaces
+Hydra
+	--Hydra Core Vocabulary
+Well-Known URIs
+	/robots.txt
+	/robots-dissallow.txt
+	
+	/security.txt
+	/.well-known/security.txt
+
+REST alternatives:
+SOAP
+	WSDL
+
+
+>Enumeration
+	-check for common indexing filenames in both webroot, applicationroot (e.g. /appname/) apiroot (e.g. /appname/api/), versioned apiroot (e.g. .appname/api/v2/) and any subdirectories nested within version apiroot that appear to directly reference dynamic application code rather than a request object/function routing endpoint names
+		--
+	--check https://sdks.io/ , https://any-api.com/ , https://readme.io for open documentation/programming language apis using framework or solution for target if using SaaS solution
+	--if openapi or convertable file is available, statically analyze REST .json document for contract-level vulnerabilities in authorization https://apisecurity.io/tools/audit/
+>How are sessions authenticated and handled?
+	*NOTE: Authentication is one of the most primary and in my experience commonly exploitable functions in RESTful APIs
+	**which in no suggests the most common Authentication vulnerabilities are easy to exploit; though they should be easy to find instances of during source code review,
+	**since most instances of insecure authentication are the result of non-cryptographic or weak cryptographic PRNGs and hashing algorithms (calls to standard libraries)
+	**or in many cases dependant on easily reversible encodings (JWT, base64 obfuschttps://readme.ioation elsewhere) for secrecy
+	authentication should be handled by a centralized IdP (Identity Provider); IdP issues authentication tokens
+		-are issued tokens sufficiently complex and random?
+			test for unpredictability
+				-generate and collect many auth tokens, are there any noticeable patterns in generated tokens?
+			-tool: Burp Sequencer
+		is a pseudorandom number generator or hashing function used to generate token values?
+			-pseudorandomly generated tokens:
+				is a cryptographic pseudorandom number generation algorithm used?
+					-vulnerabilties include backtracking (resistence) and prediction (resistance)
+						--backtracking resistence: previously generated bits should be impossible to recover; prediction resistence: future bits should be impossible to predict
+					check with statistical analysis
+						-count the number of 1 bits versus the number of 0 bits OR the distribution of 8-bit patterns
+							--measure of entropy
+						--passing statistical analysis tests does not preclude cryptographic security
+							--it is possible to design cryptographically insecure/weak PRNGs that will in most cases pass statistical analysis testing even with large sample sets
+					to ensure normaly in the result set of auth tokens, compare them with a result set obtained for a reliable sample of equal size:
+						> openssl rand <# bytes> --out outfile.ext
+					Mersenne Twister (MT) is the most commonly implemented non-cryptographic PRNG, check against known MT patterns if generation seems weak/patterned
+						--default PRNG for: C++ (in standard lib since C++11), C++ BOOST, PHP, Python, Ruby, R
+						consists in an internal state (S) consisting of 624 32-bit words
+						Ssub(k+624) = Ssub(k+397) ^ A((Ssub(k) & 0x80000000) | (Ssub(k+1) & 0x7fffffff))
+							-*note: algorithm never combines two bits of S together, only operates on bits of S with constants & (bitwise AND) and | (bitwise OR)
+							-ergo: any future state can be expressed as a bitwise XOR combination of bits from the the initation array state Ssub(1)...Ssub(624)
+							--e.g. Ssub(228+624)=Ssub(882) can be expressed as a function of Ssub(625), Ssub(228) and Ssub(229), Ssub(625) by expression in terms of Ssub(398), Ssub(1) and Ssub(2)
+							--ergo converse is subsequently true: bits fron the initial state cab be expressed as a an XOR of output bits
+					-problem is linear insecurity, algorithm involves operation on only single bits, linear combinations of those bits include max 624 variables
+					-non-linear algorithms also include products (&[AND]-combinations) of bits, which with some same seed allows for up to 2^264 variables
+					--java.util.Random() and Math.random() in java standard libraries are also commonly used and insecure/weak
+					types of cryptographically secure PRNGs (CSPRNG):
+						stream cipher
+						block cipher
+						CSPRNGs by design, e.g. algorithms Yarrow-160 or its improved derivitive Fortuna
+						combination PRNGs, combining several PRNG algorithm privimitives sufficient to remove the detectable non-randomness of each given primitive
+			hashing function-derived algorithms
+				check random-looking values for patterns matching cryptographic hashes
+					-tool: https://github.com/psypanda/hashID
+					-tool: https://code.google.com/archive/p/hash-identifier/
+					does the parameter or context of the response body indicate what the format of the hash value may be?
+						-can MASK a PRINCE rule be written to brute force the plaintext message given a hash value?
+					does tampering with the hashed value return errors?
+						-appending escape characters or sending invalid values (e.g. wrong length or charset for submitting where a hash is expected) return errors
+					does the applications produce valid responses if hashed values replaced with arbitrary valid hash values computed by an attacker
+						-are arbitrary values sent to the server within computed hash values processed by the server?
+							-are those values stored in session variables, a filesystem (is stored data serialized?) or database?
+							-will a message containing escape sequences that is computed to a hashed value be processed as a sequence escaping into operation?
+								-SSTI?
+								*any system doing this will depend upon a (likely relatively small) fixed number of pre-computed hashed message values
+		-test for other paramater modifications to recieve session tokens without properly authenticating
+	access control decision should be taken locally by REST endpoints
+		can any requests be directly accessed?
+				--do any of these constitute information disclosure vulnerabilties?
+			prior to or without authentication?
+			redirecting to an authentication page?
+				does the resulting url for the authentication page contain an open redirect?
+		-test for parameter modification if direct access is forbidden
+	Is BASIC AUTH in use?
+		--Digest is better, not great
+		APIs should support standard AUTH (JWT, OAUTH, &c)
+			e.g.
+				GET / HTTP/1.1
+				Host: target.dom
+				Authorization: Basic Zm9vOmJhcg==
+			curl -H "Authorization: Basic Zm9vOmJhcg==" https://target.dom/
+			-basic auth schema:
+				base64(user:pass)
+			basic auth brute forcing
+				for i in $(cat words.lst); do echo "user:"${i} | base64 ; done > bf.lst
+				patator http_fuzz auth_type=basic url=http://target.dom/ user_pass=FILE0 0=bf.lst -x ignore:code=401
+		HTTP STANDARD AUTH
+			hmac
+				echo -n "VERB+/path/to/endpoint/" | openssl dgst -sha256 -hmac "secret" | base64 -w 0
+					--hash hmac for a URL given the secret passkey/password for a given user
+				e.g.
+					GET /path/to/endpoint
+					HOST: target.dom
+					Authorization: hmac user:KHN0ZGluKT0gZjI1MjNlOTI1MDUwZjAwMWJjNDQ1MmY2NDM3ZTY4MzlmNjZiODA5NzYwY2Q0ZWUxMjIyNjkzMmRiOWQ2NTYyZgo=
+				curl -H "Authorization: hmac user:KHN0ZGluKT0gZjI1MjNlOTI1MDUwZjAwMWJjNDQ1MmY2NDM3ZTY4MzlmNjZiODA5NzYwY2Q0ZWUxMjIyNjkzMmRiOWQ2NTYyZgo=" https://target.dom/path/to/endpoint
+	Deriving session identification from cookies or headers (or local/sessionStorage)
+		What parts of the Session ID are static?
+			What portions of the Session ID are static for replicated authentication conditions?
+		What information can be deduced from the structure of the Session ID?
+			What patterns are present in Session ID struture and/or within (possibly even between) derivative partial structures  
+		What sensetive information is stored in the Session ID?
+	Does the authentication function have a max retry limit?
+		Is the there a strong ReCaptcha mechanism protecting against further attempts?
+	Are multiple concurrent sessions allowed/possible?
+>Rate Limiting
+	-test limitations on application authentication requests, determine what if any factors auth rate limits are applied to
+		-often possible to bypass token-based authentication ip-based rate limiting by rotating ips
+		Max-Retry less likely to be bypassed on client-side than in traditional web applications, but still a possible vector, try submitting the initialization value of Max-Retry/Max-Retries and higher to authenticate
+		User-based auth jails are more difficult to bypass, but less frequetly implemented than tokens, especially when for most WebAPIs auth tokens either include/contain usernames or name-based auth factors
+		If token can be generate, create them over as predictable of a sequence as possible, calaculate shannon entropy and/or other cryptanalytic frequency prediction algorithms for each sequence collected and any aggregated collection of sequence to determine if, and if so which subocomponents, of time predicte any significant difference in entropy valures; generated with more predible tokens sequenced over as many control groups as possible for best results
+		Authenticated requests should be equally as rate-limited by load-balancer, proxy or application component as unauthenticated requests to prevent DoS or TCP starvation attacks
+>API Access Tokens
+	Generating sufficiently many tokens in (as near simultaneously as possilbe) succession, how much entropy is measured in the generated tokens?
+	Are there any noticeable patterns in the generated tokens by either examining successively (e.g. incrementation) or common patterns noticeable between tokens without examining them in sequential order?
+		Examing the series of generated tokens converted to hexidecimal notation, are can any patterns be discerned in the same ways now? Can bitwise operations explain any patterns noticed in the plaintext?
+		Most commonly discovered patterns:
+			static string as (hyphen-seperated) segment (usually leading) segment of all keys
+				--repeat process at different time if time or incrementation input 
+			repeated sub-string in multiple tokens?
+	What is the character set used to generate the access token?
+		alphabetic? alphanumeric?
+		case sensitive?
+	Given key length, accounting for measured entropy and patterns discovered that reduce the complexity of generating likely valid (in use by another user) key; how many keys we would need to be generated and tested by making an api request to perform non-targeted impersonation as a brute force attack?
+		Are there any other unique header fields, uri segments, or request body values the service application validates the api key, e.g. a user/organization/&c identifier, against on every endpoint?
+		-prefer testing against "ping"/"status"/"online" key against endpoints for less intrusive and to recieve most immediate possible response
+>JWT (JSON WEB TOKENS)
+	-string composed of 3 "."-delimited components
+		Base64(Header).Base64(Payload).Signature
+				OR:
+		JWS-defined compact representation for a signed JWT:
+				--concatenation of the JOSE header, the JWT and the details of the signature
+			BASE64URL(UTF8(JWS Protected Header)) + '.' +
+			BASE64URL(JWS Payload) + '.' +
+			BASE64URL(JWS Signature)
+				OR:
+		compact representation for encrypted JWT:
+			BASE64URL(UTF8(JWE Protected Header)) + '.' +
+			BASE64URL(JWE Encrypted Key) + '.' +
+			BASE64URL(JWE Initialization Vector) + '.' +
+			BASE64URL(JWE Ciphertext) + '.' +
+			BASE64URL(JWE Authentication Tag)
+				--ciphertext would normally contain a JWT
+		header
+			-JOSE header (JSON Object Signing and Encryption header)
+			-metadata that describes which algorithm is used for signature and/or encryption
+		payload
+			-contains data that can be serialized to a JSON string
+			--constituted of JSON string-formatted key-balue claims
+		signature
+			-used to by server to ensure confidentiality and verify integrity of payload
+				--validates against modifications, not necesarilly secure against eavesdropping or arbitrary token creation
+	--each part can be encoded using base-64
+		echo $jwtstring | base64 -d
+	--can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA
+		echo -n "value" | openssl dgst -sha256 -hmac "key"
+	JWT Usage (cURL)
+		TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":"plague","password":"god","rememberMe":false}' https://target.dom/api/v3/auth | jq -r '.id_token')
+		curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" https://target.dom/api/v3/endpoint -d '{"key":"value"}
+	Unsecure JWT
+		--not protected by a signature or MAC
+			{"alg":"none"}
+		-unsecured JWT are simple base64-encoded strings
+		-can the signature or MAC be brute-forced?
+		*signatures should be preferred over MACs for integrity protection
+			--a random complicated key should be in use to make brute forcing a JWT resource-intensive
+	Is the algorithm extracted from the payload?
+		-If MACs are used for integrity protection, every service that is able to validate JWTs can also create new JWTs using the same key
+			--ergo: all services using the same key have to mutually trust each other
+			--ergo: compromise of any service also compromises all other services sharing the same key
+		-algorithm should be forced on the backend (preferably HS256 or RS256)
+		What algorithms are considered insecure?
+			HMAC keys shorter than 256 bits
+			AES keys shorter than 128 bits
+			 RSA keys shorter than 1024 bits
+	Does a relying party or token consumer validate JWT by verifying its integrity and claims contained
+		--this is the most secure configuration
+		-else may rely on the information of the JWT header to select the verification algorithm
+			--this is an insecure configuration
+	Standard Claims that should be verified:
+		'iss' or issuer - is this a trusted issuer? Is it the expected owner of the signing key?
+		'aud' or audience - is the relying party in the target audience for this JWT?
+		'exp' or expiration time - is the current time before the end of the validity period of this token?
+		'nbf' or not before time - is the current time after the start of the validity period of this token?
+		'sub' or subject - 
+		'iat' or issued at -is the current time after the start of the validity period of this token?
+		'jti' or JWT ID - 
+	Does a decoded JWT contain any information that should not be or is redundantly stored on the client system?
+		Is this sensitive information?
+		-only the server should know the "secret" that is used to generate the JWT
+			--if data contained in JWT is modified, server should fail to decode it
+	How long does the token live?
+		-TTL or RTTL should be as short as possible
+		tokens with long lifespans may allow csrf attacks or may be returned to an attacker in an xss payload
+	Where is the JWT stored?
+		-JWT stored in client browser LocalStorage can be returned via DOM interaction and is made especially vulnerable with weak CORS policies
+	Can the JWT ever be sent over unecrpyted/plaintext HTTP?
+		-an MitM and/or MitB attack forcing HTTP downgrade can trivially intercept token if sent over plaintext
+		--unlike cookies, JWT cannot be flagged as 'http-only' or 'secure'
+			--only limited to defined origin and attacks impeded by potential SOP violation
+	JWS vs. JWE security
+		JWS (JSON Web Signing) - https://tools.ietf.org/html/rfc7515
+			--proviated validation signature at end of JWT
+			Common JWT Signing Algorithms:
+					https://tools.ietf.org/html/rfc7518#section-3
+				HMAC + SHA256
+		JWE (JSON Web Encryption) - https://tools.ietf.org/html/rfc7516
+			--encryption ensures that JWT content is only readable between parties between whom the cryptographic key exchange was negotiated
+			+signature can't be stripped
+			+signature is private(eavesdropping would require intercepting the cryptographic key)
+			Common JWT signed encryption algorithms:
+				RSASSA-PKCS1-v1_5 + SHA256
+				ECDSA + P-256 + SHA256
+	JOSE (JSON Object Signing and Encryption) Header
+		--carried in JWT header by bearers of signed and encrypted JWTs
+		--describes what algorithm (signing or encryption) is used to process the data contained in the JWT
+			--typically defines 2 attributesL
+				alg: algorithm used to sign or encrypt the JWT
+				typ: content (type) that is being signed or encrypted (usually 'JWT')
+		-signed and encrypted JWTs are usually nested
+			--signed JWT first produced, then ciphertext of signed result is created
+	Cracking 'secure' signed JWT tokens
+		--what's needed to brute force?
+		Token
+			-HS256 JWT Token
+		Alphabet
+			-alphabet to use for brute force attempt
+			--character array of all values to iterate over
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		--expect 20-60mins to crack using high-end desktop (i9-9800X (Skylake-X architecture, 10core/20thread [3.5GHz])) complex high entropy token; 40-100mins using high-end laptop (i7-9850H (Coffee Lake-H architecture, 6core/12thread [2.6GHz])) CPU-based brute force
+		JohnTheRipper
+			method(old)
+				--still necessary using non-Jumbo versions of John
+				signature=$(echo ${JWT} | cut -d'.' -f3 | xxd -p | tr -d \\n) && data=$(echo ${JWT}| cut -d'.' -f1,2) && echo "$data"'#'"$signature"
+			method(new)
+		Hashcat
+			hashcat64 -a0 -m 16500 -w3 jwt.json.b64 word.lst
+			hashcat64 -a3 -m 1450 jwt.raw.HMAC-SHA256.has
+	-tool: https://github.com/lmammino/jwt-cracker
+		--HS256 brute force cracking tool
+		npm install --global jwt-cracker
+		jwt-cracker <token> [<alphabet>] [<maxLength>]
+		jwt-cracker "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ" "abcdefghijklmnopqrstuwxyz" 9
+	-tool: https://github.com/lmammino/distributed-jwt-cracker
+		npm i -g distributed-jwt-cracker
+		jwt-cracker-server <jwtToken> [options]
+		jwt-cracker-server 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ' -a="abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" -p 4444 -P 5555 -b 5000000
+			--start a new server
+		jwt-cracker-client [options]
+		jwt-cracker-client --host=3.124.41.213 --port=4444 --pubPort=5555
+			--start a new client
+	-tool: https://github.com/mike-engel/jwt-cli
+	-tool: https://github.com/andresriancho/jwt-fuzzer
+	-tool: https://github.com/ticarpi/jwt_tool
+	-tool, gui, html: https://github.com/ticarpi/jwt_tool
+	-tool, burp extension: https://github.com/mvetsch/JWT4B
+	-tool, burp extension: https://github.com/pinnace/burp-jwt-fuzzhelper-extension
+	-tool, https://jwt.io/
+	Use in other major REST AUTH methods:
+		--integral part of the OpenID Connect standard, an identity layer that sits on top of the OAuth2 framework
+			--e.g. Auth0 is OpenID Connect certified identity platform using JWT
+>ACCESS CONTROLS
+	Are there any sensitive functions that do not require re-authentication?
+>AUTHENTICATION (cont..)
+	Are User IDs/Usernames can sensitive?
+		--should be case-insensitive
+		Are there any vectors during or after authentication where registered usernames with different cases are treated as case-insensitive?
+	Are UUIDs visible?
+	Is there a length beyond which passwords seem to be truncated?
+>OAUTH
+		--OAuth2 specification doesn't mandate a format for access tokens
+	Is redirect_uri validated on the server-side?
+		-only whitelisted URLs should validate
+		Can the IP be spoofed using an arbitrary X-Forwarded-For: Header value?
+		OAUTH open redirect example exploit:
+			http://target.dom/endpoint?redir=http://attacker.dom/target.dom
+	Does OAUTH exchange for code or token?
+		-always prefer code over tokens
+			--don't allow response_type=token
+	Is the state parameter used with a random hash on the OAuth authentication process?
+		-else CSRF attacks may be possible
+	Are the default scope and validate scope parameters defined for each application?
+	Replay attacks?
+	Session fixation?
+	XML Signature wrapping?
+	Is Oauth 1.0 (not 1.0a) implemented in any fashion?
+		-vulnerable to session fixation attacks
+>SSO
+	--single sign on
+	--token based authentication validated by third-party (similar to Kerberos)
+	Are SSO tokens properly invalidated?
+		on logout?
+		on period of inactivity?
+>API Keys
+	Is the API key required for every request to each protected endpoint?
+	Is HTTP response code 429 "Too Many Requests" ever returned while rapidly making requests?
+	Is an API key revocation functionality in place?
+		-does it strictly comply with application's usage agreement?
+>Privilege Escalation (vertical or horizontal)
+	Can other users be enumerated?
+		How many requests would be required to discover the identity of an arbitrary target or all users?
+		Possible Methods:
+			Query a list/table/collection/(other representation of an array) of users
+				Can a full index of users be returned?
+					-Wildcard Injection
+						*--wildcard characters or phrases may or may not require precession by an escape sequence, subquery encapsulation, (non-)particular sorting function phrase(s) or additional comparison operation AND/OR succession by an endline character, comment invocation, sequence unescape, subquery endcap, sorting phrase adjective or comparison operation (either conjoining with a preceding referenced value given some new equivelancy relation or being disjoined by resolving a false equivelance/equality via an injected identifier, e.g. rendering identifiers in an injected statement falesly equivelant values by expecting all to be cast as types for which comparison can be evaluated)
+						SQL: * (SELECT statement injection), % (LIKE statement injection; matches 1+ character), _ (LIKE statement injection; matches exactly 1 character)
+						MongoDB: *, /.*/ (JavaScript regex), {'$regex': ''} (regex typedef), { $ne: 1 } (resolves to JavaScript null type, evalutes as declared uninitialized value), {$exists:true}, {$exists:false}
+				Can any indexed data other than the queried user identifier (username, email) be queried?
+					Can any of the queried attributes be iterated over for each unique user?
+				Can bulk user information returned in a single object, does it need to paginated over or can unique queries be requested serially for ordered values following the final value in the series included in a most recent previous response?
+					If all possible values are queried, should all indexed items be expected to be returned in at least 1 response?
+						Iterating over all possible queries:
+						e.g.:
+							crunch 4 13 mixalpha-numeric-all-space -o word.lst \
+							for i in `cat word.lst`; do curl -X POST https://api.target.dom/v2/search --data '{ "querystring": \"$i\" }' | awk -f json-parse.awk - >> /tmp/placehold && sort -u /tmp/placeholder -o /tmp/placeholder ; done
+						--results must be ordered (non-pseudo-random)
+							--test by making same request at multiple different time intervals
+						--sufficiently many results must be returned or be capable of being paginated over in qeury requests for each unique possible query
+							--not measurable without knowing length of index
+			Registration page harvesting:
+				On parameter submission, either asynchronously or form data submission request body, are any expected unique user attributes (e.g. username, email address, phone number, &c) declared unavailable (not unique) in the response body?
+					Do errors caused by parameter validaty and uniqueness return identical responses (Status Code & Response Body)?
+						In which order does the API evaluate (assuming accorded response) validity and uniqueness?
+							If validity is evaluated prior to uniqueness actually creating accounts may be required to test if a username is in use.
+				Does the registration function require multiple steps to complete?
+					Does it require making requests to (an) endpoint(s) or accross multiple pages or screens?
+						If so validation and parameter unicity are in most cases capable of being tested without creating any new accounts.
+			Login page harvesting:
+				Does login failure return an error message or response?
+					Does the returned login attempt message or response body indicate distinctly whether the username is valid (for an existing account)?
+				Are the there protections against many authentication attempts?
+					account lockout
+						are email warnings sent?
+							are the likely to be caught by spam filters? 
+						time-based or requiring some user interaction?
+					ip address ban (usually temporary)
+						--perform test using clustered instances on cloud-hosting services
+					client-side controls
+						check cookies, parameter values, DOM object values
+			Unique user endpoint harvesing:
+				where is the unique identifier located?
+					uri segment
+					uri parameter
+					request body parameter
+					subdomain name
+				what type of unique identifier is the target field?
+					username/orgname
+					email
+					uuid
+					account number (incremented)
+>JSON (JavaScript Object Notation)
+	--most common format for API request and response data body
+	--objects serialized in the form of javascript literal types
+	JSON-Tampering
+		Send differing JSON request bodies, each invalid in a uniquely different way, to each given endpoint for each valid HTTP verb (POST,PUT,&c), e.g.:
+			{"key":"value"}=-
+			{key:value}
+			{"key":string}
+			{"key":"int"}
+		Error messages of varying verbosity may be found and are a common source of information disclosure vulnerabilities information from which may facilitate exploitation of more severe vulnerabilities
+>If there are users how are users uniquely identified? If user endpoints exist are they related to a primary key identifier? How?
+	serial identifier
+		PKID
+		--iterable
+			non-numeric iteration possible, e.g. alnum, decimal notations
+		OID
+	non-random identifier
+		username
+			any vector or endpoint that does not strictly enforce unicity?
+			are non-alnum characters valid input?
+				can stored identifier string value escape sequence generate errors or long response times on any requested endpoint? Injection possible: sqli, SSTI, ldapi
+				if the stored escape sequence containing identifier string is reflected is it always properly sanitized in generated response? Client-side exploits: stored xss, dom xss, on-site request forgery
+		if hashed/encoded value, non-unique identifiers still predictable passing hash or encoded values
+	pseudo-random identifier
+		UUID
+		pseudo-random-seeded hash
+>SSL
+	Is the application also hosted as plaintext?
+	Is the HSTS header sent in HTTP responses?
+	Is certificate-pinning enabled for the FQDN?
+>Application Templating Engine
+	
+>IDOR
+	(Insecure Direct Object Reference)
+	*common to find endpoints that don't perform authorization checks that should
+		e.g. /something/api/v1/service_name/users/666/
+		*GET Requests may allow access to sensetive user information
+		*POST requests are more likely to allow manipulating user information
+	-out of range index errors are fairly common given a an integer value
+		--e.g. /path/to/endpoint/666 where index item 666 is uninitialized, thus Null
+		--may return verbose respones containing source code or revealing backend framework, data storage system, &c
+>Rate Limiting
+	-HTTP status code for rate limiting defined as 429 by RFC 6585
+		-RFC 6584 reappropriates 503 Status Code header 'Retry-After:' for use with 429 Responses
+		Other common indications that an API rate limit has been hit:
+			Legacy Status Response Code 420
+				--still implemented in pre-standardization APIs and ocassionally in newly written APIs
+				--originally used by twitter API with response “420 - Enhance Your Calm”; some engineers really liked that joke and don't want it to die
+			Status Response Code 403 combined with an error code
+				--Google API services and Github v3 API (distinct from the newer GraphQL API) use status code 403 Forbidden for rate limiting and include JSON message bodies
+				--Google and Github host additional external APIs and other (services/libraries) remain modeled after them, check the response body of 403 Responses when querying an API
+					--rarely will APIs have a mechanism for forbidden file access as a response, because they generally do not serve files from a webroot
+			Rate limit responses may be included in API headers, e.g.:
+				X-RateLimit-Limit:
+				X-RateLimit-Remaining:
+				X-RateLimit-Reset:
+	How have you been rate-limited?
+		-APIs most commonly use one or both of two factors determining when an API rate limit has been reached:
+			API Key/AUTH Key
+				--especially true of premium/paid APIs
+				x-trivially bypassed for freely-accessed APIs if multiple API Key-generating accounts can be created
+					--may require multiple contact address accounts or in some cases even multiple domain names
+			IP Address
+				--especially true of APIs that do not require user authentication
+				x-trivially bypassed clustering cloud-hosting service instances to make additional requests originating from
+		--For responses indicating a 'Retry', 'Reset' or similar header or body response in Unix Epoch Time(UTC) (or any datetime format that can be converted to an int value) a shared key, e.g. in Redis, tracking request availability time or set with an expiry period may be the most efficient method to stagger programmatic or daemonized requests in accordance with expected or agreed service usage terms.
+			--Test that sleep does not block background processes from processing other jobs
+			--can happen in languages where sleep sleeps the whole process and that process is running multiple types job on the same thread
+	Where have you been rate-limited?
+		Is the entire API rate-limited or are only endpoints within certain paths?
+			--NGINX rate-limiting configured by two main directives:
+				limit_req
+					--counts universally
+				limit_req_zone
+					--counts within location for defined virtualhosted service
+			Do Paths share rate limits or are limits counted exclusive to a path?
+				--NGINX limit_req_zone applies only within singular zone configuration, e.g.:
+					limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
+					server {
+						location /path/ {
+							limit_req zone=alimit;
+				
+>Webhooks
+	Are webhook receivers authenticated?
+	If the webprovide an HMAC and implicitly assume that consumer applications of the webhook are properly implemented and will verify all requests. Like any application component webhooks are iterated on and vulnerabilities may be further introduced to consumer applications or the webhook hosts via the consumer application if improperly maintained.
+		-verification should be cryptographically unique as in the Plaid verification system.
+If the we hook has is accessible via subdomain can the webhooks scope to or inherit document objects to a parent domain?
+
+>SOQL
+	Salesforce REST API accepting sql-like string as a parameter.
+	-No parametrization in the API itself, many consumer allocation are inherently vulnerable by default.
+		--similar to downstream vulns caused by early SAML implementations
+
+		
+		
+
+
+Best Practices:
+	Prefer to scan/fuzz item update/modification requests rather than creation requests
+
+
+
+Appendix 1:
+Common Frameworks(Languages/Libraries) used to implement APIs
+	node.js
+		ExpressJS
+		Electron
+		Restify
+		Adonis
+		Sails.js
+		Loopback
+		hapi.js
+	Python
+		Flask
+			flask-restful
+			flask-restless
+			Flask-Potion
+		Django
+			Django-REST-Framework
+			django-tastypie
+		FastAPI
+		Web2Py
+		Bottle
+		Cherrypy
+		Twisted
+		webpy
+		Connexion
+		falcon
+		restless
+		slashdb
+		hug
+	Java
+		Scala
+			Akka
+				https://github.com/swagger-akka-http/swagger-akka-http
+				https://github.com/akka/akka-http
+		Spring
+			Spring-Boot
+		Glassfish
+			Jersey
+		CodeIgniter
+		Grails
+		Apache Spark
+		Netty
+			Wildfly
+				--formerly JBoss Application Server
+			RestExpress
+		Play!
+		Blade
+		Ninja Web
+		Resteasy
+		Restlet
+	PHP
+		Symphony2
+		Laravel
+		Yii
+		Lumen
+		Slim
+		Microrest
+	Ruby
+		Rails
+		Sinatra
+		Grape
+	ASP.NET
+		ASP.NET.Core
+		Nancy
+	Go
+		Revel
+		Gin
+		Martini
+		Web.go
+		gocrud
+		go-rest
+			go-json-rest
+		go-restful
+		go-relax
+		sleepy
+	Elixer
+		Phoenix
+	Agnostic microservices:
+		Azure Functions + Azure Api-Management
+		AWS API Gateway + AWS Lambda
+Web Server API Management gateways (API Gateways):
+Microservices:
+	AWS API Gateway
+	Azure API Management
+NGINX
+	OpenResty
+		--NGINX+Lua
+	Kong
+		--Scalable, distributed, and plugin oriented API gateway on NGINX backend
+	Tyk
+		--Lightweight API gateway with analytics logging
+		--written in Go
+Express Gateway
+	--Microservices API Gateway built on ExpressJS
+Node Server
+	--server.js
+	
+Appendix 2:
+RESTful Methods and Response Codes
+
+| Method    |Description    							  |
+| ----------|---------------------------------------------|
+| GET		| Get the representation of resource’s state
+| POST     	| Create a new resource
+| PUT      	| Update a resource
+| DELETE	| Remove a resource
+| HEAD		| Get metadata associated with resource’s state
+| OPTIONS	| List avaiable methods
+
+| Response Code |	Response Message   |	Description 	|
+| ------------- | -------------------- | ------------------ |
+|200|	OK	    |	Success while processing client's request
+|201|	Created |	New resource created
+|301|	Moved Permanently |	Permanent redirection
+|304|	Not Modified |	Caching related response that returned when the client has the same copy of the resource as the server
+|307|	Temporary Redirect |	Temporary redirection of resource
+|400|	Bad Request |	Malformed request by the client
+|401|	Unauthorized |	Client is not allowed to make requests or access a particular resource
+|402|	Forbidden |	Client is forbidden to access the resource
+|404|	Not Found |	Resource doesn't exist or incorrect based on the request
+|405|	Method Not Allowed |	Invalid method or unknown method used
+|500|	Internal Server Error |	Server failed to process request due to an internal error
+
+
+Appendix 3:
+References
+	HTTP Authentication schemas:
+	https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
+
+
+Appendix 4:
+OWASP API Top 10
+
+API1:2019 — Broken object level authorization
+DIY: substitute the ID of an owned resource in an API call with the ID of a resource belonging to some other user
+Why? lack of proper authorization checks allows access a specified resource
+What? IDOR (Insecure Direct Object Reference)
+
+API2:2019 — Broken authentication
+BASIC auth or HS256 JWT tokens are non-complex and cryptographically weak.
+Single Auth factor.
+Industry standard Auth mechanisms are fairly standard and robust and it’s usually the implementation or that’s broken.
+SSO, esp. using legal identity, email and multi-account identity-linked accounts, make downstream components vulnerable to multi-account take-over.
+No MFA, weak MFA or MFA that involves a weak factor (SIM swap) or transmission mechanism (Plaintext HTTP Auth, lack of or short-lived HSTS).
+Sessionable cookies not flagged HTTP-Only or Secure.
+Cross-origin tokens involving an misconfigured or insecure upstream host.
+Lack of rate limiting (brute force, credential spraying).
+Predictable/poorly seeded pseudo-random or non-randomly seeded usernames &/or Auth Tokens.
+Token validation implementation error (e.g cryptographic signature confusion or vuln to downgrade attacks).
+
+A3: Excessive Data Exposure
+      API exposes more data than client requirements, or in most cases is programmed to return as output or render, client browser or client software filtering is a client side control.
+      Most common in applications for which data retrieval is simpler or more efficient where returning the full set of a columns (or column as used by the server, may reuse queries) especially common amongst SAP-consuming APIs, nosql collections-type JSONic document retrieval and rushed into production graphql-type JSONic API instances for databases storage retrieval as well as blobable and serialized data retrieved from externally-hosted file storage hosting (s3 /bucket type storage).
+      -Web API returns full data objects as they are stored by a database or on/off-site file system parsing only the formatted storage object(file).
+            -/-worst case scenario for scalable services usually involves users’ data storage also being mounted as a fileshare on the application server host, esp. common with IIS/Azure.
+      -direct API calls or captured asynchronous responses often directly expose unnecessary, if not sensitive data.
+
+A4: LACK OF RESOURCES & RATE LIMITING:
+Application lacks load balancing, client/ip-based blacklisting to handle excessive unexpected requests (DoS/DDoS) or especially when vulnerable endpoint is component of authentication function (brute force), which may further starve database connections. This includes TCP Starvation. Or accepts excessively long or malformed payloads (POST, PUT, PATCH), arbitrary and/or arbitrarily many request parameters of potentially arbitrary length (GET, parameter pollution), payloads -esp. including file uploads- containing metacharacters (largely language-defendant; Java [frameworks], server-side JavaScript and SAP S/4HANA tend to be vuln, but still throw a * at PL/SQL or a large  poorly indexed sql table ..) that will be processed files whose structure will process as recursive self-reference (ReDoS, zip bombs/extreme compression ratio). Second order vulnerabilities, esp. the otherwise rare application race condition, may also become exposed, e.g. insufficient load balancing or a bypassed WAF/IPS may expose improper structure of a validation function if requests are allowed to keep-alive or not wait for app accepts processed ingress while all workers  occupied.
+
+
+Appendix 5:
+Tooling:
+Manual Developer tooling:
+Postman - https://www.getpostman.com/downloads/
+HTTPie - https://httpie.org/
+Firecamp - https://firecamp.app/
+Mockoon - https://mockoon.com/
+Insomnia - https://insomnia.rest/
+Server/Mockup tooling:
+JSON-SERVER - https://github.com/typicode/json-server
+prmd - https://github.com/interagent/prmd
+https://github.com/Mermade/widdershins
+https://api.github.com/repos/postmanlabs/swagger2-to-postman
+https://github.com/8x8Cloud/swagger2raml
+https://api.github.com/repos/swagger-hub/swagger-editor
+https://github.com/Reckon-Limited/serverless_swagger
+https://api.github.com/repos/postmanlabs/raml2postman
+https://github.com/apiaryio/Paw-APIBlueprintGenerator/
+widdershins - Pentest tooling:
+API dev libraries:
+https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi
+https://square.github.io/retrofit/
+https://github.com/paulcbetts/refit
+https://github.com/mattiasnordqvist/Web-Anchor=
+Pentest-specific tooling:
+Astra	- https://github.com/flipkart-incubator/astra
+BurpSuitePro
+OWASP Zaproxy
+wfuzz
+
+
+Appendix 6:
+API Architecture, Development & Style Guides:
+https://cloud.google.com/apis/design/
+https://github.com/paypal/api-standards/blob/master/api-style-guide.md
+https://github.com/interagent/http-api-design
+https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md
+https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design
+Standardized Documentation:
+https://github.com/Rebilly/ReDoc
+https://github.com/swagger-api/swagger-ui
+https://github.com/lord/slate
+https://api-docs.io/
+http://apicommons.org/
+https://apis.guru/openapi-directory/
+http://apisjson.org/

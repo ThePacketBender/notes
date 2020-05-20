@@ -1,0 +1,21 @@
+pfsense
+
+
+Firewall Rules
+pfctl -sr
+	show firewall rules
+pfctl -sn
+	show NAT rules
+pfctl -sa
+	show all
+pgctl -vvsr
+	--verbose filewall rule info
+
+
+	set promiscuous mode on network interface
+/sbin/ifconfig em0 promisc
+
+
+
+Reference:
+https://docs.netgate.com/pfsense/en/latest/book

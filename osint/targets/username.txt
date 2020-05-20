@@ -26,12 +26,12 @@ Username Search Tools:
 	CheckUsers
 	NameVine
 	UserSherlock - https://www.usersherlock.com/
-	UserSearch
+	UserSearch - https://usersearch.org/
 	PeekYou
 	Pipl
 	Spokeo
 	gaddr
-	name chk
+	name chk - https://namechk.com/
 	name checkr
 	https://checkusername.com/
 

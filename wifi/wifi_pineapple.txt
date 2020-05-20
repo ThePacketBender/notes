@@ -38,7 +38,7 @@ bash wp6.sh
 
 
 Connect via SSH
-ssh root@172,16.42.1
+ssh root@172.16.42.1
 
 package management (SSH)
 opkg update

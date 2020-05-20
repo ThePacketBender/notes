@@ -1,0 +1,40 @@
+HTTP Request Methods
+
+The request method token is the primary source of request semantics
+	-indicates purpose for which client has made request
+		--&& type of response expected by client on success.
+
+RFC 7231 Standard Methods:
+   +---------+-------------------------------------------------+-------+
+   | Method  | Description                                     | Sec.  |
+   +---------+-------------------------------------------------+-------+
+   | GET     | Transfer a current representation of the target | 4.3.1 |
+   |         | resource.                                       |       |
+   | HEAD    | Same as GET, but only transfer the status line  | 4.3.2 |
+   |         | and header section.                             |       |
+   | POST    | Perform resource-specific processing on the     | 4.3.3 |
+   |         | request payload.                                |       |
+   | PUT     | Replace all current representations of the      | 4.3.4 |
+   |         | target resource with the request payload.       |       |			
+   | DELETE  | Remove all current representations of the       | 4.3.5 |
+   |         | target resource.                                |       |
+   | CONNECT | Establish a tunnel to the server identified by  | 4.3.6 |
+   |         | the target resource.                            |       |
+   | OPTIONS | Describe the communication options for the      | 4.3.7 |
+   |         | target resource.                                |       |
+   | TRACE   | Perform a message loop-back test along the path | 4.3.8 |
+   |         | to the target resource.                         |       |
+   +---------+-------------------------------------------------+-------+
+
+RFC 7231 required all general purpose servers support GET and HEAD methods, other methods optional
+	--modern APIs, asynchronous browser requests and Google's use of leverage as the dominant browser client+index to reshape the internet from STEM ideas of it to advertising & marketing's ideal internet and concept of technology has significantly changed this.
+	
+
+
+
+
+
+References:
+https://tools.ietf.org/html/rfc7231#section-4
+https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+https://tools.ietf.org/html/rfc4918#section-9

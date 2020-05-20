@@ -42,6 +42,26 @@ container runtime
 		Kubernetes CRI (Container Runtime Interface) [implementation]
 
 
+
+Usage:
+	Create a cluster
+minikube version
+minikube start
+	Deploy an app
+kubectl
+	--kubectl command can create a proxy that will forward communications into the cluster-wide, private network
+kubectl proxy
+curl http://localhost:8001/version	
+kubectl version
+kubectl cluster-info
+kubectl get nodes
+kubectl create deployment
+	kubectl create deployment kubernetes-appname --images=target.dom/path-to/kubernetes-appname:v2
+kubectl get deployments
+	Interacting with Pods
+kubectl describe pods
+kubectl get pods
+
 	
 
 KUBECTL

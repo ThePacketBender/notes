@@ -1,0 +1,37 @@
+Microsoft Sharepoint:
+
+	--web-based collaberation platform
+
+Users' Document Schema
+	MySite
+https://mysite.sub.dom.ext/Person.aspx?accountname=<email_addr_schema>
+https://mysite.sub.dom.ext/Person.aspx?accountname=<LanID>
+https://mysite.sub.dom.ext/Person.aspx?accountname=UPSTREAMACCTS%5<LanID>
+	
+
+
+Searching Sharepoint Documents:
+*.pbix
+	--power BI data handling
+*.mdb
+	--ms access database
+		--ms access db files always vulnerable either by not requiring auth or auth bypass ;~)
+
+
+
+	landing pages
+/vti_inf.html
+
+	base dirs
+/_catalogs/
+	/wp/
+		/Forms/
+/_layouts/
+/_vfi_bin/
+/admin/
+
+	enumeration/search schema
+/_layouts/userdisp.aspx?Force=True&id=1
+	--user enumeration
+/_layouts/people.aspx?MembershipGroupId=0
+/_vti_bin/spdisco.aspx

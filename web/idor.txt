@@ -1,0 +1,31 @@
+IDOR (Insecure Direct Object Reference)
+
+	--"insecure object level reference"
+	-type of Broken Access Control
+		--one of many access control implementation mistakes that can lead to access controls being circumvented
+	--commonly sought by attackers for horizontal privilege escalation, but they can also arise in relation to vertical privilege escalation
+	tl;dr: access control vulnerabilities where user-controlled parameter values are used to access resources or functions directly
+
+
+--occurs when a (user) controlled/supplied input is unvalidated and direct access to the object requested is provided
+	--most common at API endpoints requested asynchronously where some data container is accessed and returned to a user, potentially one within the access privileges intended necessary to access that data
+	e.g. as a broken access control flaw userid associated with session may be passed as get parameter https://www.set.dom/api/v2/uid=11 but will return valid for any valid given as the expected return value for that user
+		--uid would the trusted unsafe input the client controls
+		--commonly trivially exploitable when occurts over whose reference is iterated over per access request 
+
+
+most common access/impact:
+	unauthorized information disclosure
+	modification or destruction of data.
+	performing a function outside of the limits of the user
+
+
+
+Remediation:
+	1.) force strict access control policies such that users cannot act outside of their intended permissions
+	2.) implement hash function and use hashed values instead of normal numbers or strings.
+		https://www.set.dom/api/v2/uid=11
+		https://www.set.dom/api/v2/uid=ea3eda3d3w2293
+	3.) strongly pseudorandomly-seeded unique identifiers better (more random, less entropic) than iteratkve, more simple or predictable and common identifier (espeially as concerns unique [id] or primary reference identifiers [e.g. name]) 
+ 
+

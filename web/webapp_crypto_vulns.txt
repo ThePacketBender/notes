@@ -1,0 +1,24 @@
+Web Application Cryptography Attacks
+
+
+
+
+Hash Extension
+	Given some hash composed of a string prefixed by an unknown value, an attacker can append to string and produce a new hash retaining unknown prefix.
+	-application vulnerable if it prepends a secret value to a string, hashes it with a vulnerable algorithm, and entrusts the attacker with both the string and the hash, but not the secret
+	--Despite attacker never knowing value for prepended secret, attacker can generate a valid hash for {secret || data || arbitrary_data}
+	--State necessary to continue a hash given in output of previous round of most hashing algorithms.
+	--Attack loads state into appropriate hash structure and continues hashing.
+	Padding Oracle causes vulnerability:
+	When calculating H(secret + data), the string (secret + data) is padded with a '1' bit and some number of '0' bits, followed by the length of the string
+		--As hex is 0x80 preceding N 0x00 bytes
+		-The number of 0x00 bytes, the number of bytes reserved for the length, and the way the length is encoded, depends on the particular algorithm and blocksize.
+	Given some hash for `length(secret || data) = length("secret")` is 0x06 bytes, or 80 0x30 bytes. Ergo 6 bytes of data prepending 50 bytes of padding and 8-byte little endian length field (30 00 00 00 00 00 00 00) comprising a 64-byte block.
+	
+	Tool:	
+	Hash Extender
+		https://github.com/iagox86/hash_extender.git
+		hash_extender <--data=<data>|--file=<file>> --signature=<signature> --format=<format> [options]
+
+
+
