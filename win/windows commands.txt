@@ -104,6 +104,8 @@ clip < file.ext
 	copy file contents to clipboard from file, ctrl+c
 type plain.txt | clip
 	-pipe stdout of file contents to stind for clipboard, ctrl+c
+fciv.exe -sha1 somefile.ext
+	-return hash of file to verify file integrity if file has a known/expected value
 
 	
 	
@@ -224,10 +226,30 @@ wbadmin get status
 wbadmin get items
 
 
+ENVIRONMENT/VARIABLES
+
+setx path "%path%;c:\path\2\dir\"
+	-set path to some path value appending to the existing path semicolon-delimited path value
+	**--WINDOWS Vista, 7, 8 only
+pathman /as C:\d\ir\
+	--add directory to system environment path
+pathman /rs C:\d\ir\
+	--remove directory from system environment path
+	**--WINDOWS 7 (tool depricated on Win8 launch, installation on other versions unlikely, 8 if you're very luck and that admin never bothered learning powershell) with rktools installed only
+		--only try this on admin boxes running Windows 7 (else as above/below)
+	--on WIN 8/10 installs by default to directory "C:\Program Files (x86)\Windows Resource Kits\Tools"
+		--Random Disclaimer (read: good advice): this specific windows kits package, because intended for WIN7, will be titled "Command Shell" rather than "Command Prompt" on the start menu
+			--if you suspect it's indirectly path-accessible presence check .lnk file naming conventions in "C:\Users\%USERNAME%\AppData\Roaming\Microsoft"
+
+
 NETWORKING
 arp -A
 net view
 	-view available network share hosts
+net1 view
+net1.exe view
+	--net1.exe contains all and identical functionality of/to net.exe but is often useful evading simple detection that expect windows CMD network enuration via the common net command, but not the uncommon net1.exe command,
+		though any sort of heuristics or behavioral detection should easily identify this executable
 net view \\HOST
 	-view available shares on host
 net view /domain:otherdomain
@@ -296,6 +318,25 @@ c:\windows\system32\gathernetworkinfo.vbs
 	--included since Win7
 
 
+Start Menu/"Hardlinks"
+	--in a gui these will display at the infamous start menu accessible via the icon on the lower left hand corner of your screen of via the windows button ... or cortona if you're the 31337
+	-'Shell Link Binary File Format'
+		--used in WIN for Object Linking and Embedding (OLE), else by applications that need the ability to store a reference to a target file
+	System lnk file location(s):
+C:\Users\%USERNAME%\AppData\Roaming\Microsoft
+	-WIN7/8/10
+C:\Documents and Settings\%USERNAME%\Recent
+	-Windows XP/Vista (Vista sometimes, desktop widgets made things weird for a few years)
+	Standard lnk file locations
+C:\Users\<uname>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+%userprofile%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+	-user startup directory
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup
+	-shared/global startup directory
+	Common Application lnk file locations:
+C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Office\Recent\
+	-MS Office MS7/8/10
+C:\Users\%USERNAME%\Downloads
 
 
 SERVICES/PROCESSES/PERMISSIONS && configuration

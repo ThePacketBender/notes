@@ -1,0 +1,8 @@
+WinRM
+
+Windows Remote Management
+
+>Exploitation
+Evil-WinRM
+
+Windows remote administration & powershell remoting alternatively work cleanly from a windows host

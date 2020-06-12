@@ -1,0 +1,6 @@
+MacOS: some basics
+
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	--install homebrew, this is why you bought a macintosh computer
+		stay on the righteous and holy path:
+			practice unix philosophy from your cli like you would any other machine running a unix-like operating system

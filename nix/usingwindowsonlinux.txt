@@ -29,3 +29,16 @@ https://github.com/ThePacketBender/pentest_scripts/blob/master/installers/powers
 	
 net rpc shutdown -I 192.168.4.111 -U user%pass
 	--shutdown remote windows how from *nix host
+	
+**MOST OF THE ABOVE HAS DATED FAIRLY QUICKLY IN THE PAST FEW
+YEARS SINCE MICROSOFT LEARNED TO STOP WORRYING AND LOVE THE FOSS**
+https://packages.microsoft.com/config/
+	--repositories spefic to most common linux distribution can be found here
+		--if you're using kali and can't figure out how to do this yourself, word from the wise:
+			KIDS,
+				OKAY,
+				I AM GOING TO ATTEMPT TO DROWN MYSELF.
+				YOU CAN TRY THIS AT HOME,
+				YOU CAN BE JUST LIKE ME!
+			don't cross your OS data streams until you know precisely how they are processing and trasmitting data, that means:
+				if you can't read the output of most network common protocols via wireshark like any other second language: TRY THIS AT HOME, YOU CAN BE JUST LIKE ME! Mic check 1, 2. .. We recording?

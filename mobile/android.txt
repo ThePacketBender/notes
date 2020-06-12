@@ -36,6 +36,31 @@ echo "ro.kernel.qemu=1" > /data/local.prop
 	-if writeable will gain root
 
 	
-ADB shell
+ADB
+	--android debug bridge utility (universal)
+adb
+	-*nix execute adb
+adb.exe
+	-Win execute adb
+C:\Android\platform-tools\adb.exe
+	-expected absolute path of standard adb installation
+		--may vary if installed via IDE (e.g. Visual Studio)
+ADB shell (once connected to device)
+adb devices
+	--list system-connected (via USB) android devices with debug interface enabled
 am start -a android.intent.activity.MAIN -n com.application.identifier/.ActivityID
 	-start an application
+adb start-server
+	-start adb daemon allowing device interactivity
+adb kill-server
+adb logcat
+adb logcat > logcat.this.txt
+	-generate a logcat debug output, this might get long, best to pipe to file
+adb bugreport
+adb bugreport > bugreport.this.txt
+	-generate a bugreport, like logcat but less verbose, tries to automate/simplify debug tasks for dev
+adb install local.apk
+	-install local apk application-type file to connected device
+adb pull /android/dev/source/file.txt \users\yourname\documents\file.txt
+adb push \users\yourname\documents\file.txt /android/dev/source/file.txt
+	-host-to-guest and guest-to-host file transfer

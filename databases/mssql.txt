@@ -2,8 +2,60 @@ MSSQL
 
 
 MS-SQL Console
+(*nix)
 mssqlclient.py -port 27900 user:password@10.1.1.1
 sqsh -S 10.1.1.1 -U user -P password
+SQLCMD installation (else see as below[WIN])
+	RHEL only, then yum install
+curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/msprod.repo
+	Debian-based distributions (kids, that means your ubuntu, mint and kali, too)
+(1)
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+(2)
+sudo apt-get update
+sudo apt-get install mssql-tools unixodbc-dev
+(3)
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
+OR
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+source ~/.bashrc
+(Mac)
+	--requires homebrew
+brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+brew update
+HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=y brew install mssql-tools
+(WIN)
+SQLCMD
+	https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15
+	https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-2014
+sqlcmd -Sserver\instance
+	--connect to interactive session (REPL)
+sqlcmd -Uwhoru -Sserver\instance
+	--connect to interactive session as user other than current user
+sqlcmd -E -N -C 
+	--connect using cached Windows credentials (e.g. kerberos ticket or ntlm), encrypt communication and trust server certificate
+sqlcmd -i C:\infile.sql -o C:\outfile.txt
+	-execute scripted sql on target mssql service context on target host non-interactively
+		--great for executing stored procedures defined by more privileged users if known/common/documented elsewhere
+	--likewise sqlcmd using predefined inputfiles non-interactively is ideal for running within batch or powershell (if mssql ps modules not installed on attack host) scripts
+OSQL
+	--enter Transact-SQL statements, system procedures, and script files from the CLI via ODBC interactively (REPL) or non-interactively
+SET OSQLPASSWORD="msdn+always+says_abracadabra"
+osql
+	-launch osql (REPL) interactively
+osql -E -Q "EXIT(SELECT COUNT(*) FROM '%1')"
+	--nest query/transaction in an EXIT() operation to execute as if non-interactively
+osql -E -i infile.qry
+	-execute tsql transaction/operation, then enter interactive command prompt (REPL)
+osql -E -i infile.qry -o outfile.ext
+	-execute tsql transaction/operation, then write output/results to target file on filesystem
+SQLCMD/OSQL REPL commands:
+GO		Executes all statements entered since previous operation invoked by GO completed
+RESET	Clears any statements you have entered (from memory, like "I forgot to remember you forgot me")
+QUIT or EXIT()	Exits from sqlcmd/osql.
+CTRL+C	Ends a query without exiting from osql.
+	
 
 DEFAULT USERS
 sa
