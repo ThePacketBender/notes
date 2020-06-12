@@ -152,6 +152,8 @@ sync
 	var mu := sync.Mutex
 	
 
+Setup Goloang variable for localhost user/system environment
+
 
 
 Tools:
