@@ -45,3 +45,10 @@ accesschk.exe -uwcqv "Authenticated Users" *
 accesschk.exe -ucqv SSDPSRV
 accesschk.exe -ucqv upnphost
 	-for XP sp0/1
+	
+	
+
+Appendix:
+https://web.archive.org/web/20111111130246/http://live.sysinternals.com/accesschk.exe
+	-previous version of accesschk.exe
+		--better for host enumeration

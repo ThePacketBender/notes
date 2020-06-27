@@ -1,11 +1,27 @@
-physcal storage (hdd/ssd) recovery
+Physical Storage (HDD/SSD) Recovery
+	-Most software-based solutions also relevant to recovering virtualized disks (VHD/VMDK/whatever, largely format-agnostic in this context)
 
-
+RECOVERY DISKS
 GParted
+	-"GNU Parted"
+	--bootable recovery optical disk image (.iso)
+	--best option for the heavy lifting
+		--convenient to mount disk on eSATA/USB device and directly connect it to a virtual machine
+			--VMWare significantly preferable for this specific use case
+	--(see section "LINUX" (below))
 
-Linux
+
+LINUX
 fsck
-
+	--standard utility
+ddrescue
+	https://www.gnu.org/software/ddrescue/
+	apt-get install ddrescue ddrescueview ddrutility gddrescue
+	ddrescue-GUI
+		https://www.hamishmb.com/html/downloads.php?program_name=ddrescue-gui
+gpart
+	--scans drives and attempt re-create partition table of specified device based on "guesses"
+	gpart /dev/sda
 
 
 Windows
@@ -133,3 +149,24 @@ Forensic
 	Testdisk/Photorec
 https://www.cgsecurity.org/wiki/TestDisk_Download
 https://www.cgsecurity.org/Download_and_donate.php/testdisk-7.2-WIP.win64.zip
+
+
+Mapping Disk drives in Windows
+	--if the problem seems like it should not exist, you're probably overthinking enough to be making them yourself
+	Device Manager
+		>Disk Drive
+			>Volumes
+				>Populate
+	Disk Management
+		Dmgnotification.exe
+			--if "File System" displays as format RAW for "damaged" disk analyze with testdisk to recovery with proper disk geometry
+				--you're probably going to want to defragment if you're not performing forensic analysis
+
+
+
+Appendix 1 (Physical Disk Drive Device Connection Types)
+	[ASC: oldest to most recent]
+IDE
+SCSI
+SATA
+NVMe

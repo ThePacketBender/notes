@@ -459,6 +459,10 @@ iptables -P FORWARD ACCEPT
 sysctl net.ipv4.ip_forward=1
 
 
+Onion Whois:
+whois -h torwhois.com facebookcorewwwi.onion
+
+
 Appendix:
 
 DNS RECORDS TYPES:

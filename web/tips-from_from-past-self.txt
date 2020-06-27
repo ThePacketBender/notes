@@ -2,6 +2,11 @@ Web Application Pentesting "tips" for my future self
 
 ctl + shift + del
 				=> clear application cache
+alt+f4
+	--close current tab
 
 Testing internal network applications
 	route: firefox -> burp (add application-layer auth in "User Options" if different that network creds [ntlm/kerberos]) -> fiddler (enable: rules>automatically authenticate; Tools>Options>HTTPS>"Decrypt HTTPS Traffic"+"Ignore Cerfificate Errors"; Tools>Options>Gateway>"Use System Proxy")
+		https://www.telerik.com/fiddler
+	
+	

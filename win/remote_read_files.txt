@@ -64,6 +64,7 @@ tier 2 (system files)
 %WINDIR%\iis7.log
 %WINDIR%\System32\inetsrv\config\schema\ASPNET_schema.xml
 %WINDIR%\System32\inetsrv\config\applicationHost.config
+\Windows\System32\inetsrv\config\applicationHost.conf
 \inetpub\wwwroot\global.asa
 \inetpub\logs\LogFiles\W3SVC1\u_ex[YYMMDD].log
 

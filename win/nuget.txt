@@ -1,0 +1,23 @@
+nuget
+	--windows/.net package management utility
+	
+	
+cli
+sudo curl -o /usr/local/bin/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+alias nuget="mono /usr/local/bin/nuget.exe"
+nuget /?
+nuget update
+nuget install packagename
+nuget list
+	--list all installed packages
+
+
+powershell
+Install-Package NuGet.CommandLine
+Find-Package Pkg
+Find-Package logging -First 100
+Install-Package Pkg
+Install-Package Pkg -ProjectName MyProject
+Uninstall-Package Pkg -Force
+$profile
+%UserProfile%\Documents\WindowsPowerShell\NuGet_profile.ps1
