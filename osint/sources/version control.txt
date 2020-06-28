@@ -1,0 +1,13 @@
+Version Control
+
+Git
+
+gitem user thepacketbender
+gitem organization microsoft
+gitem repository thepacketbender notes
+
+gitleaks
+gitleaks --org=microsoft
+gitleaks --user=thepacketbender
+
+trufflehog https://github.com/thepacketbender/notes
